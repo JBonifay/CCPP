@@ -1,0 +1,93 @@
+---
+const { topics } = Astro.props;
+---
+
+<div class="filter-container">
+  <span class="filter-label">Filter by topics</span>
+  <div class="topic-pills">
+    {topics.map((topic: string) => (
+      <button class="topic-pill" data-topic={topic}>
+        {topic}
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  .filter-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    color: #718096;
+    font-size: 0.9rem;
+  }
+
+  .topic-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .topic-pill {
+    padding: 0.4rem 0.9rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #4a5568;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .topic-pill:hover {
+    border-color: #3182ce;
+    color: #3182ce;
+    background: #ebf8ff;
+  }
+
+  .topic-pill.active {
+    border-color: #3182ce;
+    color: #3182ce;
+    background: #ebf8ff;
+  }
+</style>
+
+<script>
+  // Client-side filtering logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const pills = document.querySelectorAll('.topic-pill');
+    const posts = document.querySelectorAll('.post-card');
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        const topic = pill.getAttribute('data-topic');
+
+        // Toggle active state
+        pill.classList.toggle('active');
+
+        // Get all active topics
+        const activeTopics = Array.from(document.querySelectorAll('.topic-pill.active'))
+          .map(p => p.getAttribute('data-topic'));
+
+        // Filter posts
+        posts.forEach(post => {
+          const postTopics = post.getAttribute('data-topics')?.split(',') || [];
+
+          if (activeTopics.length === 0) {
+            post.style.display = 'block';
+          } else {
+            const hasActiveTopic = activeTopics.some(activeTopic =>
+              postTopics.includes(activeTopic)
+            );
+            post.style.display = hasActiveTopic ? 'block' : 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

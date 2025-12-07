@@ -1,0 +1,41 @@
+---
+const { tabs, activeTab } = Astro.props;
+---
+
+<nav class="navigation">
+  {tabs.map((tab: { name: string; slug: string }) => (
+    <a
+      href={`/${tab.slug}`}
+      class={`nav-tab ${activeTab === tab.slug ? 'active' : ''}`}
+    >
+      {tab.name}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .navigation {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .nav-tab {
+    padding: 0.75rem 0;
+    color: #718096;
+    text-decoration: none;
+    font-size: 1rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .nav-tab:hover {
+    color: #3182ce;
+  }
+
+  .nav-tab.active {
+    color: #3182ce;
+    border-bottom-color: #3182ce;
+  }
+</style>

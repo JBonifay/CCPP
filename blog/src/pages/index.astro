@@ -3,7 +3,21 @@ import Sidebar from '../components/Sidebar.astro';
 import Navigation from '../components/Navigation.astro';
 import TopicFilter from '../components/TopicFilter.astro';
 import PostsGrid from '../components/PostsGrid.astro';
-import { posts } from '../data/posts';
+import { getCollection } from 'astro:content';
+
+// Get all posts from content/posts
+const allPosts = await getCollection('posts');
+
+// Transform posts to match the expected format
+const posts = allPosts.map(post => ({
+  number: post.data.number,
+  title: post.data.title,
+  date: post.data.date,
+  excerpt: post.data.excerpt,
+  topics: post.data.topics,
+  color: post.data.color,
+  slug: post.slug,
+}));
 
 const sidebarData = {
   name: "Joffrey B.",
@@ -28,6 +42,9 @@ const tabs = [
 ];
 
 const topics = ["DDD", "DevOps", "Backend", "Frontend", "MISC"];
+
+// Sort posts by number in descending order (newest first)
+const sortedPosts = [...posts].sort((a, b) => b.number - a.number);
 ---
 
 <!DOCTYPE html>
@@ -46,7 +63,7 @@ const topics = ["DDD", "DevOps", "Backend", "Frontend", "MISC"];
       <main class="main-content">
         <Navigation tabs={tabs} activeTab="" />
         <TopicFilter topics={topics} />
-        <PostsGrid posts={posts} />
+        <PostsGrid posts={sortedPosts} />
       </main>
     </div>
   </body>

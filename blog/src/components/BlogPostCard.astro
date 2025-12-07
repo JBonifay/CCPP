@@ -6,7 +6,6 @@ const { post } = Astro.props as { post: CollectionEntry<'posts'> };
 
 <article class="post-card" data-topics={post.data.topics.join(',')}>
   <a href={`/posts/${post.slug}`} class="post-link">
-    <div class="post-number">#{post.data.number}</div>
     <h2 class="post-title">{post.data.title}</h2>
     <div class="progress-bar" style={`background-color: ${post.data.color}`}></div>
     <time class="post-date">{post.data.date}</time>
@@ -55,9 +54,8 @@ const { post } = Astro.props as { post: CollectionEntry<'posts'> };
   }
 
   .progress-bar {
-    width: 100%;
+    width: 8%;
     height: 3px;
-    border-radius: 2px;
     margin-bottom: 0.75rem;
   }
 

@@ -38,20 +38,6 @@ const sidebarData = {
 
       <main class="main-content">
         <article class="post">
-          <header class="post-header">
-            <div class="post-meta">
-              <span class="post-number">#{post.data.number}</span>
-              <time class="post-date">{post.data.date}</time>
-            </div>
-            <h1 class="post-title">{post.data.title}</h1>
-            <div class="post-topics">
-              {post.data.topics.map((topic: string) => (
-                <span class="topic-tag">{topic}</span>
-              ))}
-            </div>
-            <div class="progress-bar" style={`background-color: ${post.data.color}`}></div>
-          </header>
-
           <div class="post-content">
             <Content />
           </div>
@@ -85,15 +71,14 @@ const sidebarData = {
   }
 
   .main-content {
-    margin-left: 320px;
-    padding: 2rem 3rem;
+    margin-left: 360px;
+    padding: 0 3rem;
     flex: 1;
-    max-width: 900px;
   }
 
   .post {
     background: white;
-    padding: 3rem;
+    padding: 0 1rem;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
@@ -129,6 +114,19 @@ const sidebarData = {
     line-height: 1.2;
   }
 
+  .post-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+  }
+
+  .post-title-row .post-date {
+      color: #718096;
+      font-size: 1rem;
+      white-space: nowrap; /* prevents date wrapping */
+  }
+
   .post-topics {
     display: flex;
     gap: 0.5rem;
@@ -146,7 +144,7 @@ const sidebarData = {
   }
 
   .progress-bar {
-    width: 100%;
+      width: 8%;
     height: 4px;
     border-radius: 2px;
   }
@@ -154,6 +152,7 @@ const sidebarData = {
   .post-content {
     font-size: 1.1rem;
     line-height: 1.8;
+    min-height: 85vh;
   }
 
   .post-content h1 {
@@ -212,8 +211,7 @@ const sidebarData = {
   }
 
   .post-footer {
-    margin-top: 3rem;
-    padding-top: 2rem;
+    padding: 1rem;
     border-top: 1px solid #e2e8f0;
   }
 

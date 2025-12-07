@@ -6,18 +6,7 @@ import PostsGrid from '../components/PostsGrid.astro';
 import { getCollection } from 'astro:content';
 
 // Get all posts from content/posts
-const allPosts = await getCollection('posts');
-
-// Transform posts to match the expected format
-const posts = allPosts.map(post => ({
-  number: post.data.number,
-  title: post.data.title,
-  date: post.data.date,
-  excerpt: post.data.excerpt,
-  topics: post.data.topics,
-  color: post.data.color,
-  slug: post.slug,
-}));
+const posts = await getCollection('posts');
 
 const sidebarData = {
   name: "Joffrey B.",
@@ -44,7 +33,7 @@ const tabs = [
 const topics = ["DDD", "DevOps", "Backend", "Frontend", "MISC"];
 
 // Sort posts by number in descending order (newest first)
-const sortedPosts = [...posts].sort((a, b) => b.number - a.number);
+const sortedPosts = [...posts].sort((a, b) => b.data.number - a.data.number);
 ---
 
 <!DOCTYPE html>

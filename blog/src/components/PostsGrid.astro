@@ -1,11 +1,12 @@
 ---
 import BlogPostCard from './BlogPostCard.astro';
+import type { CollectionEntry } from 'astro:content';
 
-const { posts } = Astro.props;
+const { posts } = Astro.props as { posts: CollectionEntry<'posts'>[] };
 ---
 
 <div class="posts-grid">
-  {posts.map((post: any) => (
+  {posts.map((post) => (
     <BlogPostCard post={post} />
   ))}
 </div>

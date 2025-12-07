@@ -1,24 +1,16 @@
 ---
-interface Post {
-  number: number;
-  title: string;
-  date: string;
-  excerpt: string;
-  topics: string[];
-  color: string;
-  slug: string;
-}
+import type { CollectionEntry } from 'astro:content';
 
-const { post } = Astro.props as { post: Post };
+const { post } = Astro.props as { post: CollectionEntry<'posts'> };
 ---
 
-<article class="post-card" data-topics={post.topics.join(',')}>
+<article class="post-card" data-topics={post.data.topics.join(',')}>
   <a href={`/posts/${post.slug}`} class="post-link">
-    <div class="post-number">#{post.number}</div>
-    <h2 class="post-title">{post.title}</h2>
-    <div class="progress-bar" style={`background-color: ${post.color}`}></div>
-    <time class="post-date">{post.date}</time>
-    <p class="post-excerpt">{post.excerpt}</p>
+    <div class="post-number">#{post.data.number}</div>
+    <h2 class="post-title">{post.data.title}</h2>
+    <div class="progress-bar" style={`background-color: ${post.data.color}`}></div>
+    <time class="post-date">{post.data.date}</time>
+    <p class="post-excerpt">{post.data.excerpt}</p>
   </a>
 </article>
 

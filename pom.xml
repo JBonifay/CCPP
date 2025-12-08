@@ -22,6 +22,25 @@
     </properties>
 
     <modules>
+        <module>ApiGateway</module>
+        <module>BudgetManagement</module>
+        <module>ContentPlanning</module>
+        <module>Notification</module>
+        <module>ProjectPlanning</module>
+        <module>TeamCollaboration</module>
+        <module>shared</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2025.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

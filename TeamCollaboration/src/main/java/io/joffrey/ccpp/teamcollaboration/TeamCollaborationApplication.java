@@ -1,0 +1,13 @@
+package io.joffrey.ccpp.teamcollaboration;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TeamCollaborationApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(TeamCollaborationApplication.class, args);
+    }
+
+}

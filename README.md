@@ -1,0 +1,112 @@
+# CCPP - Content Creator Planning Platform
+
+[![Deploy Blog](https://github.com/joffrey/CCPP/actions/workflows/deploy-blog.yml/badge.svg)](https://github.com/joffrey/CCPP/actions/workflows/deploy-blog.yml)
+[![Build and Test](https://github.com/joffrey/CCPP/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/joffrey/CCPP/actions/workflows/build-and-test.yml)
+
+> A multi-tenant content creator planning application demonstrating **Clean Architecture**, **Domain-Driven Design (DDD)
+**, **Event Sourcing**, **CQRS**, **Event-Driven Architecture**, **Saga Choreography**, and **Test-Driven Development (
+TDD)**.
+
+## 📚 Documentation
+
+- [**PLAN.md**](PLAN.md) - Complete architectural plan and implementation guide
+- [**INITIAL_CONVERSATION.md**](INITIAL_CONVERSATION.md) - Architecture discussion and decision-making process
+- [**Blog**](blog/) - Technical blog documenting the journey
+
+## 🏗️ Architecture
+
+### Bounded Contexts
+
+1. **Workspace Context** - Multi-tenancy and subscription management
+2. **Ideation Context** - Brainstorming and idea management
+3. **Project Planning Context** ⭐ (Core Domain) - Video project planning with budget tracking
+4. **Notification Context** - Email/SMS notifications
+
+### Technology Stack
+
+- **Backend**: Java 25 + Spring Boot 4.0.0
+- **Event Store**: In-memory (later EventStoreDB)
+- **Database**: In-memory (later PostgreSQL)
+- **Testing**: JUnit 5 + AssertJ
+- **Blog**: Astro
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Java 25
+- Maven 3.9+
+- Node.js 20+ (for blog)
+
+### Build the Project
+
+```bash
+# Build all modules
+mvn clean install
+
+# Run tests
+mvn test
+```
+
+### Run the Blog Locally
+
+```bash
+cd blog
+npm install
+npm run dev
+```
+
+Visit: http://localhost:4321
+
+## 📖 Project Structure
+
+```
+ccpp/
+├── .github/workflows/     # CI/CD workflows
+├── shared/                # Shared kernel (value objects, base classes)
+├── ApiGateway/            # Authentication and routing
+├── ProjectPlanning/       # Core domain - project planning
+├── TeamCollaboration/     # Workspace context
+├── ContentPlanning/       # Ideation context
+├── Notification/          # Supporting domain
+├── BudgetManagement/      # (Optional) Separate budget context
+├── blog/                  # Technical blog (Astro)
+├── pom.xml                # Parent POM
+├── PLAN.md                # Architecture plan
+└── INITIAL_CONVERSATION.md # Architecture discussion
+```
+
+## 🎯 Learning Goals
+
+This project demonstrates:
+
+- ✅ **Clean Architecture** with dependency inversion
+- ✅ **Domain-Driven Design** with bounded contexts
+- ✅ **Event Sourcing** for complete audit trail
+- ✅ **CQRS** with separate read/write models
+- ✅ **Saga Choreography** for cross-context workflows
+- ✅ **TDD** with 80%+ test coverage goal
+- ✅ **Multi-tenancy** at domain level
+
+## 📊 Current Status
+
+**Phase**: Foundation + Planning
+**Next Step**: Implement Project aggregate with TDD
+
+See [PLAN.md](PLAN.md) for detailed roadmap.
+
+## 🤝 Contributing
+
+This is a learning project. Feel free to:
+
+- Review architectural decisions
+- Suggest improvements
+- Learn from the code
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+---
+
+**Last Updated**: 2025-12-09

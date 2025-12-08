@@ -5,7 +5,7 @@ const { post } = Astro.props as { post: CollectionEntry<'posts'> };
 ---
 
 <article class="post-card" data-topics={post.data.topics.join(',')}>
-  <a href={`/posts/${post.slug}`} class="post-link">
+  <a href={`${import.meta.env.BASE_URL}posts/${post.slug}`} class="post-link">
     <h2 class="post-title">{post.data.title}</h2>
     <div class="progress-bar" style={`background-color: ${post.data.color}`}></div>
     <time class="post-date">{post.data.date}</time>

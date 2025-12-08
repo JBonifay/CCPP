@@ -40,7 +40,7 @@ const sortedPosts = [...posts].sort((a, b) => b.data.number - a.data.number);
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Joffrey B. - Software Engineer</title>

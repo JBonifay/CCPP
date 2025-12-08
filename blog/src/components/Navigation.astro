@@ -5,7 +5,7 @@ const { tabs, activeTab } = Astro.props;
 <nav class="navigation">
   {tabs.map((tab: { name: string; slug: string }) => (
     <a
-      href={`/${tab.slug}`}
+      href={tab.slug ? `${import.meta.env.BASE_URL}${tab.slug}` : import.meta.env.BASE_URL}
       class={`nav-tab ${activeTab === tab.slug ? 'active' : ''}`}
     >
       {tab.name}

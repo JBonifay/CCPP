@@ -50,7 +50,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <image>
-                        <name>ghcr.io/JBonifay/${project.artifactId}:${project.version}</name>
+                        <name>ghcr.io/jbonifay/${project.artifactId}:${project.version}</name>
                     </image>
                 </configuration>
             </plugin>

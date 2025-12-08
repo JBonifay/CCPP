@@ -6,6 +6,6 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   integrations: [mdx()],
   // GitHub Pages deployment configuration
-  site: process.env.SITE || 'https://jbonifay.github.io',
-  base: process.env.BASE_PATH || '/CCPP/',
+  site: 'https://jbonifay.github.io',
+  base: '/CCPP',
 });

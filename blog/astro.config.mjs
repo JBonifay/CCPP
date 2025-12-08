@@ -7,5 +7,5 @@ export default defineConfig({
   integrations: [mdx()],
   // GitHub Pages deployment configuration
   site: process.env.SITE || 'https://joffrey.github.io',
-  base: process.env.BASE_PATH || '/CCPP',
+  base: process.env.BASE_PATH || '/CCPP/',
 });

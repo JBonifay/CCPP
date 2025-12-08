@@ -1,0 +1,36 @@
+Copyright (c) 2025 Joffrey Bonifay
+
+All Rights Reserved
+
+EDUCATIONAL AND REFERENCE USE ONLY
+
+This software and associated documentation files (the "Software") are made
+publicly available for educational and reference purposes only.
+
+Permission is hereby granted to any person obtaining a copy of this Software
+to view and study the code for educational purposes, subject to the following
+conditions:
+
+PERMITTED USES:
+- Viewing and studying the source code
+- Using as a learning resource for software architecture patterns
+- Referencing architectural decisions in educational contexts
+- Using code snippets in educational blog posts or presentations with proper attribution
+
+PROHIBITED USES:
+- Commercial use of any kind
+- Copying, modifying, merging, or distributing the Software
+- Creating derivative works based on this Software
+- Using the Software in production systems or applications
+- Sublicensing or selling copies of the Software
+- Using the Software as a foundation for other projects
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+For questions about usage or collaboration, please open an issue on GitHub.

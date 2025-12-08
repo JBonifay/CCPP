@@ -4,7 +4,7 @@ const { name, bio, socialLinks } = Astro.props;
 
 <aside class="sidebar">
   <div class="profile">
-    <img src="/profile.png" alt={name} class="profile-img" />
+    <img src="${import.meta.env.BASE_URL}/profile.png" alt={name} class="profile-img" />
     <h1 class="name">{name}</h1>
   </div>
 

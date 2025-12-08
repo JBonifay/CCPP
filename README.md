@@ -1,11 +1,14 @@
 # CCPP - Content Creator Planning Platform
 
-[![Deploy Blog](https://github.com/joffrey/CCPP/actions/workflows/deploy-blog.yml/badge.svg)](https://github.com/joffrey/CCPP/actions/workflows/deploy-blog.yml)
-[![Build and Test](https://github.com/joffrey/CCPP/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/joffrey/CCPP/actions/workflows/build-and-test.yml)
+A multi-tenant content creator planning application demonstrating
 
-> A multi-tenant content creator planning application demonstrating **Clean Architecture**, **Domain-Driven Design (DDD)
-**, **Event Sourcing**, **CQRS**, **Event-Driven Architecture**, **Saga Choreography**, and **Test-Driven Development (
-TDD)**.
+- **Clean Architecture**
+- **Domain-Driven Design (DDD)**
+- **Event Sourcing**
+- **CQRS**
+- **Event-Driven Architecture**
+- **Saga Choreography**
+- **Test-Driven Development (TDD)**
 
 ## 📚 Documentation
 
@@ -48,16 +51,6 @@ mvn clean install
 mvn test
 ```
 
-### Run the Blog Locally
-
-```bash
-cd blog
-npm install
-npm run dev
-```
-
-Visit: http://localhost:4321
-
 ## 📖 Project Structure
 
 ```
@@ -85,7 +78,7 @@ This project demonstrates:
 - ✅ **Event Sourcing** for complete audit trail
 - ✅ **CQRS** with separate read/write models
 - ✅ **Saga Choreography** for cross-context workflows
-- ✅ **TDD** with 80%+ test coverage goal
+- ✅ **TDD** with high test coverage
 - ✅ **Multi-tenancy** at domain level
 
 ## 📊 Current Status
@@ -95,18 +88,29 @@ This project demonstrates:
 
 See [PLAN.md](PLAN.md) for detailed roadmap.
 
-## 🤝 Contributing
+---
 
-This is a learning project. Feel free to:
+## 📄 License & Usage
 
-- Review architectural decisions
-- Suggest improvements
-- Learn from the code
+**Copyright © 2025 Joffrey Bonifay. All Rights Reserved.**
 
-## 📄 License
+This code is publicly available for **educational and reference purposes only**.
 
-MIT License - See LICENSE file for details
+### ✅ You MAY:
+
+- View and study the code
+- Use it as a learning resource
+- Reference architectural patterns in your own learning
+
+### ❌ You MAY NOT:
+
+- Use this code in commercial projects
+- Copy or redistribute this code
+- Create derivative works
+- Use this code in production systems
+
+**This is a portfolio/learning project.** If you're interested in collaboration or have questions, feel free to reach
+out via GitHub issues.
 
 ---
 
-**Last Updated**: 2025-12-09

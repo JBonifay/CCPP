@@ -7,36 +7,70 @@ topics: []
 color: "#10b981"
 ---
 
-## Project Overview
+# How I Used Claude to Design a Clean Architecture
 
-I’m starting a new project to showcase my skills in **Event Sourcing**, **CQRS**, **Clean Architecture**, **TDD**, and **DDD**.
+When I started this project, I knew what I wanted to demonstrate: **Event Sourcing**, **CQRS**, **Clean Architecture**, **TDD**, and **Domain-Driven Design**.
+The challenge? I didn't have the full architectural picture to make it all work together.
 
-The idea is simple: **build an app for content creator teams to plan and manage their video projects.**
+That's where this journey began.
 
-### Why this project?
+## The Problem: Theory vs. Practice
 
-Creator teams often struggle to organize ideas, track progress, estimate costs, share notes, and communicate effectively. This domain is perfect for demonstrating how clean architecture and event-driven design can support real-world workflows.
+I understand the concepts individually.
+I've read about bounded contexts, aggregates, and event-driven systems.
+But when it came to designing a real application from scratch, I found myself stuck on fundamental questions:
 
-### What the app will do
+- Where should budget items live? Inside the project aggregate or as a separate bounded context?
+- Do I need a multi-tenant layer with a `workspaceId` in every aggregate?
+- How do I actually implement saga choreography, not just talk about it?
 
-The first version of the app will allow teams to:
+I needed an experienced architect to guide me through these decisions. Since I don't have a senior architect on call, I turned to Claude.
 
-- Add and organize video ideas
-- Add descriptions, notes, and important details
-- Track estimated and actual costs
-- Send emails or reminders related to the project
-- Follow each project from idea → script → recording → editing → publishing
-- Collaborate without mixing data between different teams
-- View a clear timeline of upcoming content
+## The Collaborative Process
 
-More features will emerge as the domain becomes clearer — **I don’t know all of them yet**, and that’s part of the DDD journey.
+Rather than just asking Claude to "design everything," I used it as a **Socratic guide**. The conversation went like this:
 
-### What I want to demonstrate
+> **Claude**: "What is a Project Plan in your domain?"
+> **Me**: "A project is a video planning with a timeline and status..."
 
-- Modeling real creative workflows with events
-- Using CQRS for clarity and efficient read models
-- Keeping the code clean and maintainable
-- Driving the design through TDD
-- Applying DDD to build a meaningful and evolving domain model
+> **Claude**: "Can participants exist without a project?"
+> **Me**: "No, they can't..."
 
-More posts coming soon!
+> **Claude**: "Does the workspace have business rules?"
+> **Me**: "Yes! Freemium gets 2 projects max, premium unlimited..."
+
+Through this Q&A process (fully documented in [INITIAL_CONVERSATION.md](https://github.com/JBonifay/CCPP/blob/main/docs/INITIAL_CONVERSATION.md)), we uncovered the true domain model.
+Claude helped me see architectural implications I hadn't considered:
+
+- **Budget items** became entities inside the `Project` aggregate because changing them recalculates the project total—this affects invariants.
+- **Participants** stayed inside the aggregate because a declined participant is critical to project state, not just a notification concern.
+- **Workspace** became a full bounded context with business rules, requiring a saga to enforce subscription limits.
+
+## The Result: A Real Architecture
+
+What emerged was **4 bounded contexts**, **3 saga choreographies**, and clear aggregate boundaries—all documented in [PLAN.md](https://github.com/JBonifay/CCPP/blob/main/docs/PLAN.md).
+
+The architecture includes:
+- **Workspace Context**: Multi-tenancy with freemium/premium limits
+- **Ideation Context**: Workspace-level brainstorming
+- **Project Planning Context** (CORE): Video planning with budget tracking
+- **Notification Context**: Email/SMS for project readiness
+
+Each context has:
+- Clearly defined aggregates and invariants
+- Event sourcing strategy with event schemas
+- Command/Query separation with projections
+- TDD approach with example tests
+
+## Why Share This?
+
+I'm documenting this journey because **architecture isn't learned in isolation**. It's learned through making real decisions, understanding trade-offs, and sometimes needing guidance.
+
+If you're learning DDD or Clean Architecture and feel overwhelmed by the gap between theory and practice, you're not alone.
+Using AI as an architectural thinking partner (not just a code generator) can help bridge that gap.
+
+The next articles will dive into implementation—starting with bounded contexts, then event sourcing patterns, and finally saga choreography.
+
+---
+
+**Next**: [Understanding Bounded Contexts](#) - Why "Project Planning" is the core domain

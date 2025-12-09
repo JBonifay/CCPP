@@ -4,9 +4,21 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**.java'
+      - '**/pom.xml'
+      - '**/src/**'
+      - '.github/workflows/**'
+      - '**/Dockerfile'
   pull_request:
     branches:
       - main
+    paths:
+      - '**.java'
+      - '**/pom.xml'
+      - '**/src/**'
+      - '.github/workflows/**'
+      - '**/Dockerfile'
   workflow_dispatch:
 
 permissions:

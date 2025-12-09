@@ -22,12 +22,12 @@
     </properties>
 
     <modules>
-        <module>ApiGateway</module>
-        <module>BudgetManagement</module>
-        <module>ContentPlanning</module>
-        <module>Notification</module>
-        <module>ProjectPlanning</module>
-        <module>TeamCollaboration</module>
+<!--        <module>shared</module>-->
+        <module>api-gateway</module>
+        <module>project-planning</module>
+        <module>workspace</module>
+        <module>Ideation</module>
+        <module>notification</module>
         <module>shared</module>
     </modules>
 

@@ -260,24 +260,23 @@ class Project {
 ### Saga 1: **Create Project with Subscription Check**
 
 ```
-
- Choreography Flow                                    
+
+ Choreography Flow                                    
 $
- 1. User → CreateProjectCommand                      
-    ↓                                                 
- 2. Workspace Context                                
-    → Check subscription tier                         
-    → Check current project count (from read model)  
-    → If FREEMIUM && count >= 2: REJECT              
-    → If allowed: Emit WorkspaceProjectCreationApproved
-    ↓                                                 
- 3. Project Planning Context (listens)               
-    → Create Project aggregate                        
-    → Emit ProjectCreated                             
-    ↓                                                 
- 4. Workspace Read Model (listens)                   
-    → Increment project count for workspace           
-
+ 1. User → CreateProjectCommand                      
+    ↓                                                 
+ 2. Workspace Context                                
+    → Check subscription tier                         
+    → Check current project count (from read model)  
+    → If FREEMIUM && count >= 2: REJECT              
+    → If allowed: Emit WorkspaceProjectCreationApproved
+    ↓                                                 
+ 3. Project Planning Context (listens)               
+    → Create Project aggregate                        
+    → Emit ProjectCreated                             
+    ↓                                                 
+ 4. Workspace Read Model (listens)                   
+    → Increment project count for workspace           
 ```
 
 **Why Saga?**
@@ -291,29 +290,28 @@ $
 ### Saga 2: **Participant Invitation Flow**
 
 ```
-
- Choreography Flow                                    
+
+ Choreography Flow                                    
 $
- 1. Project marked as READY                          
-    → ProjectMarkedAsReady event                      
-    ↓                                                 
- 2. Notification Context (listens)                   
-    → For each participant in event.participants     
-    → Send email with project details                 
-    → Emit NotificationSent                           
-    ↓                                                 
- 3. Participant receives email                       
-    → Clicks Accept/Decline link                      
-    → API receives ParticipantResponseCommand         
-    ↓                                                 
- 4. Project Planning Context                         
-    → Update participant status                       
-    → If ACCEPTED: Emit ParticipantAccepted           
-    → If DECLINED: Emit ParticipantDeclined           
-    ↓                                                 
- 5. (Optional) Auto-suggest replacement              
-    → If ParticipantDeclined → trigger workflow       
-
+ 1. Project marked as READY                          
+    → ProjectMarkedAsReady event                      
+    ↓                                                 
+ 2. Notification Context (listens)                   
+    → For each participant in event.participants     
+    → Send email with project details                 
+    → Emit NotificationSent                           
+    ↓                                                 
+ 3. Participant receives email                       
+    → Clicks Accept/Decline link                      
+    → API receives ParticipantResponseCommand         
+    ↓                                                 
+ 4. Project Planning Context                         
+    → Update participant status                       
+    → If ACCEPTED: Emit ParticipantAccepted           
+    → If DECLINED: Emit ParticipantDeclined           
+    ↓                                                 
+ 5. (Optional) Auto-suggest replacement              
+    → If ParticipantDeclined → trigger workflow       
 ```
 
 **Why Choreography?**
@@ -328,28 +326,27 @@ $
 ### Saga 3: **Brainstorm to Project Conversion**
 
 ```
-
- Choreography Flow                                    
+
+ Choreography Flow                                    
 $
- 1. User → ConvertBrainstormToProjectCommand          
-    ↓                                                 
- 2. Ideation Context                                 
-    → Mark idea as CONVERTED                          
-    → Emit BrainstormIdeaConverted                    
-       (with idea data: title, description)           
-    ↓                                                 
- 3. Workspace Context (listens)                      
-    → Check subscription limits                       
-    → Emit WorkspaceProjectCreationApproved           
-    ↓                                                 
- 4. Project Planning Context (listens)               
-    → Create project from brainstorm data             
-    → Emit ProjectCreatedFromBrainstorm               
-    ↓                                                 
- 5. Ideation Context (listens)                       
-    → Link brainstorm to created project              
-    → Emit BrainstormLinkedToProject                  
-
+ 1. User → ConvertBrainstormToProjectCommand          
+    ↓                                                 
+ 2. Ideation Context                                 
+    → Mark idea as CONVERTED                          
+    → Emit BrainstormIdeaConverted                    
+       (with idea data: title, description)           
+    ↓                                                 
+ 3. Workspace Context (listens)                      
+    → Check subscription limits                       
+    → Emit WorkspaceProjectCreationApproved           
+    ↓                                                 
+ 4. Project Planning Context (listens)               
+    → Create project from brainstorm data             
+    → Emit ProjectCreatedFromBrainstorm               
+    ↓                                                 
+ 5. Ideation Context (listens)                       
+    → Link brainstorm to created project              
+    → Emit BrainstormLinkedToProject                  
 ```
 
 **Why Saga?**
@@ -377,37 +374,20 @@ notification-{notificationId} ↓ All notification events
 
 ```json
 {
-  "eventId": "550e8400-e29b-41d4-a716-446655440000",
+  "eventId": "uuid",
   "eventType": "ProjectCreated",
   "aggregateId": "project-123",
-  "aggregateType": "Project",
-  "workspaceId": "workspace-456",
-  "version": 1,
+  "workspaceId": "workspace-456",  // CRITICAL for multi-tenant filtering
+  "version": 1,                     // Optimistic concurrency control
   "timestamp": "2025-12-09T10:30:00Z",
-  "data": {
-    "projectId": "project-123",
-    "workspaceId": "workspace-456",
-    "title": "Q1 Video Series with Mcfly&Carlito",
-    "description": "Educational content collaboration",
-    "timeline": {
-      "startDate": "2025-01-01",
-      "endDate": "2025-03-31"
-    }
-  },
+  "data": { /* event payload */ },
   "metadata": {
     "userId": "user-789",
-    "correlationId": "corr-abc",
-    "causationId": "event-xyz"
+    "correlationId": "corr-abc",    // Track saga flows
+    "causationId": "event-xyz"      // Event causation chain
   }
 }
 ```
-
-**Important Fields**:
-
-- `workspaceId`: **CRITICAL** for multi-tenant event filtering
-- `version`: Optimistic concurrency control
-- `correlationId`: Track saga flows
-- `causationId`: Which event caused this event (saga tracking)
 
 ### Projections (Read Models)
 
@@ -492,41 +472,37 @@ CREATE TABLE brainstorm_list_view
 ### Layer Structure
 
 ```
-
- Presentation Layer (API Gateway)                        
- - REST Controllers                                      
- - Authentication (JWT)                                  
- - Extract userId + workspaceId from token              
- - Route to bounded contexts                             
-
+
+ Presentation Layer (API Gateway)                        
+ - REST Controllers                                      
+ - Authentication (JWT)                                  
+ - Extract userId + workspaceId from token              
+ - Route to bounded contexts                             
               ↓ depends on ↓
-
- Application Layer                                       
- - Command Handlers (write side)                         
- - Query Handlers (read side)                            
- - DTOs (Data Transfer Objects)                          
- - Event Handlers (saga listeners)                       
- - Application Services                                  
-
+
+ Application Layer                                       
+ - Command Handlers (write side)                         
+ - Query Handlers (read side)                            
+ - DTOs (Data Transfer Objects)                          
+ - Event Handlers (saga listeners)                       
+ - Application Services                                  
               ↓ depends on ↓
-
- Domain Layer (CORE - NO DEPENDENCIES)                   
- - Aggregates (Project, Workspace, Brainstorm)          
- - Entities (BudgetItem, Participant)                    
- - Value Objects (Money, DateRange, Email)              
- - Domain Events                                          
- - Repository Interfaces (ports)                         
- - Invariants & Business Rules                           
-
+
+ Domain Layer (CORE - NO DEPENDENCIES)                   
+ - Aggregates (Project, Workspace, Brainstorm)          
+ - Entities (BudgetItem, Participant)                    
+ - Value Objects (Money, DateRange, Email)              
+ - Domain Events                                          
+ - Repository Interfaces (ports)                         
+ - Invariants & Business Rules                           
               ↓ implemented by ↓
-
- Infrastructure Layer                                    
- - Event Store Implementation (in-memory → EventStoreDB) 
- - Repository Implementations                            
- - Projection Updaters                                   
- - Email/SMS Services                                    
- - Database Adapters                                     
-
+              
+ Infrastructure Layer                                    
+ - Event Store Implementation (in-memory → EventStoreDB) 
+ - Repository Implementations                            
+ - Projection Updaters                                   
+ - Email/SMS Services                                    
+ - Database Adapters                                     
 ```
 
 ### Dependency Rules
@@ -629,80 +605,39 @@ Return: List<ProjectListDTO>
 class ProjectTest {
 
     @Test
-    void should_create_project_with_valid_data() {
+    void should_create_project_and_emit_event() {
         // Given
         var workspaceId = new WorkspaceId(UUID.randomUUID());
-        var title = "Q1 Video Series";
-        var description = "Educational content";
-        var timeline = new DateRange(
-                LocalDate.of(2025, 1, 1),
-                LocalDate.of(2025, 3, 31)
-        );
-        var userId = new UserId(UUID.randomUUID());
+        var timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
 
         // When
-        var project = Project.create(
-                workspaceId,
-                title,
-                description,
-                timeline,
-                userId
-        );
+        var project = Project.create(workspaceId, "Q1 Video Series", "Educational content", timeline, userId);
 
         // Then
         assertThat(project.getStatus()).isEqualTo(Status.PLANNING);
-        assertThat(project.getTitle()).isEqualTo(title);
-        assertThat(project.getEvents())
-                .hasSize(1)
-                .first()
-                .isInstanceOf(ProjectCreated.class);
+        assertThat(project.getEvents()).hasSize(1).first().isInstanceOf(ProjectCreated.class);
     }
 
     @Test
-    void should_prevent_timeline_change_when_ready() {
+    void should_prevent_modifications_when_ready() {
         // Given
         var project = createPlanningProject();
         project.markAsReady(userId);
-        var newTimeline = new DateRange(
-                LocalDate.of(2025, 2, 1),
-                LocalDate.of(2025, 4, 30)
-        );
 
         // When / Then
         assertThatThrownBy(() -> project.changeTimeline(newTimeline))
-                .isInstanceOf(CannotModifyReadyProjectException.class)
-                .hasMessage("Cannot modify project in READY status");
+                .isInstanceOf(CannotModifyReadyProjectException.class);
     }
 
     @Test
-    void should_calculate_total_budget_from_items() {
+    void should_calculate_total_budget() {
         // Given
         var project = createPlanningProject();
-
-        // When
-        project.addBudgetItem("Hotel 2x nights", Money.of(300, "USD"));
-        project.addBudgetItem("Equipment rental", Money.of(150, "USD"));
+        project.addBudgetItem("Hotel", Money.of(300, "USD"));
+        project.addBudgetItem("Equipment", Money.of(150, "USD"));
 
         // Then
-        assertThat(project.getTotalBudget())
-                .isEqualTo(Money.of(450, "USD"));
-    }
-
-    @Test
-    void should_emit_participant_declined_event() {
-        // Given
-        var project = createReadyProjectWithParticipants();
-        var participantEmail = new Email("Mcfly&Carlito@example.com");
-
-        // When
-        project.recordParticipantResponse(
-                participantEmail,
-                ParticipantResponse.DECLINED
-        );
-
-        // Then
-        assertThat(project.getEvents())
-                .anyMatch(e -> e instanceof ParticipantDeclined);
+        assertThat(project.getTotalBudget()).isEqualTo(Money.of(450, "USD"));
     }
 }
 ```
@@ -798,9 +733,9 @@ CREATE POLICY tenant_isolation ON projects
 ```
 Database: ccpp
  workspace_456/  (schema)
-    projects
-    event_store
-    projections
+    projects
+    event_store
+    projections
  workspace_789/  (schema)
      projects
      event_store
@@ -856,12 +791,13 @@ ccpp/
  pom.xml (parent)
  shared/ (shared kernel - value objects, base classes)
  ApiGateway/ (authentication, routing)
- ProjectPlanning/ (core domain)
- BudgetManagement/ (if separated from ProjectPlanning)
- TeamCollaboration/ (workspace context)
- ContentPlanning/ (ideation context)
- Notification/ (supporting domain)
+ ProjectPlanning/ (core domain - project planning context)
+ Workspace/ (multi-tenancy & subscriptions - workspace context)
+ Ideation/ (brainstorming - ideation context)
+ Notification/ (supporting domain - notification context)
 ```
+
+**Note**: Module names now match bounded context names for clarity and alignment with ubiquitous language.
 
 ### Infrastructure Adapters
 

@@ -2,17 +2,18 @@ services:
 
   watchtower:
     image: containrrr/watchtower
+    container_name: watchtower
     environment:
-      WATCHTOWER_LABEL_ENABLE: "true"
+      # Cleanup old images
+      WATCHTOWER_CLEANUP: "true"
+      # Log level
+      WATCHTOWER_DEBUG: "false"
     labels:
-      # Watchtower
-      - "com.centurylinklabs.watchtower.enable=true"
-      # disable traefik
       - "traefik.enable=false"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /root/.docker/config.json:/config.json
-    command: --interval 30 --include-stopped --revive-stopped
+    command: --interval 300 --include-stopped --revive-stopped
 
   traefik:
     image: traefik:latest
@@ -119,7 +120,7 @@ services:
       - ccpp-network
 
   admin-server:
-    image: codecentric/spring-boot-admin:3.3.4
+    image: codecentric/spring-boot-admin:latest
     container_name: admin-server
     environment:
       - SPRING_BOOT_ADMIN_CONTEXT_PATH=/admin
@@ -134,7 +135,7 @@ services:
       - ccpp-network
 
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:latest
     container_name: kafka
     ports:
       - "9092:9092"

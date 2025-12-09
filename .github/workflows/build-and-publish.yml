@@ -17,6 +17,22 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  discover-modules:
+    name: Discover Modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set-modules.outputs.modules }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Discover modules from pom.xml
+        id: set-modules
+        run: |
+          MODULES=$(grep -oP '(?<=<module>)[^<]+' pom.xml | grep -v "shared" | jq -R -s -c 'split("\n")[:-1]')
+          echo "Discovered modules: $MODULES"
+          echo "modules=$MODULES" >> $GITHUB_OUTPUT
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -36,18 +52,12 @@ jobs:
 
   build-and-publish:
     name: Build and Publish Images
-    needs: test
+    needs: [test, discover-modules]
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     strategy:
       matrix:
-        module:
-          - ApiGateway
-          - BudgetManagement
-          - ContentPlanning
-          - Notification
-          - ProjectPlanning
-          - TeamCollaboration
+        module: ${{ fromJson(needs.discover-modules.outputs.modules) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

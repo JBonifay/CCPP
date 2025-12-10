@@ -11,6 +11,7 @@ import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -143,193 +144,6 @@ class ProjectTest {
     }
 
     @Test
-    void should_add_budget_item_to_project() {
-        Project project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
-
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-
-        project.addBudgetItem(budgetItemId, "Hotel 2 nights", amount);
-
-        assertThat(project.uncommittedEvents()).containsExactly(
-                new BudgetItemAdded(
-                        projectId,
-                        budgetItemId,
-                        "Hotel 2 nights",
-                        amount)
-        );
-    }
-
-    @Test
-    void should_add_multiple_budget_items() {
-        var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
-
-        var item1Id = new BudgetItemId(UUID.randomUUID());
-        var item2Id = new BudgetItemId(UUID.randomUUID());
-        var amount1 = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-        var amount2 = new Money(BigDecimal.valueOf(150), Currency.getInstance("USD"));
-
-        project.addBudgetItem(item1Id, "Hotel", amount1);
-        project.addBudgetItem(item2Id, "Equipment", amount2);
-
-        assertThat(project.uncommittedEvents())
-                .hasSize(2)
-                .containsExactly(
-                        new BudgetItemAdded(projectId, item1Id, "Hotel", amount1),
-                        new BudgetItemAdded(projectId, item2Id, "Equipment", amount2)
-                );
-    }
-
-    @Test
-    void should_remove_budget_item() {
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount)
-        ));
-
-        project.removeBudgetItem(budgetItemId);
-
-        assertThat(project.uncommittedEvents()).containsExactly(
-                new BudgetItemRemoved(projectId, budgetItemId)
-        );
-    }
-
-    @Test
-    void should_prevent_removing_budget_item_when_ready() {
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
-                new ProjectMarkedAsReady(projectId, workspaceId, userId)
-        ));
-
-        assertThatThrownBy(() ->
-                project.removeBudgetItem(budgetItemId)
-        )
-                .isInstanceOf(CannotModifyReadyProjectException.class)
-                .hasMessageContaining("Cannot modify project in READY status");
-    }
-
-    @Test
-    void should_update_budget_item() {
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var originalAmount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel 2 nights", originalAmount)
-        ));
-
-        var newAmount = new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"));
-        project.updateBudgetItem(budgetItemId, "Hotel 3 nights", newAmount);
-
-        assertThat(project.uncommittedEvents()).containsExactly(
-                new BudgetItemUpdated(projectId, budgetItemId, "Hotel 3 nights", newAmount)
-        );
-    }
-
-    @Test
-    void should_mark_project_budget_as_over_limit_when_total_budget_exceeds_cap() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, new BigDecimal(100)),
-                new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD")))
-        ));
-
-        UUID itemId = UUID.randomUUID();
-        project.addBudgetItem(new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD")));
-
-        assertThat(project.uncommittedEvents()).containsExactly(
-                new BudgetItemAdded(projectId, new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD"))),
-                new ProjectBudgetCapExceeded(projectId, new Money(BigDecimal.valueOf(101), Currency.getInstance("USD")))
-        );
-    }
-
-    @Test
-    void should_prevent_updating_budget_item_when_ready() {
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
-                new ProjectMarkedAsReady(projectId, workspaceId, userId)
-        ));
-
-        assertThatThrownBy(() ->
-                project.updateBudgetItem(
-                        budgetItemId,
-                        "Hotel Updated",
-                        new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))
-                )
-        )
-                .isInstanceOf(CannotModifyReadyProjectException.class)
-                .hasMessageContaining("Cannot modify project in READY status");
-    }
-
-    @Test
-    void should_reject_updating_budgetItem_previously_deleted() {
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
-                new BudgetItemRemoved(projectId, budgetItemId)
-        ));
-
-        assertThatThrownBy(() -> project.updateBudgetItem(budgetItemId, "Hotel Updated", new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))))
-                .isInstanceOf(InvalidProjectDataException.class)
-                .hasMessage("Budget item not present!");
-    }
-
-    @Test
-    void should_fail_to_add_budgetItem_in_different_currency() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Hotel 2 nights", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
-        ));
-
-        assertThatThrownBy(() -> project.addBudgetItem(new BudgetItemId(UUID.randomUUID()), "INVALID", new Money(BigDecimal.valueOf(300), Currency.getInstance("EUR"))))
-                .isInstanceOf(CurrencyException.class)
-                .hasMessageContaining("Cannot add budget items with different currencies.");
-    }
-
-    @Test
-    void should_check_currency_against_updated_budget_item() {
-        var item1Id = new BudgetItemId(UUID.randomUUID());
-
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD"))),
-                new BudgetItemUpdated(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(200), Currency.getInstance("EUR"))) // Changed to EUR
-        ));
-
-        assertThatThrownBy(() ->
-                project.addBudgetItem(new BudgetItemId(UUID.randomUUID()), "Equipment", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
-        )
-                .isInstanceOf(CurrencyException.class)
-                .hasMessageContaining("Cannot add budget items with different currencies");
-    }
-
-    @Test
-    void should_reject_empty_budget_item_description() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
-        ));
-
-        assertThatThrownBy(() ->
-                project.addBudgetItem(
-                        new BudgetItemId(UUID.randomUUID()),
-                        "",
-                        new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))
-                )
-        )
-                .isInstanceOf(InvalidProjectDataException.class)
-                .hasMessageContaining("Budget item description cannot be empty");
-    }
-
-    @Test
     void should_mark_project_as_ready() {
         var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
 
@@ -338,25 +152,6 @@ class ProjectTest {
         assertThat(project.uncommittedEvents()).containsExactly(
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         );
-    }
-
-    @Test
-    void should_prevent_adding_budget_item_when_ready() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new ProjectMarkedAsReady(projectId, workspaceId, userId)
-        ));
-
-
-        assertThatThrownBy(() ->
-                project.addBudgetItem(
-                        new BudgetItemId(UUID.randomUUID()),
-                        "Hotel",
-                        new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))
-                )
-        )
-                .isInstanceOf(CannotModifyReadyProjectException.class)
-                .hasMessageContaining("Cannot modify project in READY status");
     }
 
     @Test
@@ -371,35 +166,268 @@ class ProjectTest {
         assertThat(project.uncommittedEvents()).isEmpty();
     }
 
-    @Test
-    void should_change_timeline_when_planning() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
-        ));
-        var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
+    @Nested
+    class BudgetTest {
 
-        project.changeTimeline(newTimeline);
+        @Test
+        void should_add_budget_item_to_project() {
+            Project project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
 
-        assertThat(project.uncommittedEvents()).containsExactly(
-                new ProjectTimelineChanged(projectId, newTimeline)
-        );
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+
+            project.addBudgetItem(budgetItemId, "Hotel 2 nights", amount);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new BudgetItemAdded(
+                            projectId,
+                            budgetItemId,
+                            "Hotel 2 nights",
+                            amount)
+            );
+        }
+
+        @Test
+        void should_add_multiple_budget_items() {
+            var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
+
+            var item1Id = new BudgetItemId(UUID.randomUUID());
+            var item2Id = new BudgetItemId(UUID.randomUUID());
+            var amount1 = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+            var amount2 = new Money(BigDecimal.valueOf(150), Currency.getInstance("USD"));
+
+            project.addBudgetItem(item1Id, "Hotel", amount1);
+            project.addBudgetItem(item2Id, "Equipment", amount2);
+
+            assertThat(project.uncommittedEvents())
+                    .hasSize(2)
+                    .containsExactly(
+                            new BudgetItemAdded(projectId, item1Id, "Hotel", amount1),
+                            new BudgetItemAdded(projectId, item2Id, "Equipment", amount2)
+                    );
+        }
+
+        @Test
+        void should_remove_budget_item() {
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount)
+            ));
+
+            project.removeBudgetItem(budgetItemId);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new BudgetItemRemoved(projectId, budgetItemId)
+            );
+        }
+
+        @Test
+        void should_prevent_removing_budget_item_when_ready() {
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
+                    new ProjectMarkedAsReady(projectId, workspaceId, userId)
+            ));
+
+            assertThatThrownBy(() ->
+                    project.removeBudgetItem(budgetItemId)
+            )
+                    .isInstanceOf(CannotModifyReadyProjectException.class)
+                    .hasMessageContaining("Cannot modify project in READY status");
+        }
+
+        @Test
+        void should_update_budget_item() {
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var originalAmount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, budgetItemId, "Hotel 2 nights", originalAmount)
+            ));
+
+            var newAmount = new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"));
+            project.updateBudgetItem(budgetItemId, "Hotel 3 nights", newAmount);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new BudgetItemUpdated(projectId, budgetItemId, "Hotel 3 nights", newAmount)
+            );
+        }
+
+        @Test
+        void should_mark_project_budget_as_over_limit_when_total_budget_exceeds_cap() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, new BigDecimal(100)),
+                    new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD")))
+            ));
+
+            UUID itemId = UUID.randomUUID();
+            project.addBudgetItem(new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD")));
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new BudgetItemAdded(projectId, new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD"))),
+                    new ProjectBudgetCapExceeded(projectId, new Money(BigDecimal.valueOf(101), Currency.getInstance("USD")))
+            );
+        }
+
+        @Test
+        void should_prevent_updating_budget_item_when_ready() {
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
+                    new ProjectMarkedAsReady(projectId, workspaceId, userId)
+            ));
+
+            assertThatThrownBy(() ->
+                    project.updateBudgetItem(
+                            budgetItemId,
+                            "Hotel Updated",
+                            new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))
+                    )
+            )
+                    .isInstanceOf(CannotModifyReadyProjectException.class)
+                    .hasMessageContaining("Cannot modify project in READY status");
+        }
+
+        @Test
+        void should_reject_updating_budgetItem_previously_deleted() {
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
+                    new BudgetItemRemoved(projectId, budgetItemId)
+            ));
+
+            assertThatThrownBy(() -> project.updateBudgetItem(budgetItemId, "Hotel Updated", new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))))
+                    .isInstanceOf(InvalidProjectDataException.class)
+                    .hasMessage("Budget item not present!");
+        }
+
+        @Test
+        void should_fail_to_add_budgetItem_in_different_currency() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Hotel 2 nights", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
+            ));
+
+            assertThatThrownBy(() -> project.addBudgetItem(new BudgetItemId(UUID.randomUUID()), "INVALID", new Money(BigDecimal.valueOf(300), Currency.getInstance("EUR"))))
+                    .isInstanceOf(CurrencyException.class)
+                    .hasMessageContaining("Cannot add budget items with different currencies.");
+        }
+
+        @Test
+        void should_check_currency_against_updated_budget_item() {
+            var item1Id = new BudgetItemId(UUID.randomUUID());
+
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new BudgetItemAdded(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD"))),
+                    new BudgetItemUpdated(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(200), Currency.getInstance("EUR"))) // Changed to EUR
+            ));
+
+            assertThatThrownBy(() ->
+                    project.addBudgetItem(new BudgetItemId(UUID.randomUUID()), "Equipment", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
+            )
+                    .isInstanceOf(CurrencyException.class)
+                    .hasMessageContaining("Cannot add budget items with different currencies");
+        }
+
+        @Test
+        void should_reject_empty_budget_item_description() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            assertThatThrownBy(() ->
+                    project.addBudgetItem(
+                            new BudgetItemId(UUID.randomUUID()),
+                            "",
+                            new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))
+                    )
+            )
+                    .isInstanceOf(InvalidProjectDataException.class)
+                    .hasMessageContaining("Budget item description cannot be empty");
+        }
+
+        @Test
+        void should_prevent_adding_budget_item_when_ready() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new ProjectMarkedAsReady(projectId, workspaceId, userId)
+            ));
+
+
+            assertThatThrownBy(() ->
+                    project.addBudgetItem(
+                            new BudgetItemId(UUID.randomUUID()),
+                            "Hotel",
+                            new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))
+                    )
+            )
+                    .isInstanceOf(CannotModifyReadyProjectException.class)
+                    .hasMessageContaining("Cannot modify project in READY status");
+        }
+
     }
 
-    @Test
-    void should_prevent_changing_timeline_when_ready() {
-        var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
-                new ProjectMarkedAsReady(projectId, workspaceId, userId)
-        ));
+    @Nested
+    class TimelineTest {
 
-        var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
+        @Test
+        void should_change_timeline_when_planning() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+            var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
 
-        assertThatThrownBy(() ->
-                project.changeTimeline(newTimeline)
-        )
-                .isInstanceOf(CannotModifyReadyProjectException.class)
-                .hasMessageContaining("Cannot modify project in READY status");
+            project.changeTimeline(newTimeline);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new ProjectTimelineChanged(projectId, newTimeline)
+            );
+        }
+
+        @Test
+        void should_prevent_changing_timeline_when_ready() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new ProjectMarkedAsReady(projectId, workspaceId, userId)
+            ));
+
+            var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
+
+            assertThatThrownBy(() ->
+                    project.changeTimeline(newTimeline)
+            )
+                    .isInstanceOf(CannotModifyReadyProjectException.class)
+                    .hasMessageContaining("Cannot modify project in READY status");
+        }
+
     }
 
+    @Nested
+    class NotesTest {
+
+        @Test
+        void should_add_note_to_project() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            project.addNote("Need to book studio for recording", userId);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new NoteAdded(projectId, "Need to book studio for recording", userId)
+            );
+        }
+
+    }
 
 }

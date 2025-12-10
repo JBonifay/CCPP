@@ -118,6 +118,10 @@ public class Project extends AggregateRoot {
         raiseEvent(new BudgetItemUpdated(projectId, budgetItemId, description, newAmount));
     }
 
+    public void addNote(String content, UserId userId) {
+        raiseEvent(new NoteAdded(projectId, content, userId));
+    }
+
     public void markAsReady(UserId userId) {
         if (projectStatus == ProjectStatus.READY) return;
         raiseEvent(new ProjectMarkedAsReady(projectId, workspaceId, userId));
@@ -144,6 +148,7 @@ public class Project extends AggregateRoot {
             case BudgetItemRemoved budgetItemRemoved -> apply(budgetItemRemoved);
             case BudgetItemUpdated budgetItemUpdated -> apply(budgetItemUpdated);
             case ProjectBudgetCapExceeded projectBudgetCapExceeded -> apply(projectBudgetCapExceeded);
+            case NoteAdded noteAdded -> apply(noteAdded);
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
@@ -186,6 +191,10 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectBudgetCapExceeded projectBudgetCapExceeded) {
+
+    }
+
+    private void apply(NoteAdded noteAdded) {
 
     }
 

@@ -7,15 +7,17 @@ public abstract class AggregateRoot {
 
     protected final List<DomainEvent> uncommittedEvents = new ArrayList<>();
 
+    protected abstract void apply(DomainEvent event);
+
     protected void raiseEvent(DomainEvent event) {
         this.uncommittedEvents.add(event);
     }
 
-    protected List<DomainEvent> getUncommittedEvents() {
+    public List<DomainEvent> uncommittedEvents() {
         return List.copyOf(uncommittedEvents);
     }
 
-    protected void markEventsAsCommitted() {
+    public void markEventsAsCommitted() {
         this.uncommittedEvents.clear();
     }
 

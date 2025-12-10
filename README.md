@@ -14,7 +14,7 @@ A multi-tenant content creator planning application demonstrating
 
 - [**PLAN.md**](PLAN.md) - Complete architectural plan and implementation guide
 - [**INITIAL_CONVERSATION.md**](INITIAL_CONVERSATION.md) - Architecture discussion and decision-making process
-- [**Blog**](blog/) - Technical blog documenting the journey
+- [**Blog**](https://jbonifay.github.io/CCPP/) - Technical blog documenting the journey
 
 ## 🏗️ Architecture
 

@@ -244,6 +244,20 @@ class ProjectTest {
                 .hasMessageContaining("Cannot modify project in READY status");
     }
 
+    @Test
+    void should_reject_updating_budgetItem_previously_deleted() {
+        var budgetItemId = new BudgetItemId(UUID.randomUUID());
+        var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
+                new BudgetItemRemoved(projectId, budgetItemId)
+        ));
+
+        assertThatThrownBy(() -> project.updateBudgetItem(budgetItemId, "Hotel Updated", new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))))
+                .isInstanceOf(InvalidProjectDataException.class)
+                .hasMessage("Budget item not present!");
+    }
 
     @Test
     void should_fail_to_add_budgetItem_in_different_currency() {

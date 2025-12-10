@@ -105,13 +105,13 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I have a project with budget items in PLANNING status
+- [x] **Given** I have a project with budget items in PLANNING status
   - **When** I remove a budget item
   - **Then** the budget item is removed from the project
   - **And** a BudgetItemRemoved event is emitted
   - **And** the total budget is recalculated
 
-- [ ] **Given** I have a project with budget items
+- [x] **Given** I have a project with budget items
   - **When** I attempt to remove a non-existent budget item
   - **Then** the system rejects the operation
   - **And** returns a "BudgetItemNotFoundException"

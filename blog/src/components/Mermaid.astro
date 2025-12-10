@@ -1,0 +1,32 @@
+---
+const { code } = Astro.props;
+---
+
+<div class="mermaid-container">
+  <pre class="mermaid">{code}</pre>
+</div>
+
+<script>
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose',
+  });
+</script>
+
+<style>
+  .mermaid-container {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+  }
+
+  .mermaid {
+    background: transparent;
+    border: none;
+    padding: 1rem;
+  }
+</style>

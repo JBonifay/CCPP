@@ -71,6 +71,7 @@ public class Project extends AggregateRoot {
 
     public void updateBudgetItem(BudgetItemId budgetItemId, String description, Money newAmount) {
         verifyProjectIsModifiable();
+        verifyBudgetItemIsPresent(budgetItemId);
         raiseEvent(new BudgetItemUpdated(projectId, budgetItemId, description, newAmount));
     }
 
@@ -82,6 +83,11 @@ public class Project extends AggregateRoot {
     private void verifyProjectIsModifiable() {
         if (projectStatus == ProjectStatus.READY)
             throw new CannotModifyReadyProjectException("Cannot modify project in READY status");
+    }
+
+    private void verifyBudgetItemIsPresent(BudgetItemId budgetItemId) {
+        if (budgetItems.stream().filter(budgetItem -> budgetItem.getId().equals(budgetItemId)).findFirst().isEmpty())
+            throw new InvalidProjectDataException("Budget item not present!");
     }
 
     @Override
@@ -117,10 +123,12 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(BudgetItemRemoved budgetItemRemoved) {
-
+        BudgetItem budgetItem = budgetItems.stream().filter(item -> item.getId().equals(budgetItemRemoved.budgetItemId())).findFirst().orElseThrow();
+        budgetItems.remove(budgetItem);
     }
 
     private void apply(BudgetItemUpdated budgetItemUpdated) {
 
     }
+
 }

@@ -18,6 +18,10 @@ public class BudgetItem extends Entity {
         this.amount = amount;
     }
 
+    public BudgetItemId getId() {
+        return budgetItemId;
+    }
+
     public Currency getCurrency() {
         return amount.currency();
     }

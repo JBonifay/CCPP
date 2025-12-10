@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>shared</artifactId>
+    <packaging>pom</packaging>
 
     <dependencies>
 

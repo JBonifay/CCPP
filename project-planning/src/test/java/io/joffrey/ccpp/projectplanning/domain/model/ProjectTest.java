@@ -169,6 +169,71 @@ class ProjectTest {
         assertThat(project.uncommittedEvents()).isEmpty();
     }
 
+    @Test
+    void should_update_project_details() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+        ));
+
+        project.updateDetails("Q2 Video Series", "Updated educational content");
+
+        assertThat(project.uncommittedEvents()).containsExactly(
+                new ProjectDetailsUpdated(projectId, "Q2 Video Series", "Updated educational content")
+        );
+    }
+
+    @Test
+    void should_reject_empty_title_on_update() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+        ));
+
+        assertThatThrownBy(() ->
+                project.updateDetails("", "Valid description")
+        )
+                .isInstanceOf(InvalidProjectDataException.class)
+                .hasMessageContaining("Title cannot be empty");
+    }
+
+    @Test
+    void should_reject_empty_description_on_update() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+        ));
+
+        assertThatThrownBy(() ->
+                project.updateDetails("Valid title", "")
+        )
+                .isInstanceOf(InvalidProjectDataException.class)
+                .hasMessageContaining("Description cannot be empty");
+    }
+
+    @Test
+    void should_reject_null_title_on_update() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+        ));
+
+        assertThatThrownBy(() ->
+                project.updateDetails(null, "Valid description")
+        )
+                .isInstanceOf(InvalidProjectDataException.class)
+                .hasMessageContaining("Title cannot be empty");
+    }
+
+    @Test
+    void should_reject_null_description_on_update() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+        ));
+
+        assertThatThrownBy(() ->
+                project.updateDetails("Valid title", null)
+        )
+                .isInstanceOf(InvalidProjectDataException.class)
+                .hasMessageContaining("Description cannot be empty");
+    }
+
     @Nested
     class BudgetTest {
 

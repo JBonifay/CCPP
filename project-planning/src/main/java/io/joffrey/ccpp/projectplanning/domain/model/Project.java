@@ -68,6 +68,12 @@ public class Project extends AggregateRoot {
         }
     }
 
+    public void updateDetails(String title, String description) {
+        validateTitle(title);
+        validateDescription(description);
+        raiseEvent(new ProjectDetailsUpdated(projectId, title, description));
+    }
+
     public void addBudgetItem(BudgetItemId budgetItemId, String description, Money amount) {
         verifyProjectIsModifiable();
         validateBudgetItem(description, amount);
@@ -160,6 +166,7 @@ public class Project extends AggregateRoot {
     protected void apply(DomainEvent event) {
         switch (event) {
             case ProjectCreated projectCreated -> apply(projectCreated);
+            case ProjectDetailsUpdated projectDetailsUpdated -> apply(projectDetailsUpdated);
             case ProjectMarkedAsReady projectMarkedAsReady -> apply(projectMarkedAsReady);
             case ProjectTimelineChanged projectTimelineChanged -> apply(projectTimelineChanged);
             case BudgetItemAdded budgetItemAdded -> apply(budgetItemAdded);
@@ -181,6 +188,8 @@ public class Project extends AggregateRoot {
         budgetItems = new HashMap<>();
         budgetLimit = projectCreated.projectBudgetLimit();
     }
+
+    private void apply(ProjectDetailsUpdated projectDetailsUpdated) {}
 
     private void apply(ProjectMarkedAsReady projectMarkedAsReady) {
         projectStatus = ProjectStatus.READY;

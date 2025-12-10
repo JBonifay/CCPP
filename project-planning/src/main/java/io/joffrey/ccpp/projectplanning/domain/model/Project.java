@@ -10,8 +10,11 @@ import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
+import io.joffrey.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
+import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -119,7 +122,22 @@ public class Project extends AggregateRoot {
     }
 
     public void addNote(String content, UserId userId) {
+        if (content == null || content.isBlank()) throw new InvalidProjectNoteException("Note content cannot be empty");
         raiseEvent(new NoteAdded(projectId, content, userId));
+    }
+
+    public void inviteParticipant(ParticipantId participantId, String mail, String name) {
+        if (mail == null || mail.isBlank()) throw new InvalidParticipantDataException("Participant email cannot be empty");
+        if (name == null || name.isBlank()) throw new InvalidParticipantDataException("Participant name cannot be empty");
+        raiseEvent(new ParticipantInvited(projectId, participantId, mail, name));
+    }
+
+    public void participantAcceptedInvitation(ParticipantId participantId) {
+        raiseEvent(new ParticipantAcceptedInvitation(projectId, participantId));
+    }
+
+    public void participantDeclinedInvitation(ParticipantId participantId) {
+        raiseEvent(new ParticipantDeclinedInvitation(projectId, participantId));
     }
 
     public void markAsReady(UserId userId) {
@@ -149,6 +167,9 @@ public class Project extends AggregateRoot {
             case BudgetItemUpdated budgetItemUpdated -> apply(budgetItemUpdated);
             case ProjectBudgetCapExceeded projectBudgetCapExceeded -> apply(projectBudgetCapExceeded);
             case NoteAdded noteAdded -> apply(noteAdded);
+            case ParticipantInvited participantInvited -> apply(participantInvited);
+            case ParticipantAcceptedInvitation participantAcceptedInvitation -> apply(participantAcceptedInvitation);
+            case ParticipantDeclinedInvitation participantDeclinedInvitation -> apply(participantDeclinedInvitation);
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
@@ -166,7 +187,6 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectTimelineChanged projectTimelineChanged) {
-
     }
 
     private void apply(BudgetItemAdded budgetItemAdded) {
@@ -191,11 +211,16 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectBudgetCapExceeded projectBudgetCapExceeded) {
-
     }
 
     private void apply(NoteAdded noteAdded) {
-
     }
 
+    private void apply(ParticipantInvited participantInvited) {
+    }
+
+    private void apply(ParticipantAcceptedInvitation participantAcceptedInvitation) {
+    }
+
+    private void apply(ParticipantDeclinedInvitation participantDeclinedInvitation) {}
 }

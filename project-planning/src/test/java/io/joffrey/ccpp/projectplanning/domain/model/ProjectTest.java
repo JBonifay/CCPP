@@ -9,8 +9,11 @@ import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
+import io.joffrey.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
+import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -426,6 +429,144 @@ class ProjectTest {
             assertThat(project.uncommittedEvents()).containsExactly(
                     new NoteAdded(projectId, "Need to book studio for recording", userId)
             );
+        }
+
+        @Test
+        void should_reject_empty_note_content() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            assertThatThrownBy(() ->
+                    project.addNote("", userId)
+            )
+                    .isInstanceOf(InvalidProjectNoteException.class)
+                    .hasMessageContaining("Note content cannot be empty");
+        }
+
+        @Test
+        void should_reject_null_note_content() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            assertThatThrownBy(() ->
+                    project.addNote(null, userId)
+            )
+                    .isInstanceOf(InvalidProjectNoteException.class)
+                    .hasMessageContaining("Note content cannot be empty");
+        }
+
+    }
+
+    @Nested
+    class ParticipantsTest {
+
+        @Test
+        void should_invite_participant_to_project() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            project.inviteParticipant(participantId, "mcfly@example.com", "McFly");
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
+            );
+        }
+
+        @Test
+        void should_accept_participant_invitation() {
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
+            ));
+
+            project.participantAcceptedInvitation(participantId);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new ParticipantAcceptedInvitation(projectId, participantId)
+            );
+        }
+
+        @Test
+        void should_decline_participant_invitation() {
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                    new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
+            ));
+
+            project.participantDeclinedInvitation(participantId);
+
+            assertThat(project.uncommittedEvents()).containsExactly(
+                    new ParticipantDeclinedInvitation(projectId, participantId)
+            );
+        }
+
+        @Test
+        void should_reject_empty_participant_email() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            assertThatThrownBy(() ->
+                    project.inviteParticipant(participantId, "", "McFly")
+            )
+                    .isInstanceOf(InvalidParticipantDataException.class)
+                    .hasMessageContaining("Participant email cannot be empty");
+        }
+
+        @Test
+        void should_reject_empty_participant_name() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            assertThatThrownBy(() ->
+                    project.inviteParticipant(participantId, "mcfly@example.com", "")
+            )
+                    .isInstanceOf(InvalidParticipantDataException.class)
+                    .hasMessageContaining("Participant name cannot be empty");
+        }
+
+        @Test
+        void should_reject_null_participant_email() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            assertThatThrownBy(() ->
+                    project.inviteParticipant(participantId, null, "McFly")
+            )
+                    .isInstanceOf(InvalidParticipantDataException.class)
+                    .hasMessageContaining("Participant email cannot be empty");
+        }
+
+        @Test
+        void should_reject_null_participant_name() {
+            var project = Project.loadFromHistory(List.of(
+                    new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
+            ));
+
+            var participantId = new ParticipantId(UUID.randomUUID());
+
+            assertThatThrownBy(() ->
+                    project.inviteParticipant(participantId, "mcfly@example.com", null)
+            )
+                    .isInstanceOf(InvalidParticipantDataException.class)
+                    .hasMessageContaining("Participant name cannot be empty");
         }
 
     }

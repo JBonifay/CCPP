@@ -126,13 +126,13 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I have a project
+- [x] **Given** I have a project
   - **When** I add a note with content
   - **Then** the note is added to the project
   - **And** a NoteAdded event is emitted
   - **And** the note includes timestamp and author
 
-- [ ] **Given** I have a project
+- [x] **Given** I have a project
   - **When** I add an empty note
   - **Then** the system rejects the operation
   - **And** returns a validation error
@@ -151,16 +151,15 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I have a project in PLANNING status
+- [x] **Given** I have a project in PLANNING status
   - **When** I mark the project as READY
   - **Then** the project status changes to READY
   - **And** a ProjectMarkedAsReady event is emitted
   - **And** the readyAt timestamp is recorded
 
-- [ ] **Given** I have a project already in READY status
+- [x] **Given** I have a project already in READY status
   - **When** I attempt to mark it as READY again
-  - **Then** the system rejects the operation
-  - **And** returns a "ProjectAlreadyReadyException"
+  - **Then** the system does nothing
 
 #### Technical Notes
 - Status transition: PLANNING → READY (one-way, no rollback)

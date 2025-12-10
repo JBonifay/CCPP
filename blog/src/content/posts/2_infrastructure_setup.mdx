@@ -161,11 +161,7 @@ Below is the architecture diagram representing Traefik routing, the Frontend, AP
     TR -->|/api| APIGW[API Gateway:8761]
     TR -->|/admin| ADM[Admin Server:8080]
 
-    subgraph KafkaCluster [Kafka KRaft]
-        K[Kafka Broker:9092]
-    end
-
-    APIGW --> K
+    FE -->|HTTP| APIGW
 
     subgraph Services [Microservices]
         PP[Project Planning]
@@ -174,10 +170,19 @@ Below is the architecture diagram representing Traefik routing, the Frontend, AP
         NT[Notification]
     end
 
-    K --> PP
-    K --> WS
-    K --> ID
-    K --> NT
+    APIGW -->|routes to| PP
+    APIGW -->|routes to| WS
+    APIGW -->|routes to| ID
+    APIGW -->|routes to| NT
+
+    subgraph KafkaCluster [Kafka KRaft - Saga Choreography]
+        K[Kafka Broker:9092]
+    end
+
+    PP <-->|events| K
+    WS <-->|events| K
+    ID <-->|events| K
+    NT <-->|events| K
 
     ADM -.monitors.-> APIGW
     ADM -.monitors.-> PP

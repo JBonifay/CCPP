@@ -7,6 +7,8 @@ topics: [DevOps]
 color: "#10b981"
 ---
 
+import Mermaid from '../../components/Mermaid.astro';
+
 # Infrastructure Setup on Ionos
 
 This page describes the full deployment setup I use on my Ionos VPS.
@@ -126,20 +128,17 @@ networks:
 
 Below is the architecture diagram representing Traefik, the Gateway, Kafka, and the microservices.
 
-### Mermaid Version (recommended for MDX)
-
-```mermaid
-flowchart TD
+<Mermaid code={`flowchart TD
 
     subgraph Traefik [Traefik Reverse Proxy]
         A[ccpp.joffreybonifay.fr] -->|/api| APIGW
     end
 
-    subgraph Gateway [API Gateway (8761)]
+    subgraph Gateway [API Gateway 8761]
         APIGW
     end
 
-    subgraph KafkaCluster [Kafka (KRaft)]
+    subgraph KafkaCluster [Kafka KRaft]
         K[Kafka Broker]
     end
 
@@ -167,22 +166,18 @@ flowchart TD
     WT --> ID
     WT --> NT
     WT --> K
-```
+`} />
 
 ### Watchtower: Auto-Update Strategy
 
 Watchtower automatically:
 
-Pulls new images from GitHub Container Registry
-
-Restarts services with zero manual intervention
-
-Cleans old images
+- Pulls new images from GitHub Container Registry
+- Restarts services with zero manual intervention
+- Cleans old images
 
 You can adjust:
 
-WATCHTOWER_POLL_INTERVAL
-
-Add scoped update rules (e.g., only update certain services)
-
-Use notifications (Slack, Discord, email…)
+- `WATCHTOWER_POLL_INTERVAL`
+- Add scoped update rules (e.g., only update certain services)
+- Use notifications (Slack, Discord, email…)

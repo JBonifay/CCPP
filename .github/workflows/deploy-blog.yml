@@ -1,4 +1,4 @@
-name: Deploy Blog to GitHub Pages
+name: Build and Publish Blog to GitHub Pages
 
 on:
   push:

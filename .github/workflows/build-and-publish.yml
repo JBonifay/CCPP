@@ -1,4 +1,4 @@
-name: Build and Publish to GitHub Packages
+name: Build and Publish Microservices
 
 on:
   push:

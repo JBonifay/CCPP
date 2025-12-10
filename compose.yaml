@@ -35,7 +35,6 @@ services:
     networks:
       - ccpp-network
 
-  # Microservices
   project-planning:
     image: ghcr.io/jbonifay/project-planning:latest
     container_name: project-planning
@@ -76,20 +75,20 @@ services:
     networks:
       - ccpp-network
 
-  admin-server:
-    image: ghcr.io/jbonifay/spring-boot-admin:latest
-    container_name: admin-server
-    environment:
-      - SPRING_BOOT_ADMIN_CONTEXT_PATH=/admin
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.admin.rule=Host(`ccpp.joffreybonifay.fr`) && PathPrefix(`/admin`)"
-      - "traefik.http.routers.admin.entrypoints=websecure"
-      - "traefik.http.routers.admin.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.admin.priority=10"
-      - "traefik.http.services.admin.loadbalancer.server.port=8080"
-    networks:
-      - ccpp-network
+  #  admin-server:
+  #    image: ghcr.io/jbonifay/spring-boot-admin:latest
+  #    container_name: admin-server
+  #    environment:
+  #      - SPRING_BOOT_ADMIN_CONTEXT_PATH=/admin
+  #    labels:
+  #      - "traefik.enable=true"
+  #      - "traefik.http.routers.admin.rule=Host(`ccpp.joffreybonifay.fr`) && PathPrefix(`/admin`)"
+  #      - "traefik.http.routers.admin.entrypoints=websecure"
+  #      - "traefik.http.routers.admin.tls.certresolver=letsencrypt"
+  #      - "traefik.http.routers.admin.priority=10"
+  #      - "traefik.http.services.admin.loadbalancer.server.port=8080"
+  #    networks:
+  #      - ccpp-network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -123,4 +122,4 @@ services:
 
 networks:
   ccpp-network:
-    driver: bridge
+    external: true

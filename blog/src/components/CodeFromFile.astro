@@ -1,0 +1,55 @@
+---
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+interface Props {
+  file: string;
+  lang?: string;
+  title?: string;
+}
+
+const { file, lang = 'yaml', title } = Astro.props;
+
+let content = '';
+let error = '';
+
+try {
+  // Resolve relative to project root (blog directory)
+  const filePath = resolve(process.cwd(), '..', file);
+  content = readFileSync(filePath, 'utf-8');
+} catch (e) {
+  error = `Failed to read file: ${file}`;
+  console.error(error, e);
+}
+---
+
+{title && <h4>{title}</h4>}
+{error ? (
+  <div class="error">{error}</div>
+) : (
+  <pre class="code-block"><code class={`language-${lang}`}>{content}</code></pre>
+)}
+
+<style>
+  .error {
+    color: #ef4444;
+    background: #fee;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #ef4444;
+  }
+
+  .code-block {
+    background: #1e1e1e;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  code {
+    color: #d4d4d4;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+</style>

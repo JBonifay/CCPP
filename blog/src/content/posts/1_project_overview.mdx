@@ -2,75 +2,78 @@
 number: 1
 title: "Project Overview"
 date: "Dec 8, 2025"
-excerpt: "Introducing my project showcasing Event Sourcing, CQRS, Clean Architecture, TDD, and DDD through an app for content creators."
+excerpt: "How I built a Clean Architecture demo using Event Sourcing, CQRS, TDD, and DDD—with a little help from AI."
 topics: []
 color: "#10b981"
 ---
 
 # How I Used Claude to Design a Clean Architecture
 
-When I started this project, I knew what I wanted to demonstrate: **Event Sourcing**, **CQRS**, **Clean Architecture**, **TDD**, and **Domain-Driven Design**.
-The challenge? I didn't have the full architectural picture to make it all work together.
+When I started this project, I knew I wanted to showcase **Event Sourcing**, **CQRS**, **Clean Architecture**, **TDD**, and **DDD**.
+But knowing the concepts and actually putting them together in a real project are two very different things.
 
-That's where this journey began.
+## The Problem: From Theory to Real Life
 
-## The Problem: Theory vs. Practice
+I understood each concept on its own.
+But when I tried to design the full architecture, I quickly ran into big questions:
 
-I understand the concepts individually.
-I've read about bounded contexts, aggregates, and event-driven systems.
-But when it came to designing a real application from scratch, I found myself stuck on fundamental questions:
+- Should budget items belong inside the Project aggregate or in a separate bounded context?
+- Do I need multi-tenancy everywhere with a `workspaceId`?
+- How do you actually implement saga choreography—not just explain it?
 
-- Where should budget items live? Inside the project aggregate or as a separate bounded context?
-- Do I need a multi-tenant layer with a `workspaceId` in every aggregate?
-- How do I actually implement saga choreography, not just talk about it?
+I needed guidance from someone with experience… so I asked Claude.
 
-I needed an experienced architect to guide me through these decisions. Since I don't have a senior architect on call, I turned to Claude.
+## The Collaboration
 
-## The Collaborative Process
+Instead of asking it to “build everything,” I used Claude as a **thinking partner**.
 
-Rather than just asking Claude to "design everything," I used it as a **Socratic guide**. The conversation went like this:
+The conversation went a bit like this:
 
-> **Claude**: "What is a Project Plan in your domain?"
-> **Me**: "A project is a video planning with a timeline and status..."
+> **Claude**: “What is a Project Plan in your domain?”
+> **Me**: “It’s a video planning with a timeline and status…”
 
-> **Claude**: "Can participants exist without a project?"
-> **Me**: "No, they can't..."
+> **Claude**: “Can participants exist without a project?”
+> **Me**: “No.”
 
-> **Claude**: "Does the workspace have business rules?"
-> **Me**: "Yes! Freemium gets 2 projects max, premium unlimited..."
+> **Claude**: “Does the workspace have business rules?”
+> **Me**: “Yes! Free users get 2 projects max; premium users get unlimited.”
 
-Through this Q&A process (fully documented in [INITIAL_CONVERSATION.md](https://github.com/JBonifay/CCPP/blob/main/docs/INITIAL_CONVERSATION.md)), we uncovered the true domain model.
-Claude helped me see architectural implications I hadn't considered:
+Step by step, we uncovered the real domain and its implications.
 
-- **Budget items** became entities inside the `Project` aggregate because changing them recalculates the project total—this affects invariants.
-- **Participants** stayed inside the aggregate because a declined participant is critical to project state, not just a notification concern.
-- **Workspace** became a full bounded context with business rules, requiring a saga to enforce subscription limits.
+For example:
 
-## The Result: A Real Architecture
+- **Budget items** stayed inside the `Project` aggregate because changing them affects project invariants.
+- **Participants** stayed inside too, because their acceptance/decline changes the project state.
+- **Workspace** became its own bounded context with subscription rules, enforced with a saga.
 
-What emerged was **4 bounded contexts**, **3 saga choreographies**, and clear aggregate boundaries—all documented in [PLAN.md](https://github.com/JBonifay/CCPP/blob/main/docs/PLAN.md).
+## The Final Architecture
 
-The architecture includes:
-- **Workspace Context**: Multi-tenancy with freemium/premium limits
+What came out of this process was a real, well-defined architecture:
+
+- **4 bounded contexts**
+- **3 sagas**
+- Clear aggregate boundaries
+
+You can see the full details in [PLAN.md](https://github.com/JBonifay/CCPP/blob/main/docs/PLAN.md).
+
+The system includes:
+
+- **Workspace Context**: Multi-tenancy + subscription limits
 - **Ideation Context**: Workspace-level brainstorming
-- **Project Planning Context** (CORE): Video planning with budget tracking
-- **Notification Context**: Email/SMS for project readiness
+- **Project Planning (Core)**: Video planning + budget handling
+- **Notification Context**: Email/SMS when a project is ready
 
 Each context has:
-- Clearly defined aggregates and invariants
-- Event sourcing strategy with event schemas
-- Command/Query separation with projections
-- TDD approach with example tests
+
+- Clear aggregates and invariants
+- Event schemas
+- CQRS with projections
+- TDD examples
 
 ## Why Share This?
 
-I'm documenting this journey because **architecture isn't learned in isolation**. It's learned through making real decisions, understanding trade-offs, and sometimes needing guidance.
-
-If you're learning DDD or Clean Architecture and feel overwhelmed by the gap between theory and practice, you're not alone.
-Using AI as an architectural thinking partner (not just a code generator) can help bridge that gap.
-
-The next articles will dive into implementation—starting with bounded contexts, then event sourcing patterns, and finally saga choreography.
+Because **architecture is learned by doing**, not just by reading.
+If you’re learning DDD or Clean Architecture and feel overwhelmed, trust me—you’re not alone.
+Using AI as a guide (not just a code generator) can really help you think through the hard parts.
 
 ---
-
-**Next**: [Understanding Bounded Contexts](#) - Why "Project Planning" is the core domain

@@ -2,7 +2,6 @@ services:
 
   frontend:
     image: ghcr.io/jbonifay/ccpp-frontend:latest
-    container_name: frontend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`ccpp.joffreybonifay.fr`)"
@@ -18,7 +17,6 @@ services:
 
   api-gateway:
     image: ghcr.io/jbonifay/api-gateway:latest
-    container_name: api-gateway
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     labels:
@@ -37,7 +35,6 @@ services:
 
   project-planning:
     image: ghcr.io/jbonifay/project-planning:latest
-    container_name: project-planning
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
@@ -47,7 +44,6 @@ services:
 
   workspace:
     image: ghcr.io/jbonifay/workspace:latest
-    container_name: workspace
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
@@ -57,7 +53,6 @@ services:
 
   ideation:
     image: ghcr.io/jbonifay/ideation:latest
-    container_name: ideation
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
@@ -67,7 +62,6 @@ services:
 
   notification:
     image: ghcr.io/jbonifay/notification:latest
-    container_name: notification
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
@@ -77,7 +71,6 @@ services:
 
   #  admin-server:
   #    image: ghcr.io/jbonifay/spring-boot-admin:latest
-  #    container_name: admin-server
   #    environment:
   #      - SPRING_BOOT_ADMIN_CONTEXT_PATH=/admin
   #    labels:
@@ -92,7 +85,6 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    container_name: kafka
     ports:
       - "9092:9092"
     environment:

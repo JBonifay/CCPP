@@ -2,19 +2,12 @@ package io.joffrey.ccpp.projectplanning.domain.event;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 
-public record ProjectCreated(
-        WorkspaceId workspaceId,
-        UserId userId,
+public record ProjectBudgetCapExceeded(
         ProjectId projectId,
-        String title,
-        String description,
-        DateRange timeline,
-        java.math.BigDecimal projectBudgetLimit) implements DomainEvent {
-
+        Money actualBudget
+) implements DomainEvent {
     @Override
     public void getEventId() {
 

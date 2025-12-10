@@ -30,6 +30,7 @@ class ProjectTest {
     DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
     String title = "Q1 Video Series";
     String description = "Educational content";
+    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
 
     @Test
     void should_create_project_with_valid_data() {
@@ -39,7 +40,8 @@ class ProjectTest {
                 projectId,
                 title,
                 description,
-                timeline
+                timeline,
+                projectBudgetLimit
         );
 
         assertThat(project.uncommittedEvents()).containsExactly(
@@ -49,7 +51,8 @@ class ProjectTest {
                         projectId,
                         title,
                         description,
-                        timeline
+                        timeline,
+                        projectBudgetLimit
                 )
         );
     }
@@ -63,7 +66,8 @@ class ProjectTest {
                         projectId,
                         title,
                         description,
-                        new DateRange(LocalDate.of(2025, 3, 31), LocalDate.of(2025, 1, 1))
+                        new DateRange(LocalDate.of(2025, 3, 31), LocalDate.of(2025, 1, 1)),
+                        projectBudgetLimit
                 )
         )
                 .isInstanceOf(DateRangeException.class)
@@ -79,7 +83,8 @@ class ProjectTest {
                         projectId,
                         "",
                         description,
-                        timeline
+                        timeline,
+                        projectBudgetLimit
                 )
         )
                 .isInstanceOf(InvalidProjectDataException.class)
@@ -95,7 +100,8 @@ class ProjectTest {
                         projectId,
                         null,
                         description,
-                        timeline
+                        timeline,
+                        projectBudgetLimit
                 )
         )
                 .isInstanceOf(InvalidProjectDataException.class)
@@ -111,7 +117,8 @@ class ProjectTest {
                         projectId,
                         title,
                         "",
-                        timeline
+                        timeline,
+                        projectBudgetLimit
                 )
         )
                 .isInstanceOf(InvalidProjectDataException.class)
@@ -127,7 +134,8 @@ class ProjectTest {
                         projectId,
                         title,
                         null,
-                        timeline
+                        timeline,
+                        projectBudgetLimit
                 )
         )
                 .isInstanceOf(InvalidProjectDataException.class)
@@ -136,7 +144,7 @@ class ProjectTest {
 
     @Test
     void should_add_budget_item_to_project() {
-        Project project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline)));
+        Project project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
 
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
@@ -154,7 +162,7 @@ class ProjectTest {
 
     @Test
     void should_add_multiple_budget_items() {
-        var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline)));
+        var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
 
         var item1Id = new BudgetItemId(UUID.randomUUID());
         var item2Id = new BudgetItemId(UUID.randomUUID());
@@ -177,7 +185,7 @@ class ProjectTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount)
         ));
 
@@ -193,7 +201,7 @@ class ProjectTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         ));
@@ -211,7 +219,7 @@ class ProjectTest {
         var originalAmount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
 
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, budgetItemId, "Hotel 2 nights", originalAmount)
         ));
 
@@ -224,11 +232,27 @@ class ProjectTest {
     }
 
     @Test
+    void should_mark_project_budget_as_over_limit_when_total_budget_exceeds_cap() {
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, new BigDecimal(100)),
+                new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD")))
+        ));
+
+        UUID itemId = UUID.randomUUID();
+        project.addBudgetItem(new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD")));
+
+        assertThat(project.uncommittedEvents()).containsExactly(
+                new BudgetItemAdded(projectId, new BudgetItemId(itemId), "Item 1", new Money(BigDecimal.valueOf(51), Currency.getInstance("USD"))),
+                new ProjectBudgetCapExceeded(projectId, new Money(BigDecimal.valueOf(101), Currency.getInstance("USD")))
+        );
+    }
+
+    @Test
     void should_prevent_updating_budget_item_when_ready() {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         ));
@@ -249,7 +273,7 @@ class ProjectTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount),
                 new BudgetItemRemoved(projectId, budgetItemId)
         ));
@@ -262,7 +286,7 @@ class ProjectTest {
     @Test
     void should_fail_to_add_budgetItem_in_different_currency() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Hotel 2 nights", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
         ));
 
@@ -272,9 +296,26 @@ class ProjectTest {
     }
 
     @Test
+    void should_check_currency_against_updated_budget_item() {
+        var item1Id = new BudgetItemId(UUID.randomUUID());
+
+        var project = Project.loadFromHistory(List.of(
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
+                new BudgetItemAdded(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD"))),
+                new BudgetItemUpdated(projectId, item1Id, "Hotel", new Money(BigDecimal.valueOf(200), Currency.getInstance("EUR"))) // Changed to EUR
+        ));
+
+        assertThatThrownBy(() ->
+                project.addBudgetItem(new BudgetItemId(UUID.randomUUID()), "Equipment", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))
+        )
+                .isInstanceOf(CurrencyException.class)
+                .hasMessageContaining("Cannot add budget items with different currencies");
+    }
+
+    @Test
     void should_reject_empty_budget_item_description() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline)
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
         ));
 
         assertThatThrownBy(() ->
@@ -288,10 +329,9 @@ class ProjectTest {
                 .hasMessageContaining("Budget item description cannot be empty");
     }
 
-
     @Test
     void should_mark_project_as_ready() {
-        var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline)));
+        var project = Project.loadFromHistory(List.of(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)));
 
         project.markAsReady(userId);
 
@@ -303,7 +343,7 @@ class ProjectTest {
     @Test
     void should_prevent_adding_budget_item_when_ready() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         ));
 
@@ -322,7 +362,7 @@ class ProjectTest {
     @Test
     void should_be_idempotent_when_marking_ready_project_as_ready() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         ));
 
@@ -334,14 +374,12 @@ class ProjectTest {
     @Test
     void should_change_timeline_when_planning() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline)
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit)
         ));
         var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
 
-        // When
         project.changeTimeline(newTimeline);
 
-        // Then
         assertThat(project.uncommittedEvents()).containsExactly(
                 new ProjectTimelineChanged(projectId, newTimeline)
         );
@@ -350,7 +388,7 @@ class ProjectTest {
     @Test
     void should_prevent_changing_timeline_when_ready() {
         var project = Project.loadFromHistory(List.of(
-                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline),
+                new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)
         ));
 

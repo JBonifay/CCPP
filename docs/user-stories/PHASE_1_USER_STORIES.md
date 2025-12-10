@@ -64,7 +64,7 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
   - **Then** the system rejects the operation
   - **And** returns a validation error
 
-- [ ] **Given** I have a project in PLANNING status
+- [x] **Given** I have a project in PLANNING status
   - **When** I add a budget item with different currency than existing items
   - **Then** the system rejects the operation
   - **And** returns a "CurrencyMismatchException"
@@ -84,13 +84,13 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I have a project with budget items
+- [x] **Given** I have a project with budget items
   - **When** I update a budget item's description or amount
   - **Then** the budget item is updated
   - **And** a BudgetItemUpdated event is emitted
   - **And** the total budget is recalculated
 
-- [ ] **Given** I have a project with budget items
+- [x] **Given** I have a project with budget items
   - **When** I attempt to update a non-existent budget item
   - **Then** the system rejects the operation
   - **And** returns a "BudgetItemNotFoundException"

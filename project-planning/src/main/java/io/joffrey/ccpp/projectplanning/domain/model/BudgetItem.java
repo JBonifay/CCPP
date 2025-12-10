@@ -4,6 +4,7 @@ import com.ccpp.shared.domain.Entity;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 
 public class BudgetItem extends Entity {
@@ -18,11 +19,11 @@ public class BudgetItem extends Entity {
         this.amount = amount;
     }
 
-    public BudgetItemId getId() {
-        return budgetItemId;
-    }
-
     public Currency getCurrency() {
         return amount.currency();
+    }
+
+    public BigDecimal getCost() {
+        return amount.amount();
     }
 }

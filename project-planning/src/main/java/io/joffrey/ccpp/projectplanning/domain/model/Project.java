@@ -13,22 +13,37 @@ import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProject
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Project extends AggregateRoot {
 
     private ProjectId projectId;
     private WorkspaceId workspaceId;
     private ProjectStatus projectStatus;
-    private List<BudgetItem> budgetItems;
+    private Map<BudgetItemId, BudgetItem> budgetItems;
+    private BigDecimal budgetLimit;
 
-    public static Project create(WorkspaceId workspaceId, UserId userId, ProjectId projectId, String title, String description, DateRange timeline) {
+    private Project() {
+    }
+
+    public static Project create(
+            WorkspaceId workspaceId,
+            UserId userId,
+            ProjectId projectId,
+            String title,
+            String description,
+            DateRange timeline,
+            BigDecimal projectBudgetLimit
+    ) {
         validateTitle(title);
         validateDescription(description);
 
         Project project = new Project();
-        project.raiseEvent(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline));
+        project.raiseEvent(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit));
         return project;
     }
 
@@ -52,11 +67,39 @@ public class Project extends AggregateRoot {
 
     public void addBudgetItem(BudgetItemId budgetItemId, String description, Money amount) {
         verifyProjectIsModifiable();
-        if (!budgetItems.isEmpty() && !budgetItems.getFirst().getCurrency().equals(amount.currency())) {
+        validateBudgetItem(description, amount);
+        raiseEvent(new BudgetItemAdded(projectId, budgetItemId, description, amount));
+
+        BigDecimal totalBudget = calculateTotalBudget(amount);
+        checkIfBudgetExceedsLimit(totalBudget, amount.currency());
+    }
+
+    private void validateBudgetItem(String description, Money amount) {
+        if (description.isBlank()) {
+            throw new InvalidProjectDataException("Budget item description cannot be empty");
+        }
+
+        if (!budgetItems.isEmpty() && !isCurrencyConsistent(amount.currency())) {
             throw new CurrencyException("Cannot add budget items with different currencies.");
         }
-        if (description.isBlank()) throw new InvalidProjectDataException("Budget item description cannot be empty");
-        raiseEvent(new BudgetItemAdded(projectId, budgetItemId, description, amount));
+    }
+
+    private boolean isCurrencyConsistent(Currency currency) {
+        return budgetItems.values().stream()
+                .allMatch(item -> item.getCurrency().equals(currency));
+    }
+
+    private BigDecimal calculateTotalBudget(Money newAmount) {
+        return budgetItems.values()
+                .stream()
+                .map(BudgetItem::getCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void checkIfBudgetExceedsLimit(BigDecimal totalBudget, Currency currency) {
+        if (totalBudget.compareTo(budgetLimit) > 0) {
+            raiseEvent(new ProjectBudgetCapExceeded(projectId, new Money(totalBudget, currency)));
+        }
     }
 
     public void removeBudgetItem(BudgetItemId budgetItemId) {
@@ -86,8 +129,9 @@ public class Project extends AggregateRoot {
     }
 
     private void verifyBudgetItemIsPresent(BudgetItemId budgetItemId) {
-        if (budgetItems.stream().filter(budgetItem -> budgetItem.getId().equals(budgetItemId)).findFirst().isEmpty())
+        if (!budgetItems.containsKey(budgetItemId)) {
             throw new InvalidProjectDataException("Budget item not present!");
+        }
     }
 
     @Override
@@ -99,6 +143,7 @@ public class Project extends AggregateRoot {
             case BudgetItemAdded budgetItemAdded -> apply(budgetItemAdded);
             case BudgetItemRemoved budgetItemRemoved -> apply(budgetItemRemoved);
             case BudgetItemUpdated budgetItemUpdated -> apply(budgetItemUpdated);
+            case ProjectBudgetCapExceeded projectBudgetCapExceeded -> apply(projectBudgetCapExceeded);
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
@@ -107,7 +152,8 @@ public class Project extends AggregateRoot {
         projectId = projectCreated.projectId();
         workspaceId = projectCreated.workspaceId();
         projectStatus = ProjectStatus.PLANNING;
-        budgetItems = new ArrayList<>();
+        budgetItems = new HashMap<>();
+        budgetLimit = projectCreated.projectBudgetLimit();
     }
 
     private void apply(ProjectMarkedAsReady projectMarkedAsReady) {
@@ -119,15 +165,27 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(BudgetItemAdded budgetItemAdded) {
-        budgetItems.add(new BudgetItem(budgetItemAdded.budgetItemId(), budgetItemAdded.description(), budgetItemAdded.amount()));
+        budgetItems.put(
+                budgetItemAdded.budgetItemId(),
+                new BudgetItem(budgetItemAdded.budgetItemId(), budgetItemAdded.description(), budgetItemAdded.amount())
+        );
     }
 
     private void apply(BudgetItemRemoved budgetItemRemoved) {
-        BudgetItem budgetItem = budgetItems.stream().filter(item -> item.getId().equals(budgetItemRemoved.budgetItemId())).findFirst().orElseThrow();
-        budgetItems.remove(budgetItem);
+        budgetItems.remove(budgetItemRemoved.budgetItemId());
     }
 
     private void apply(BudgetItemUpdated budgetItemUpdated) {
+        budgetItems.put(
+                budgetItemUpdated.budgetItemId(),
+                new BudgetItem(budgetItemUpdated.budgetItemId(),
+                        budgetItemUpdated.description(),
+                        budgetItemUpdated.newAmount()
+                )
+        );
+    }
+
+    private void apply(ProjectBudgetCapExceeded projectBudgetCapExceeded) {
 
     }
 

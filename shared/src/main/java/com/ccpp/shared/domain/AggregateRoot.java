@@ -11,6 +11,7 @@ public abstract class AggregateRoot {
 
     protected void raiseEvent(DomainEvent event) {
         this.uncommittedEvents.add(event);
+        apply(event);
     }
 
     public List<DomainEvent> uncommittedEvents() {

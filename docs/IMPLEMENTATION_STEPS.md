@@ -85,7 +85,7 @@ public interface EventStore {
 }
 ```
 
-- [ ] **Create Value Objects with TDD**
+- [x] **Create Value Objects with TDD**
 
 **Money Value Object:**
 - [x] Write test: `should_create_money_with_amount_and_currency()`

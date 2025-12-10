@@ -124,6 +124,29 @@ public interface EventStore {
 
 **Module:** `ProjectPlanning/`
 
+**⚠️ CRITICAL: Event Sourcing Testing Principle**
+
+In event sourcing, **ALWAYS test events, NEVER test state!**
+
+❌ **BAD** - Testing state:
+```java
+assertThat(project.getStatus()).isEqualTo(Status.PLANNING);
+assertThat(project.getTotalBudget()).isEqualTo(Money.of(450, "USD"));
+```
+
+✅ **GOOD** - Testing events:
+```java
+assertThat(project.uncommittedEvents()).containsExactly(
+    new ProjectCreated(...)
+);
+```
+
+**Why?**
+- State is derived from events during reconstitution
+- Events are the source of truth and public contract
+- Testing events ensures behavior correctness
+- State-based tests couple to implementation details
+
 **Directory structure:**
 ```
 ProjectPlanning/
@@ -157,7 +180,7 @@ ProjectPlanning/
 
 #### **Test 1: Create Project**
 
-- [ ] Write test: `should_create_project_with_valid_data()`
+- [x] Write test: `should_create_project_with_valid_data()`
 ```java
 @Test
 void should_create_project_with_valid_data() {
@@ -165,15 +188,15 @@ void should_create_project_with_valid_data() {
     var workspaceId = new WorkspaceId(UUID.randomUUID());
     var timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
     var userId = new UserId(UUID.randomUUID());
+    var projectId = new ProjectId(UUID.randomUUID());
 
     // When
-    var project = Project.create(workspaceId, "Q1 Video Series", "Educational content", timeline, userId);
+    var project = Project.create(workspaceId, userId, projectId, "Q1 Video Series", "Educational content", timeline);
 
-    // Then
-    assertThat(project.getStatus()).isEqualTo(Status.PLANNING);
-    assertThat(project.getTitle()).isEqualTo("Q1 Video Series");
-    assertThat(project.getWorkspaceId()).isEqualTo(workspaceId);
-    assertThat(project.getEvents()).hasSize(1).first().isInstanceOf(ProjectCreated.class);
+    // Then - Test EVENTS not state!
+    assertThat(project.uncommittedEvents()).containsExactly(
+        new ProjectCreated(workspaceId, userId, projectId, "Q1 Video Series", "Educational content", timeline)
+    );
 }
 ```
 
@@ -188,19 +211,27 @@ void should_create_project_with_valid_data() {
 #### **Test 2: Add Budget Items**
 
 - [ ] Write test: `should_add_budget_item_to_project()`
-- [ ] Write test: `should_calculate_total_budget_from_items()`
+- [ ] Write test: `should_emit_budget_item_added_events()`
 ```java
 @Test
-void should_calculate_total_budget_from_items() {
+void should_emit_budget_item_added_events() {
     // Given
     var project = createPlanningProject();
+    project.clearEvents(); // Clear ProjectCreated event
 
     // When
-    project.addBudgetItem("Hotel", Money.of(300, "USD"));
-    project.addBudgetItem("Equipment", Money.of(150, "USD"));
+    var itemId1 = new BudgetItemId(UUID.randomUUID());
+    var itemId2 = new BudgetItemId(UUID.randomUUID());
+    project.addBudgetItem(itemId1, "Hotel", Money.of(300, "USD"));
+    project.addBudgetItem(itemId2, "Equipment", Money.of(150, "USD"));
 
-    // Then
-    assertThat(project.getTotalBudget()).isEqualTo(Money.of(450, "USD"));
+    // Then - Test EVENTS not state!
+    assertThat(project.uncommittedEvents())
+        .hasSize(2)
+        .containsExactly(
+            new BudgetItemAdded(project.getId(), itemId1, "Hotel", Money.of(300, "USD")),
+            new BudgetItemAdded(project.getId(), itemId2, "Equipment", Money.of(150, "USD"))
+        );
 }
 ```
 
@@ -393,15 +424,23 @@ public record CreateProjectCommand(
 void should_create_project_when_handling_command() {
     // Given
     var command = new CreateProjectCommand(workspaceId, "Title", "Desc", timeline, userId);
-    var handler = new CreateProjectCommandHandler(projectRepository, eventBus);
+    var eventCaptor = new EventCaptor();
+    var handler = new CreateProjectCommandHandler(projectRepository, eventCaptor);
 
     // When
     var projectId = handler.handle(command);
 
-    // Then
-    var project = projectRepository.findById(projectId);
-    assertThat(project).isPresent();
-    assertThat(project.get().getTitle()).isEqualTo("Title");
+    // Then - Verify event was published (not state!)
+    assertThat(eventCaptor.getCapturedEvents())
+        .hasSize(1)
+        .first()
+        .isInstanceOf(ProjectCreated.class)
+        .extracting("title", "description")
+        .containsExactly("Title", "Desc");
+
+    // Verify aggregate was saved to repository
+    var savedProject = projectRepository.findById(projectId);
+    assertThat(savedProject).isPresent();
 }
 ```
 

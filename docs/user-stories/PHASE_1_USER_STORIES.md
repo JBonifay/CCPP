@@ -15,7 +15,7 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I am a content creator in a workspace
+- [x] **Given** I am a content creator in a workspace
   - **When** I create a project with valid data (title, description, timeline)
   - **Then** the project is created with status "PLANNING"
   - **And** a unique ProjectId is generated
@@ -48,18 +48,18 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 
 #### Acceptance Criteria
 
-- [ ] **Given** I have a project in PLANNING status
+- [x] **Given** I have a project in PLANNING status
   - **When** I add a budget item with description "Hotel 2x nights" and amount $300
   - **Then** the budget item is added to the project
   - **And** a BudgetItemAdded event is emitted
   - **And** the budget item has a unique BudgetItemId
 
-- [ ] **Given** I have added multiple budget items
+- [x] **Given** I have added multiple budget items
   - **When** I request the total budget
   - **Then** the system calculates the sum of all budget item amounts
   - **And** returns the correct total (e.g., $300 + $150 = $450)
 
-- [ ] **Given** I have a project in PLANNING status
+- [x] **Given** I have a project in PLANNING status
   - **When** I add a budget item with negative amount
   - **Then** the system rejects the operation
   - **And** returns a validation error

@@ -22,17 +22,22 @@
     </properties>
 
     <modules>
-<!--        <module>shared</module>-->
+        <module>shared</module>
         <module>api-gateway</module>
         <module>project-planning</module>
         <module>workspace</module>
         <module>Ideation</module>
         <module>notification</module>
-        <module>shared</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.joffrey</groupId>
+                <artifactId>shared</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>

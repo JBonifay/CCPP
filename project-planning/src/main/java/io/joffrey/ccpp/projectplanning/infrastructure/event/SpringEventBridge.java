@@ -6,7 +6,7 @@ import io.joffrey.ccpp.projectplanning.query.handler.ProjectEventHandler;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-@Component  // ← Spring annotation ONLY in infrastructure!
+@Component
 public class SpringEventBridge {
 
     private final ProjectEventHandler handler;

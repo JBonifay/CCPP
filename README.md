@@ -27,10 +27,14 @@ A multi-tenant content creator planning application demonstrating
 
 ### Technology Stack
 
+- **Frontend**: Angular 21 + TypeScript
 - **Backend**: Java 25 + Spring Boot 4.0.0
+- **API Gateway**: Spring Cloud Gateway
+- **Event Bus**: Apache Kafka
 - **Event Store**: In-memory (later EventStoreDB)
 - **Database**: In-memory (later PostgreSQL)
-- **Testing**: JUnit 5 + AssertJ
+- **Testing**: JUnit 5 + AssertJ (Backend), Vitest (Frontend)
+- **Deployment**: Docker + Nginx + Traefik
 - **Blog**: Astro
 
 ## 🚀 Getting Started
@@ -39,10 +43,12 @@ A multi-tenant content creator planning application demonstrating
 
 - Java 25
 - Maven 3.9+
-- Node.js 20+ (for blog)
+- Node.js 20+
+- Docker (for deployment)
 
 ### Build the Project
 
+**Backend:**
 ```bash
 # Build all modules
 mvn clean install
@@ -51,22 +57,39 @@ mvn clean install
 mvn test
 ```
 
+**Frontend:**
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run development server (with proxy to API Gateway on :8761)
+npm start
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
+```
+
 ## 📖 Project Structure
 
 ```
 ccpp/
 ├── .github/workflows/     # CI/CD workflows
+├── frontend/              # Angular web application
 ├── shared/                # Shared kernel (value objects, base classes)
-├── ApiGateway/            # Authentication and routing
-├── ProjectPlanning/       # Core domain - project planning
-├── TeamCollaboration/     # Workspace context
-├── ContentPlanning/       # Ideation context
-├── Notification/          # Supporting domain
-├── BudgetManagement/      # (Optional) Separate budget context
+├── api-gateway/           # API Gateway with Spring Cloud Gateway
+├── project-planning/      # Core domain - project planning
+├── workspace/             # Workspace context (multi-tenancy)
+├── Ideation/              # Ideation context
+├── notification/          # Supporting domain
 ├── blog/                  # Technical blog (Astro)
+├── compose.yaml           # Docker Compose for deployment
 ├── pom.xml                # Parent POM
-├── PLAN.md                # Architecture plan
-└── INITIAL_CONVERSATION.md # Architecture discussion
+└── PLAN.md                # Architecture plan
 ```
 
 ## 🎯 Learning Goals
@@ -87,6 +110,28 @@ This project demonstrates:
 **Next Step**: Implement Project aggregate with TDD
 
 See [PLAN.md](PLAN.md) for detailed roadmap.
+
+## 🚢 Deployment
+
+The application uses Docker Compose with Traefik for routing and Let's Encrypt for SSL.
+
+**Architecture:**
+- Frontend (Nginx) serves Angular app on `/`
+- API Gateway handles all `/api/*` requests
+- Kafka for event-driven communication between microservices
+- Traefik routes traffic with automatic HTTPS
+
+**Deploy:**
+```bash
+# Pull latest images and restart services
+docker-compose pull
+docker-compose up -d
+```
+
+**CI/CD:**
+- Backend services are built and published to GHCR on push to main
+- Frontend is built and published to GHCR on push to main
+- GitHub Actions workflows handle automated builds and tests
 
 ---
 

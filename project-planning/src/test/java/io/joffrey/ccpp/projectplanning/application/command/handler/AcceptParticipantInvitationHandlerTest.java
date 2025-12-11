@@ -74,8 +74,8 @@ class AcceptParticipantInvitationHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(2)).isInstanceOf(ParticipantAcceptedInvitation.class);
                     var acceptedEvent = (ParticipantAcceptedInvitation) events.get(2);
-                    assertThat(acceptedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(acceptedEvent.getParticipantId()).isEqualTo(participantId);
+                    assertThat(acceptedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(acceptedEvent.participantId()).isEqualTo(participantId);
                 });
     }
 }

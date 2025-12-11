@@ -159,7 +159,7 @@ public class Project extends AggregateRoot {
     }
 
     @Override
-    protected void apply(DomainEvent event) {
+    protected void apply(Object event) {
         switch (event) {
             case ProjectCreated projectCreated -> apply(projectCreated);
             case ProjectDetailsUpdated projectDetailsUpdated -> apply(projectDetailsUpdated);
@@ -178,11 +178,11 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectCreated projectCreated) {
-        projectId = projectCreated.getProjectId();
-        workspaceId = projectCreated.getWorkspaceId();
+        projectId = projectCreated.projectId();
+        workspaceId = projectCreated.workspaceId();
         projectStatus = ProjectStatus.PLANNING;
         budgetItems = new HashMap<>();
-        budgetLimit = projectCreated.getProjectBudgetLimit();
+        budgetLimit = projectCreated.projectBudgetLimit();
     }
 
     private void apply(ProjectDetailsUpdated projectDetailsUpdated) {}
@@ -196,21 +196,21 @@ public class Project extends AggregateRoot {
 
     private void apply(BudgetItemAdded budgetItemAdded) {
         budgetItems.put(
-                budgetItemAdded.getBudgetItemId(),
-                new BudgetItem(budgetItemAdded.getBudgetItemId(), budgetItemAdded.getDescription(), budgetItemAdded.getAmount())
+                budgetItemAdded.budgetItemId(),
+                new BudgetItem(budgetItemAdded.budgetItemId(), budgetItemAdded.description(), budgetItemAdded.amount())
         );
     }
 
     private void apply(BudgetItemRemoved budgetItemRemoved) {
-        budgetItems.remove(budgetItemRemoved.getBudgetItemId());
+        budgetItems.remove(budgetItemRemoved.budgetItemId());
     }
 
     private void apply(BudgetItemUpdated budgetItemUpdated) {
         budgetItems.put(
-                budgetItemUpdated.getBudgetItemId(),
-                new BudgetItem(budgetItemUpdated.getBudgetItemId(),
-                        budgetItemUpdated.getDescription(),
-                        budgetItemUpdated.getNewAmount()
+                budgetItemUpdated.budgetItemId(),
+                new BudgetItem(budgetItemUpdated.budgetItemId(),
+                        budgetItemUpdated.description(),
+                        budgetItemUpdated.newAmount()
                 )
         );
     }

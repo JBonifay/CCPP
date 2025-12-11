@@ -73,10 +73,10 @@ class InviteParticipantHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(1)).isInstanceOf(ParticipantInvited.class);
                     var participantInvitedEvent = (ParticipantInvited) events.get(1);
-                    assertThat(participantInvitedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(participantInvitedEvent.getParticipantId()).isEqualTo(participantId);
-                    assertThat(participantInvitedEvent.getMail()).isEqualTo("mcfly@example.com");
-                    assertThat(participantInvitedEvent.getName()).isEqualTo("McFly");
+                    assertThat(participantInvitedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(participantInvitedEvent.participantId()).isEqualTo(participantId);
+                    assertThat(participantInvitedEvent.mail()).isEqualTo("mcfly@example.com");
+                    assertThat(participantInvitedEvent.name()).isEqualTo("McFly");
                 });
     }
 

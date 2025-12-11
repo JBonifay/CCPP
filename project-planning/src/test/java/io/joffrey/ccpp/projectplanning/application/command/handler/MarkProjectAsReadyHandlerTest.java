@@ -70,9 +70,9 @@ class MarkProjectAsReadyHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(1)).isInstanceOf(ProjectMarkedAsReady.class);
                     var markedAsReadyEvent = (ProjectMarkedAsReady) events.get(1);
-                    assertThat(markedAsReadyEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(markedAsReadyEvent.getWorkspaceId()).isEqualTo(workspaceId);
-                    assertThat(markedAsReadyEvent.getUserId()).isEqualTo(userId);
+                    assertThat(markedAsReadyEvent.projectId()).isEqualTo(projectId);
+                    assertThat(markedAsReadyEvent.workspaceId()).isEqualTo(workspaceId);
+                    assertThat(markedAsReadyEvent.userId()).isEqualTo(userId);
                 });
     }
 

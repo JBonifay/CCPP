@@ -71,9 +71,9 @@ class AddNoteHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(1)).isInstanceOf(NoteAdded.class);
                     var noteAddedEvent = (NoteAdded) events.get(1);
-                    assertThat(noteAddedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(noteAddedEvent.getContent()).isEqualTo("Need to book studio for recording");
-                    assertThat(noteAddedEvent.getUserId()).isEqualTo(userId);
+                    assertThat(noteAddedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(noteAddedEvent.content()).isEqualTo("Need to book studio for recording");
+                    assertThat(noteAddedEvent.userId()).isEqualTo(userId);
                 });
     }
 

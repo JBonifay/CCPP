@@ -24,6 +24,6 @@ public class RemoveBudgetItemHandler implements CommandHandler<RemoveBudgetItemC
         var newEvents = project.uncommittedEvents();
         int expectedVersion = events.size() - 1;
         eventStore.append(streamId, newEvents, expectedVersion);
-        project.markEventsAsCommitted();
+        project.clearUncommittedEvents();
     }
 }

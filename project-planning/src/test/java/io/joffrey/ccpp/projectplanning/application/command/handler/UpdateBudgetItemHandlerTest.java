@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Currency;
 import java.util.UUID;
@@ -42,6 +41,7 @@ class UpdateBudgetItemHandlerTest {
     void setUp() {
         eventStore = new InMemoryEventStore();
         handler = new UpdateBudgetItemHandler(eventStore);
+
 
         workspaceId = new WorkspaceId(UUID.randomUUID());
         userId = new UserId(UUID.randomUUID());
@@ -87,10 +87,10 @@ class UpdateBudgetItemHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(2)).isInstanceOf(BudgetItemUpdated.class);
                     var budgetUpdatedEvent = (BudgetItemUpdated) events.get(2);
-                    assertThat(budgetUpdatedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(budgetUpdatedEvent.getBudgetItemId()).isEqualTo(budgetItemId);
-                    assertThat(budgetUpdatedEvent.getDescription()).isEqualTo("Hotel 3 nights");
-                    assertThat(budgetUpdatedEvent.getNewAmount()).isEqualTo(newAmount);
+                    assertThat(budgetUpdatedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(budgetUpdatedEvent.budgetItemId()).isEqualTo(budgetItemId);
+                    assertThat(budgetUpdatedEvent.description()).isEqualTo("Hotel 3 nights");
+                    assertThat(budgetUpdatedEvent.newAmount()).isEqualTo(newAmount);
                 });
     }
 

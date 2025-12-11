@@ -1,20 +1,31 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.event;
 
-import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.domain.StoredEvent;
 import com.ccpp.shared.exception.ConcurrencyException;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEventStore implements EventStore {
 
-    private final Map<UUID, List<DomainEvent>> streams = new ConcurrentHashMap<>();
+    private final Map<UUID, List<StoredEvent>> streams = new ConcurrentHashMap<>();
+    private final Clock clock;
+
+    public InMemoryEventStore() {
+        this.clock = Clock.systemUTC();
+    }
+
+    public InMemoryEventStore(Clock clock) {
+        this.clock = clock;
+    }
 
     @Override
-    public void append(UUID streamId, List<DomainEvent> events, int expectedVersion) {
+    public void append(UUID streamId, List<Object> events, int expectedVersion) {
         synchronized (streams) {
-            List<DomainEvent> stream = streams.getOrDefault(streamId, new ArrayList<>());
+            var stream = streams.getOrDefault(streamId, new ArrayList<>());
             int currentVersion = stream.size() - 1;
 
             if (expectedVersion != -1 && currentVersion != expectedVersion) {
@@ -24,14 +35,30 @@ public class InMemoryEventStore implements EventStore {
                 );
             }
 
-            stream.addAll(events);
+            var timestamp = clock.instant();
+            int version = currentVersion;
+
+            for (Object event : events) {
+                version++;
+                stream.add(new StoredEvent(
+                    UUID.randomUUID(),
+                    streamId,
+                    version,
+                    timestamp,
+                    event
+                ));
+            }
+
             streams.put(streamId, stream);
         }
     }
 
     @Override
-    public List<DomainEvent> readStream(UUID streamId) {
-        return new ArrayList<>(streams.getOrDefault(streamId, List.of()));
+    public List<Object> readStream(UUID streamId) {
+        return streams.getOrDefault(streamId, List.of())
+            .stream()
+            .map(StoredEvent::payload)
+            .toList();
     }
 
 }

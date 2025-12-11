@@ -73,8 +73,8 @@ class ChangeProjectTimelineHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(1)).isInstanceOf(ProjectTimelineChanged.class);
                     var timelineChangedEvent = (ProjectTimelineChanged) events.get(1);
-                    assertThat(timelineChangedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(timelineChangedEvent.getNewTimeline()).isEqualTo(newTimeline);
+                    assertThat(timelineChangedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(timelineChangedEvent.newTimeline()).isEqualTo(newTimeline);
                 });
     }
 

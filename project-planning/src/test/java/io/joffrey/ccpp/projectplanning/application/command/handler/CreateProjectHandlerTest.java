@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -69,9 +68,7 @@ class CreateProjectHandlerTest {
                                 title,
                                 description,
                                 timeline,
-                                projectBudgetLimit,
-                                Instant.now(),
-                                0
+                                projectBudgetLimit
                         )
                 );
     }

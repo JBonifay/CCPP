@@ -64,9 +64,16 @@ class UpdateProjectDetailsHandlerTest {
 
         handler.handle(command);
 
-        assertThat(eventStore.readStream(projectId.value())).containsExactly(
-                new ProjectDetailsUpdated(projectId, "Q2 Video Series", "Updated educational content")
-        );
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)
+                .satisfies(events -> {
+                    assertThat(events.get(0)).isInstanceOf(ProjectCreated.class);
+                    assertThat(events.get(1)).isInstanceOf(ProjectDetailsUpdated.class);
+                    var updatedEvent = (ProjectDetailsUpdated) events.get(1);
+                    assertThat(updatedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(updatedEvent.title()).isEqualTo("Q2 Video Series");
+                    assertThat(updatedEvent.description()).isEqualTo("Updated educational content");
+                });
     }
 
     @Test

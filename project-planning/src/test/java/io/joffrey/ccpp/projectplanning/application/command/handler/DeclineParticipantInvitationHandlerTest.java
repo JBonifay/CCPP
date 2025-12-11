@@ -84,8 +84,8 @@ class DeclineParticipantInvitationHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(2)).isInstanceOf(ParticipantDeclinedInvitation.class);
                     var declinedEvent = (ParticipantDeclinedInvitation) events.get(2);
-                    assertThat(declinedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(declinedEvent.getParticipantId()).isEqualTo(participantId);
+                    assertThat(declinedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(declinedEvent.participantId()).isEqualTo(participantId);
                 });
     }
 }

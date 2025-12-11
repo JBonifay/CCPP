@@ -85,8 +85,8 @@ class RemoveBudgetItemHandlerTest {
                 .satisfies(events -> {
                     assertThat(events.get(2)).isInstanceOf(BudgetItemRemoved.class);
                     var budgetRemovedEvent = (BudgetItemRemoved) events.get(2);
-                    assertThat(budgetRemovedEvent.getProjectId()).isEqualTo(projectId);
-                    assertThat(budgetRemovedEvent.getBudgetItemId()).isEqualTo(budgetItemId);
+                    assertThat(budgetRemovedEvent.projectId()).isEqualTo(projectId);
+                    assertThat(budgetRemovedEvent.budgetItemId()).isEqualTo(budgetItemId);
                 });
     }
 

@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.repository;
 
-import io.joffrey.ccpp.projectplanning.query.model.ProjectReadModel;
-import io.joffrey.ccpp.projectplanning.query.repository.ProjectQueryRepository;
+import io.joffrey.ccpp.projectplanning.application.query.model.ProjectReadModel;
+import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectQueryRepository;
 
 import java.util.*;
 

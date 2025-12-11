@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.query.handler;
+package io.joffrey.ccpp.projectplanning.application.query.handler;
 
 import com.ccpp.shared.domain.DomainEvent;
 

@@ -1,6 +1,6 @@
-package io.joffrey.ccpp.projectplanning.query.repository;
+package io.joffrey.ccpp.projectplanning.application.query.repository;
 
-import io.joffrey.ccpp.projectplanning.query.model.ProjectReadModel;
+import io.joffrey.ccpp.projectplanning.application.query.model.ProjectReadModel;
 
 import java.util.List;
 import java.util.Optional;

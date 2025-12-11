@@ -21,7 +21,6 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Project extends AggregateRoot {
@@ -32,7 +31,8 @@ public class Project extends AggregateRoot {
     private Map<BudgetItemId, BudgetItem> budgetItems;
     private BigDecimal budgetLimit;
 
-    private Project() {
+    public Project(ProjectId projectId) {
+        super(projectId.value());
     }
 
     public static Project create(
@@ -47,14 +47,8 @@ public class Project extends AggregateRoot {
         validateTitle(title);
         validateDescription(description);
 
-        Project project = new Project();
+        Project project = new Project(projectId);
         project.raiseEvent(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit));
-        return project;
-    }
-
-    public static Project loadFromHistory(List<DomainEvent> events) {
-        Project project = new Project();
-        events.forEach(project::apply);
         return project;
     }
 
@@ -184,11 +178,11 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectCreated projectCreated) {
-        projectId = projectCreated.projectId();
-        workspaceId = projectCreated.workspaceId();
+        projectId = projectCreated.getProjectId();
+        workspaceId = projectCreated.getWorkspaceId();
         projectStatus = ProjectStatus.PLANNING;
         budgetItems = new HashMap<>();
-        budgetLimit = projectCreated.projectBudgetLimit();
+        budgetLimit = projectCreated.getProjectBudgetLimit();
     }
 
     private void apply(ProjectDetailsUpdated projectDetailsUpdated) {}
@@ -202,21 +196,21 @@ public class Project extends AggregateRoot {
 
     private void apply(BudgetItemAdded budgetItemAdded) {
         budgetItems.put(
-                budgetItemAdded.budgetItemId(),
-                new BudgetItem(budgetItemAdded.budgetItemId(), budgetItemAdded.description(), budgetItemAdded.amount())
+                budgetItemAdded.getBudgetItemId(),
+                new BudgetItem(budgetItemAdded.getBudgetItemId(), budgetItemAdded.getDescription(), budgetItemAdded.getAmount())
         );
     }
 
     private void apply(BudgetItemRemoved budgetItemRemoved) {
-        budgetItems.remove(budgetItemRemoved.budgetItemId());
+        budgetItems.remove(budgetItemRemoved.getBudgetItemId());
     }
 
     private void apply(BudgetItemUpdated budgetItemUpdated) {
         budgetItems.put(
-                budgetItemUpdated.budgetItemId(),
-                new BudgetItem(budgetItemUpdated.budgetItemId(),
-                        budgetItemUpdated.description(),
-                        budgetItemUpdated.newAmount()
+                budgetItemUpdated.getBudgetItemId(),
+                new BudgetItem(budgetItemUpdated.getBudgetItemId(),
+                        budgetItemUpdated.getDescription(),
+                        budgetItemUpdated.getNewAmount()
                 )
         );
     }

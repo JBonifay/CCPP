@@ -65,14 +65,15 @@ class MarkProjectAsReadyHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);  // ProjectCreated + ProjectMarkedAsReady
-        assertThat(events.get(1)).isInstanceOf(ProjectMarkedAsReady.class);
-
-        var markedAsReadyEvent = (ProjectMarkedAsReady) events.get(1);
-        assertThat(markedAsReadyEvent.projectId()).isEqualTo(projectId);
-        assertThat(markedAsReadyEvent.workspaceId()).isEqualTo(workspaceId);
-        assertThat(markedAsReadyEvent.userId()).isEqualTo(userId);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)  // ProjectCreated + ProjectMarkedAsReady
+                .satisfies(events -> {
+                    assertThat(events.get(1)).isInstanceOf(ProjectMarkedAsReady.class);
+                    var markedAsReadyEvent = (ProjectMarkedAsReady) events.get(1);
+                    assertThat(markedAsReadyEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(markedAsReadyEvent.getWorkspaceId()).isEqualTo(workspaceId);
+                    assertThat(markedAsReadyEvent.getUserId()).isEqualTo(userId);
+                });
     }
 
     @Test
@@ -101,7 +102,7 @@ class MarkProjectAsReadyHandlerTest {
         handler.handle(command);
 
         // THEN - no new event is added (idempotent behavior)
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);  // Still only ProjectCreated + ProjectMarkedAsReady (no duplicate)
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2);  // Still only ProjectCreated + ProjectMarkedAsReady (no duplicate)
     }
 }

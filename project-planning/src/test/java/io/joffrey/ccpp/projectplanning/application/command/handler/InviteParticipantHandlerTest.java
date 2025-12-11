@@ -68,15 +68,16 @@ class InviteParticipantHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
-        assertThat(events.get(1)).isInstanceOf(ParticipantInvited.class);
-
-        var participantInvitedEvent = (ParticipantInvited) events.get(1);
-        assertThat(participantInvitedEvent.projectId()).isEqualTo(projectId);
-        assertThat(participantInvitedEvent.participantId()).isEqualTo(participantId);
-        assertThat(participantInvitedEvent.mail()).isEqualTo("mcfly@example.com");
-        assertThat(participantInvitedEvent.name()).isEqualTo("McFly");
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)
+                .satisfies(events -> {
+                    assertThat(events.get(1)).isInstanceOf(ParticipantInvited.class);
+                    var participantInvitedEvent = (ParticipantInvited) events.get(1);
+                    assertThat(participantInvitedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(participantInvitedEvent.getParticipantId()).isEqualTo(participantId);
+                    assertThat(participantInvitedEvent.getMail()).isEqualTo("mcfly@example.com");
+                    assertThat(participantInvitedEvent.getName()).isEqualTo("McFly");
+                });
     }
 
     @Test
@@ -101,8 +102,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -127,8 +127,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -153,8 +152,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -179,7 +177,6 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 }

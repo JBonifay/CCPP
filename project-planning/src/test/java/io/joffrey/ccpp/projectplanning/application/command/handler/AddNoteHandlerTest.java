@@ -66,14 +66,15 @@ class AddNoteHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
-        assertThat(events.get(1)).isInstanceOf(NoteAdded.class);
-
-        var noteAddedEvent = (NoteAdded) events.get(1);
-        assertThat(noteAddedEvent.projectId()).isEqualTo(projectId);
-        assertThat(noteAddedEvent.content()).isEqualTo("Need to book studio for recording");
-        assertThat(noteAddedEvent.userId()).isEqualTo(userId);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)
+                .satisfies(events -> {
+                    assertThat(events.get(1)).isInstanceOf(NoteAdded.class);
+                    var noteAddedEvent = (NoteAdded) events.get(1);
+                    assertThat(noteAddedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(noteAddedEvent.getContent()).isEqualTo("Need to book studio for recording");
+                    assertThat(noteAddedEvent.getUserId()).isEqualTo(userId);
+                });
     }
 
     @Test
@@ -97,8 +98,7 @@ class AddNoteHandlerTest {
                 .isInstanceOf(InvalidProjectNoteException.class)
                 .hasMessageContaining("Note content cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -122,7 +122,6 @@ class AddNoteHandlerTest {
                 .isInstanceOf(InvalidProjectNoteException.class)
                 .hasMessageContaining("Note content cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 }

@@ -79,12 +79,13 @@ class DeclineParticipantInvitationHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(3);
-        assertThat(events.get(2)).isInstanceOf(ParticipantDeclinedInvitation.class);
-
-        var declinedEvent = (ParticipantDeclinedInvitation) events.get(2);
-        assertThat(declinedEvent.projectId()).isEqualTo(projectId);
-        assertThat(declinedEvent.participantId()).isEqualTo(participantId);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(3)
+                .satisfies(events -> {
+                    assertThat(events.get(2)).isInstanceOf(ParticipantDeclinedInvitation.class);
+                    var declinedEvent = (ParticipantDeclinedInvitation) events.get(2);
+                    assertThat(declinedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(declinedEvent.getParticipantId()).isEqualTo(participantId);
+                });
     }
 }

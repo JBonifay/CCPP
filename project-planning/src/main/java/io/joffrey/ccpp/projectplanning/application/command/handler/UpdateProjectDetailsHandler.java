@@ -16,7 +16,8 @@ public class UpdateProjectDetailsHandler implements CommandHandler<UpdateProject
     public void handle(UpdateProjectDetailsCommand command) {
         var streamId = command.projectId().value();
         var events = eventStore.readStream(streamId);
-        var project = Project.loadFromHistory(events);
+        var project = new Project(command.projectId());
+        project.loadFromHistory(events);
 
         project.updateDetails(command.title(), command.description());
 

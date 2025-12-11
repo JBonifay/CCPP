@@ -50,9 +50,9 @@ class UpdateProjectDetailsHandlerTest {
     @Test
     void should_update_project_details() {
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -73,9 +73,9 @@ class UpdateProjectDetailsHandlerTest {
     void should_reject_empty_title_on_update() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -102,9 +102,9 @@ class UpdateProjectDetailsHandlerTest {
     void should_reject_empty_description_on_update() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -130,9 +130,9 @@ class UpdateProjectDetailsHandlerTest {
     void should_reject_null_title_on_update() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -158,9 +158,9 @@ class UpdateProjectDetailsHandlerTest {
     void should_reject_null_description_on_update() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

@@ -14,18 +14,29 @@ import java.time.Instant;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
-@ToString
+@ToString(callSuper = true)
 public class ProjectCreated extends DomainEvent {
 
+    private final ProjectId projectId;
     private final WorkspaceId workspaceId;
     private final UserId userId;
-    private final ProjectId projectId;
     private final String title;
     private final String description;
     private final DateRange timeline;
     private final BigDecimal projectBudgetLimit;
 
-    public ProjectCreated(WorkspaceId workspaceId, UserId userId, ProjectId projectId, String title, String description, DateRange timeline, BigDecimal projectBudgetLimit) {
+    public ProjectCreated(ProjectId projectId, WorkspaceId workspaceId, UserId userId, String title, String description, DateRange timeline, BigDecimal projectBudgetLimit) {
+        this.workspaceId = workspaceId;
+        this.userId = userId;
+        this.projectId = projectId;
+        this.title = title;
+        this.description = description;
+        this.timeline = timeline;
+        this.projectBudgetLimit = projectBudgetLimit;
+    }
+
+    public ProjectCreated(ProjectId projectId, WorkspaceId workspaceId, UserId userId, String title, String description, DateRange timeline, BigDecimal projectBudgetLimit, Instant occurredOn, int version) {
+        super(projectId.value(), occurredOn, version);
         this.workspaceId = workspaceId;
         this.userId = userId;
         this.projectId = projectId;

@@ -50,9 +50,9 @@ class AddNoteHandlerTest {
     void should_add_note_to_project() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -81,9 +81,9 @@ class AddNoteHandlerTest {
     void should_reject_empty_note_content() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -105,9 +105,9 @@ class AddNoteHandlerTest {
     void should_reject_null_note_content() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

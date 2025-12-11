@@ -51,9 +51,9 @@ class ChangeProjectTimelineHandlerTest {
     void should_change_timeline_when_planning() {
         // GIVEN - project exists and is in PLANNING status
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -82,9 +82,9 @@ class ChangeProjectTimelineHandlerTest {
     void should_prevent_changing_timeline_when_ready() {
         // GIVEN - project is marked as READY
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

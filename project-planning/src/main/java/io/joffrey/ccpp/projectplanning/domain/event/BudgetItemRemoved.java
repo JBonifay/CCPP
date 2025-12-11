@@ -5,12 +5,14 @@ import com.ccpp.shared.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class BudgetItemRemoved extends DomainEvent {
 
     private final ProjectId projectId;

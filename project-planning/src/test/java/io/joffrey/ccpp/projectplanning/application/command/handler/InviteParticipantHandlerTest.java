@@ -51,9 +51,9 @@ class InviteParticipantHandlerTest {
     void should_invite_participant_to_project() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -84,9 +84,9 @@ class InviteParticipantHandlerTest {
     void should_reject_empty_participant_email() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -109,9 +109,9 @@ class InviteParticipantHandlerTest {
     void should_reject_empty_participant_name() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -134,9 +134,9 @@ class InviteParticipantHandlerTest {
     void should_reject_null_participant_email() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -159,9 +159,9 @@ class InviteParticipantHandlerTest {
     void should_reject_null_participant_name() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

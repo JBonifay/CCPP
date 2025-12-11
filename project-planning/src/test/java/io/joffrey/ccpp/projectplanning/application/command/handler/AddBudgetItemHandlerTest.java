@@ -58,9 +58,9 @@ class AddBudgetItemHandlerTest {
     void should_add_budget_item_to_project() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -92,9 +92,9 @@ class AddBudgetItemHandlerTest {
     void should_mark_project_budget_as_over_limit_when_total_budget_exceeds_cap() {
         // GIVEN - project with small budget limit and one item already added
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -136,9 +136,9 @@ class AddBudgetItemHandlerTest {
     void should_prevent_adding_budget_item_when_ready() {
         // GIVEN - project is marked as READY
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -168,9 +168,9 @@ class AddBudgetItemHandlerTest {
     void should_reject_empty_budget_item_description() {
         // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -194,9 +194,9 @@ class AddBudgetItemHandlerTest {
     void should_fail_to_add_budgetItem_in_different_currency() {
         // GIVEN - project with USD budget item already added
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

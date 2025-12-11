@@ -5,11 +5,13 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public final class NoteAdded extends DomainEvent {
 
     private final ProjectId projectId;

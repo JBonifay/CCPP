@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -62,13 +63,15 @@ class CreateProjectHandlerTest {
 
         assertThat(eventStore.readStream(projectId.value())).containsExactly(
                         new ProjectCreated(
+                                projectId,
                                 workspaceId,
                                 userId,
-                                projectId,
                                 title,
                                 description,
                                 timeline,
-                                projectBudgetLimit
+                                projectBudgetLimit,
+                                Instant.now(),
+                                0
                         )
                 );
     }

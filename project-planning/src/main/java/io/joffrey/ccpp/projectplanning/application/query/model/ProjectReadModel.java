@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.query.model;
+package io.joffrey.ccpp.projectplanning.application.query.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

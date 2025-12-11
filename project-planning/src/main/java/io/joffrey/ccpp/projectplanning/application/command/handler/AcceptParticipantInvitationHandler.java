@@ -1,0 +1,27 @@
+package io.joffrey.ccpp.projectplanning.application.command.handler;
+
+import com.ccpp.shared.domain.EventStore;
+import io.joffrey.ccpp.projectplanning.application.command.AcceptParticipantInvitationCommand;
+import io.joffrey.ccpp.projectplanning.domain.Project;
+
+public class AcceptParticipantInvitationHandler implements CommandHandler<AcceptParticipantInvitationCommand> {
+
+    private final EventStore eventStore;
+
+    public AcceptParticipantInvitationHandler(EventStore eventStore) {
+        this.eventStore = eventStore;
+    }
+
+    @Override
+    public void handle(AcceptParticipantInvitationCommand command) {
+        var streamId = command.projectId().value().toString();
+        var events = eventStore.readStream(streamId);
+        var project = Project.loadFromHistory(events);
+
+        project.participantAcceptedInvitation(command.participantId());
+
+        var newEvents = project.uncommittedEvents();
+        eventStore.append(streamId, newEvents, -1);
+        project.markEventsAsCommitted();
+    }
+}

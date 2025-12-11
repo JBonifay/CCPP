@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.domain.model;
+package io.joffrey.ccpp.projectplanning.domain;
 
 import com.ccpp.shared.domain.AggregateRoot;
 import com.ccpp.shared.domain.DomainEvent;
@@ -13,6 +13,8 @@ import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProject
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
+import io.joffrey.ccpp.projectplanning.domain.model.BudgetItem;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 

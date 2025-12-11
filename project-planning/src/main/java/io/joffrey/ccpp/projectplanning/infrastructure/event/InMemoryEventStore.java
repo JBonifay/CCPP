@@ -34,10 +34,4 @@ public class InMemoryEventStore implements EventStore {
         return new ArrayList<>(streams.getOrDefault(streamId, List.of()));
     }
 
-    @Override
-    public List<DomainEvent> readAllEvents() {
-        return streams.values().stream()
-                .flatMap(List::stream)
-                .toList();
-    }
 }

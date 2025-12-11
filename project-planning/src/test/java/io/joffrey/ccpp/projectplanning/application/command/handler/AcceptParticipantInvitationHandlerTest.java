@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,9 +49,7 @@ class AcceptParticipantInvitationHandlerTest {
 
     @Test
     void should_accept_participant_invitation() {
-        // GIVEN - project with invited participant
         var participantId = new ParticipantId(UUID.randomUUID());
-
         var projectCreatedEvent = new ProjectCreated(
                 workspaceId,
                 userId,
@@ -66,25 +65,17 @@ class AcceptParticipantInvitationHandlerTest {
                 "mcfly@example.com",
                 "McFly"
         );
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent, participantInvitedEvent), -1);
 
-        eventStore.append(
-                projectId.value(),
-                java.util.List.of(projectCreatedEvent, participantInvitedEvent),
-                -1
-        );
+        handler.handle(new AcceptParticipantInvitationCommand(projectId, participantId));
 
-        var command = new AcceptParticipantInvitationCommand(projectId, participantId);
-
-        // WHEN
-        handler.handle(command);
-
-        // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(3);
-        assertThat(events.get(2)).isInstanceOf(ParticipantAcceptedInvitation.class);
-
-        var acceptedEvent = (ParticipantAcceptedInvitation) events.get(2);
-        assertThat(acceptedEvent.projectId()).isEqualTo(projectId);
-        assertThat(acceptedEvent.participantId()).isEqualTo(participantId);
+        assertThat(eventStore.readStream(projectId.value()))
+                .contains(projectCreatedEvent, participantInvitedEvent)
+                .satisfies(events -> {
+                    assertThat(events.get(2)).isInstanceOf(ParticipantAcceptedInvitation.class);
+                    var acceptedEvent = (ParticipantAcceptedInvitation) events.get(2);
+                    assertThat(acceptedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(acceptedEvent.getParticipantId()).isEqualTo(participantId);
+                });
     }
 }

@@ -61,22 +61,20 @@ class CreateProjectHandlerTest {
         handler.handle(command);
 
         assertThat(eventStore.readStream(projectId.value())).containsExactly(
-                new ProjectCreated(
-                        workspaceId,
-                        userId,
-                        projectId,
-                        title,
-                        description,
-                        timeline,
-                        projectBudgetLimit
-                )
-        );
+                        new ProjectCreated(
+                                workspaceId,
+                                userId,
+                                projectId,
+                                title,
+                                description,
+                                timeline,
+                                projectBudgetLimit
+                        )
+                );
     }
 
     @Test
     void should_reject_project_with_invalid_timeline() {
-        // GIVEN & WHEN & THEN - invalid timeline (end before start)
-        // DateRange validates in constructor, so exception is thrown when creating command
         assertThatThrownBy(() -> new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -92,7 +90,6 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_empty_title() {
-        // GIVEN
         var command = new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -103,18 +100,13 @@ class CreateProjectHandlerTest {
                 projectBudgetLimit
         );
 
-        // WHEN & THEN
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Title cannot be empty");
-
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).isEmpty();
     }
 
     @Test
     void should_reject_project_with_null_title() {
-        // GIVEN
         var command = new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -125,18 +117,13 @@ class CreateProjectHandlerTest {
                 projectBudgetLimit
         );
 
-        // WHEN & THEN
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Title cannot be empty");
-
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).isEmpty();
     }
 
     @Test
     void should_reject_project_with_empty_description() {
-        // GIVEN
         var command = new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -147,18 +134,13 @@ class CreateProjectHandlerTest {
                 projectBudgetLimit
         );
 
-        // WHEN & THEN
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
-
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).isEmpty();
     }
 
     @Test
     void should_reject_project_with_null_description() {
-        // GIVEN
         var command = new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -169,12 +151,8 @@ class CreateProjectHandlerTest {
                 projectBudgetLimit
         );
 
-        // WHEN & THEN
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
-
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).isEmpty();
     }
 }

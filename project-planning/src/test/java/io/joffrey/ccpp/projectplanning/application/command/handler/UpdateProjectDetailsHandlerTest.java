@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +49,6 @@ class UpdateProjectDetailsHandlerTest {
 
     @Test
     void should_update_project_details() {
-        // GIVEN - project exists
         var projectCreatedEvent = new ProjectCreated(
                 workspaceId,
                 userId,
@@ -58,26 +58,15 @@ class UpdateProjectDetailsHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
-        var command = new UpdateProjectDetailsCommand(
-                projectId,
-                "Q2 Video Series",
-                "Updated educational content"
-        );
+        var command = new UpdateProjectDetailsCommand(projectId, "Q2 Video Series", "Updated educational content");
 
-        // WHEN
         handler.handle(command);
 
-        // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
-        assertThat(events.get(1)).isInstanceOf(ProjectDetailsUpdated.class);
-
-        var updatedEvent = (ProjectDetailsUpdated) events.get(1);
-        assertThat(updatedEvent.projectId()).isEqualTo(projectId);
-        assertThat(updatedEvent.title()).isEqualTo("Q2 Video Series");
-        assertThat(updatedEvent.description()).isEqualTo("Updated educational content");
+        assertThat(eventStore.readStream(projectId.value())).containsExactly(
+                new ProjectDetailsUpdated(projectId, "Q2 Video Series", "Updated educational content")
+        );
     }
 
     @Test
@@ -92,7 +81,7 @@ class UpdateProjectDetailsHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
         var command = new UpdateProjectDetailsCommand(
                 projectId,
@@ -106,8 +95,7 @@ class UpdateProjectDetailsHandlerTest {
                 .hasMessageContaining("Title cannot be empty");
 
         // Verify no new events were persisted
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);  // Only ProjectCreated
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);  // Only ProjectCreated
     }
 
     @Test
@@ -122,7 +110,7 @@ class UpdateProjectDetailsHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
         var command = new UpdateProjectDetailsCommand(
                 projectId,
@@ -135,8 +123,7 @@ class UpdateProjectDetailsHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -151,7 +138,7 @@ class UpdateProjectDetailsHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
         var command = new UpdateProjectDetailsCommand(
                 projectId,
@@ -164,8 +151,7 @@ class UpdateProjectDetailsHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Title cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -180,7 +166,7 @@ class UpdateProjectDetailsHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
         var command = new UpdateProjectDetailsCommand(
                 projectId,
@@ -193,7 +179,6 @@ class UpdateProjectDetailsHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 }

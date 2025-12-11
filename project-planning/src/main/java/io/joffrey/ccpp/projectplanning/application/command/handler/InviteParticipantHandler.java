@@ -16,7 +16,8 @@ public class InviteParticipantHandler implements CommandHandler<InviteParticipan
     public void handle(InviteParticipantCommand command) {
         var streamId = command.projectId().value();
         var events = eventStore.readStream(streamId);
-        var project = Project.loadFromHistory(events);
+        var project = new Project(command.projectId());
+        project.loadFromHistory(events);
 
         project.inviteParticipant(command.participantId(), command.email(), command.name());
 

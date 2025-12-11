@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Currency;
 import java.util.UUID;
@@ -75,15 +76,16 @@ class AddBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
-        assertThat(events.get(1)).isInstanceOf(BudgetItemAdded.class);
-
-        var budgetAddedEvent = (BudgetItemAdded) events.get(1);
-        assertThat(budgetAddedEvent.projectId()).isEqualTo(projectId);
-        assertThat(budgetAddedEvent.budgetItemId()).isEqualTo(budgetItemId);
-        assertThat(budgetAddedEvent.description()).isEqualTo("Hotel 2 nights");
-        assertThat(budgetAddedEvent.amount()).isEqualTo(amount);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)
+                .satisfies(events -> {
+                    assertThat(events.get(1)).isInstanceOf(BudgetItemAdded.class);
+                    var budgetAddedEvent = (BudgetItemAdded) events.get(1);
+                    assertThat(budgetAddedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(budgetAddedEvent.getBudgetItemId()).isEqualTo(budgetItemId);
+                    assertThat(budgetAddedEvent.getDescription()).isEqualTo("Hotel 2 nights");
+                    assertThat(budgetAddedEvent.getAmount()).isEqualTo(amount);
+                });
     }
 
     @Test
@@ -119,14 +121,15 @@ class AddBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN - should produce both BudgetItemAdded and ProjectBudgetCapExceeded
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(4);  // ProjectCreated + BudgetItemAdded + BudgetItemAdded + ProjectBudgetCapExceeded
-        assertThat(events.get(2)).isInstanceOf(BudgetItemAdded.class);
-        assertThat(events.get(3)).isInstanceOf(ProjectBudgetCapExceeded.class);
-
-        var budgetCapExceededEvent = (ProjectBudgetCapExceeded) events.get(3);
-        assertThat(budgetCapExceededEvent.projectId()).isEqualTo(projectId);
-        assertThat(budgetCapExceededEvent.actualBudget().amount()).isEqualByComparingTo(BigDecimal.valueOf(101));
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(4)  // ProjectCreated + BudgetItemAdded + BudgetItemAdded + ProjectBudgetCapExceeded
+                .satisfies(events -> {
+                    assertThat(events.get(2)).isInstanceOf(BudgetItemAdded.class);
+                    assertThat(events.get(3)).isInstanceOf(ProjectBudgetCapExceeded.class);
+                    var budgetCapExceededEvent = (ProjectBudgetCapExceeded) events.get(3);
+                    assertThat(budgetCapExceededEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(budgetCapExceededEvent.getActualBudget().amount()).isEqualByComparingTo(BigDecimal.valueOf(101));
+                });
     }
 
     @Test
@@ -158,8 +161,7 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(CannotModifyReadyProjectException.class)
                 .hasMessageContaining("Cannot modify project in READY status");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(2);
     }
 
     @Test
@@ -185,8 +187,7 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Budget item description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(1);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(1);
     }
 
     @Test
@@ -223,7 +224,6 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(CurrencyException.class)
                 .hasMessageContaining("Cannot add budget items with different currencies");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(2);
     }
 }

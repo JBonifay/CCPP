@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Currency;
 import java.util.UUID;
@@ -81,15 +82,16 @@ class UpdateBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(3);
-        assertThat(events.get(2)).isInstanceOf(BudgetItemUpdated.class);
-
-        var budgetUpdatedEvent = (BudgetItemUpdated) events.get(2);
-        assertThat(budgetUpdatedEvent.projectId()).isEqualTo(projectId);
-        assertThat(budgetUpdatedEvent.budgetItemId()).isEqualTo(budgetItemId);
-        assertThat(budgetUpdatedEvent.description()).isEqualTo("Hotel 3 nights");
-        assertThat(budgetUpdatedEvent.newAmount()).isEqualTo(newAmount);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(3)
+                .satisfies(events -> {
+                    assertThat(events.get(2)).isInstanceOf(BudgetItemUpdated.class);
+                    var budgetUpdatedEvent = (BudgetItemUpdated) events.get(2);
+                    assertThat(budgetUpdatedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(budgetUpdatedEvent.getBudgetItemId()).isEqualTo(budgetItemId);
+                    assertThat(budgetUpdatedEvent.getDescription()).isEqualTo("Hotel 3 nights");
+                    assertThat(budgetUpdatedEvent.getNewAmount()).isEqualTo(newAmount);
+                });
     }
 
     @Test
@@ -124,7 +126,6 @@ class UpdateBudgetItemHandlerTest {
                 .isInstanceOf(CannotModifyReadyProjectException.class)
                 .hasMessageContaining("Cannot modify project in READY status");
 
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(3);
+        assertThat(eventStore.readStream(projectId.value())).hasSize(3);
     }
 }

@@ -16,7 +16,8 @@ public class UpdateBudgetItemHandler implements CommandHandler<UpdateBudgetItemC
     public void handle(UpdateBudgetItemCommand command) {
         var streamId = command.projectId().value();
         var events = eventStore.readStream(streamId);
-        var project = Project.loadFromHistory(events);
+        var project = new Project(command.projectId());
+        project.loadFromHistory(events);
 
         project.updateBudgetItem(command.budgetItemId(), command.description(), command.newAmount());
 

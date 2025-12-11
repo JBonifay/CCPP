@@ -6,5 +6,4 @@ import java.util.UUID;
 public interface EventStore {
     void append(UUID streamId, List<DomainEvent> events, int expectedVersion);
     List<DomainEvent> readStream(UUID streamId);
-    List<DomainEvent> readAllEvents();
 }

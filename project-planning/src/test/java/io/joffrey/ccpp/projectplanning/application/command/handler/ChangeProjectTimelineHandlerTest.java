@@ -68,13 +68,14 @@ class ChangeProjectTimelineHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);
-        assertThat(events.get(1)).isInstanceOf(ProjectTimelineChanged.class);
-
-        var timelineChangedEvent = (ProjectTimelineChanged) events.get(1);
-        assertThat(timelineChangedEvent.projectId()).isEqualTo(projectId);
-        assertThat(timelineChangedEvent.newTimeline()).isEqualTo(newTimeline);
+        assertThat(eventStore.readStream(projectId.value()))
+                .hasSize(2)
+                .satisfies(events -> {
+                    assertThat(events.get(1)).isInstanceOf(ProjectTimelineChanged.class);
+                    var timelineChangedEvent = (ProjectTimelineChanged) events.get(1);
+                    assertThat(timelineChangedEvent.getProjectId()).isEqualTo(projectId);
+                    assertThat(timelineChangedEvent.getNewTimeline()).isEqualTo(newTimeline);
+                });
     }
 
     @Test
@@ -106,7 +107,6 @@ class ChangeProjectTimelineHandlerTest {
                 .hasMessageContaining("Cannot modify project in READY status");
 
         // Verify no new events were persisted
-        var events = eventStore.readStream(projectId.value());
-        assertThat(events).hasSize(2);  // Only ProjectCreated + ProjectMarkedAsReady
+        assertThat(eventStore.readStream(projectId.value())).hasSize(2);  // Only ProjectCreated + ProjectMarkedAsReady
     }
 }

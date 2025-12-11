@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +57,7 @@ class MarkProjectAsReadyHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), List.of(projectCreatedEvent), -1);
 
         var command = new MarkProjectAsReadyCommand(projectId, userId);
 
@@ -64,7 +65,7 @@ class MarkProjectAsReadyHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);  // ProjectCreated + ProjectMarkedAsReady
         assertThat(events.get(1)).isInstanceOf(ProjectMarkedAsReady.class);
 
@@ -89,8 +90,8 @@ class MarkProjectAsReadyHandlerTest {
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         eventStore.append(
-                projectId.value().toString(),
-                java.util.List.of(projectCreatedEvent, projectMarkedAsReadyEvent),
+                projectId.value(),
+                List.of(projectCreatedEvent, projectMarkedAsReadyEvent),
                 -1
         );
 
@@ -100,7 +101,7 @@ class MarkProjectAsReadyHandlerTest {
         handler.handle(command);
 
         // THEN - no new event is added (idempotent behavior)
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);  // Still only ProjectCreated + ProjectMarkedAsReady (no duplicate)
     }
 }

@@ -68,7 +68,7 @@ class AcceptParticipantInvitationHandlerTest {
         );
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, participantInvitedEvent),
                 -1
         );
@@ -79,7 +79,7 @@ class AcceptParticipantInvitationHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(3);
         assertThat(events.get(2)).isInstanceOf(ParticipantAcceptedInvitation.class);
 

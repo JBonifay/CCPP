@@ -6,6 +6,8 @@ import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 
+import java.math.BigDecimal;
+
 public record ProjectCreated(
         WorkspaceId workspaceId,
         UserId userId,
@@ -13,35 +15,6 @@ public record ProjectCreated(
         String title,
         String description,
         DateRange timeline,
-        java.math.BigDecimal projectBudgetLimit) implements DomainEvent {
-
-    @Override
-    public void getEventId() {
-
-    }
-
-    @Override
-    public void getEventType() {
-
-    }
-
-    @Override
-    public void getAggregateId() {
-
-    }
-
-    @Override
-    public void getWorkspaceId() {
-
-    }
-
-    @Override
-    public void getTimestamp() {
-
-    }
-
-    @Override
-    public void getVersion() {
-
-    }
+        BigDecimal projectBudgetLimit
+) implements DomainEvent {
 }

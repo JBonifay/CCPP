@@ -69,7 +69,7 @@ class RemoveBudgetItemHandlerTest {
         var budgetItemAddedEvent = new BudgetItemAdded(projectId, budgetItemId, "Hotel", amount);
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, budgetItemAddedEvent),
                 -1
         );
@@ -80,7 +80,7 @@ class RemoveBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(3);
         assertThat(events.get(2)).isInstanceOf(BudgetItemRemoved.class);
 
@@ -108,7 +108,7 @@ class RemoveBudgetItemHandlerTest {
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, budgetItemAddedEvent, projectMarkedAsReadyEvent),
                 -1
         );
@@ -120,7 +120,7 @@ class RemoveBudgetItemHandlerTest {
                 .isInstanceOf(CannotModifyReadyProjectException.class)
                 .hasMessageContaining("Cannot modify project in READY status");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(3);
     }
 }

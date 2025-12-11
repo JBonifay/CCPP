@@ -2,24 +2,35 @@ package io.joffrey.ccpp.projectplanning.infrastructure.event;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.exception.ConcurrencyException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEventStore implements EventStore {
 
-    private final Map<String, List<DomainEvent>> streams = new ConcurrentHashMap<>();
+    private final Map<UUID, List<DomainEvent>> streams = new ConcurrentHashMap<>();
 
     @Override
-    public void append(String streamId, List<DomainEvent> events, int expectedVersion) {
-        streams.computeIfAbsent(streamId, k -> new ArrayList<>()).addAll(events);
+    public void append(UUID streamId, List<DomainEvent> events, int expectedVersion) {
+        synchronized (streams) {
+            List<DomainEvent> stream = streams.getOrDefault(streamId, new ArrayList<>());
+            int currentVersion = stream.size() - 1;
+
+            if (expectedVersion != -1 && currentVersion != expectedVersion) {
+                throw new ConcurrencyException(
+                        String.format("Concurrency conflict for stream '%s': expected version %d but current version is %d",
+                                streamId, expectedVersion, currentVersion)
+                );
+            }
+
+            stream.addAll(events);
+            streams.put(streamId, stream);
+        }
     }
 
     @Override
-    public List<DomainEvent> readStream(String streamId) {
+    public List<DomainEvent> readStream(UUID streamId) {
         return new ArrayList<>(streams.getOrDefault(streamId, List.of()));
     }
 

@@ -48,7 +48,6 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_create_project_with_valid_data() {
-        // GIVEN
         var command = new CreateProjectCommand(
                 workspaceId,
                 userId,
@@ -59,22 +58,19 @@ class CreateProjectHandlerTest {
                 projectBudgetLimit
         );
 
-        // WHEN
         handler.handle(command);
 
-        // THEN
-        var events = eventStore.readStream(projectId.value().toString());
-        assertThat(events).hasSize(1);
-        assertThat(events.get(0)).isInstanceOf(ProjectCreated.class);
-
-        var event = (ProjectCreated) events.get(0);
-        assertThat(event.projectId()).isEqualTo(projectId);
-        assertThat(event.workspaceId()).isEqualTo(workspaceId);
-        assertThat(event.userId()).isEqualTo(userId);
-        assertThat(event.title()).isEqualTo(title);
-        assertThat(event.description()).isEqualTo(description);
-        assertThat(event.timeline()).isEqualTo(timeline);
-        assertThat(event.projectBudgetLimit()).isEqualTo(projectBudgetLimit);
+        assertThat(eventStore.readStream(projectId.value())).containsExactly(
+                new ProjectCreated(
+                        workspaceId,
+                        userId,
+                        projectId,
+                        title,
+                        description,
+                        timeline,
+                        projectBudgetLimit
+                )
+        );
     }
 
     @Test
@@ -112,7 +108,7 @@ class CreateProjectHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Title cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).isEmpty();
     }
 
@@ -134,7 +130,7 @@ class CreateProjectHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Title cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).isEmpty();
     }
 
@@ -156,7 +152,7 @@ class CreateProjectHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).isEmpty();
     }
 
@@ -178,7 +174,7 @@ class CreateProjectHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).isEmpty();
     }
 }

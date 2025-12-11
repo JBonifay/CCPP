@@ -59,7 +59,7 @@ class InviteParticipantHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var participantId = new ParticipantId(UUID.randomUUID());
         var command = new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "McFly");
@@ -68,7 +68,7 @@ class InviteParticipantHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
         assertThat(events.get(1)).isInstanceOf(ParticipantInvited.class);
 
@@ -91,7 +91,7 @@ class InviteParticipantHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var participantId = new ParticipantId(UUID.randomUUID());
         var command = new InviteParticipantCommand(projectId, participantId, "", "McFly");  // empty email
@@ -101,7 +101,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 
@@ -117,7 +117,7 @@ class InviteParticipantHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var participantId = new ParticipantId(UUID.randomUUID());
         var command = new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "");  // empty name
@@ -127,7 +127,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 
@@ -143,7 +143,7 @@ class InviteParticipantHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var participantId = new ParticipantId(UUID.randomUUID());
         var command = new InviteParticipantCommand(projectId, participantId, null, "McFly");  // null email
@@ -153,7 +153,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 
@@ -169,7 +169,7 @@ class InviteParticipantHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var participantId = new ParticipantId(UUID.randomUUID());
         var command = new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", null);  // null name
@@ -179,7 +179,7 @@ class InviteParticipantHandlerTest {
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 }

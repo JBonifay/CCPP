@@ -49,9 +49,9 @@ class MarkProjectAsReadyHandlerTest {
     void should_mark_project_as_ready() {
         // GIVEN - project exists (ProjectCreated event in event store)
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -80,9 +80,9 @@ class MarkProjectAsReadyHandlerTest {
     void should_be_idempotent_when_marking_ready_project_as_ready() {
         // GIVEN - project is already marked as ready (ProjectCreated + ProjectMarkedAsReady in event store)
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

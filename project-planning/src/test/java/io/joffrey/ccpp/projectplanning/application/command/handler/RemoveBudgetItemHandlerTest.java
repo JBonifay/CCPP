@@ -58,9 +58,9 @@ class RemoveBudgetItemHandlerTest {
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
 
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,
@@ -97,9 +97,9 @@ class RemoveBudgetItemHandlerTest {
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
 
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

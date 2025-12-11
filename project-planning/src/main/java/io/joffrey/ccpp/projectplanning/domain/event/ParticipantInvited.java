@@ -5,11 +5,13 @@ import com.ccpp.shared.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class ParticipantInvited extends DomainEvent {
 
     private final ProjectId projectId;

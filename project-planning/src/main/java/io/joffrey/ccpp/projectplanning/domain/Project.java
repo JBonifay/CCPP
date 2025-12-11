@@ -48,7 +48,7 @@ public class Project extends AggregateRoot {
         validateDescription(description);
 
         Project project = new Project(projectId);
-        project.raiseEvent(new ProjectCreated(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit));
+        project.raiseEvent(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit));
         return project;
     }
 

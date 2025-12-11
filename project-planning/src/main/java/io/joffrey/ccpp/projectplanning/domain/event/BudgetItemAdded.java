@@ -6,11 +6,13 @@ import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.Instant;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class BudgetItemAdded extends DomainEvent {
 
     private final ProjectId projectId;

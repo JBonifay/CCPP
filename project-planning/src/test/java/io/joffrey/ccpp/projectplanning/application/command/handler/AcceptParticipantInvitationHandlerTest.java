@@ -51,9 +51,9 @@ class AcceptParticipantInvitationHandlerTest {
     void should_accept_participant_invitation() {
         var participantId = new ParticipantId(UUID.randomUUID());
         var projectCreatedEvent = new ProjectCreated(
+                projectId,
                 workspaceId,
                 userId,
-                projectId,
                 title,
                 description,
                 timeline,

@@ -8,33 +8,5 @@ public record ParticipantAcceptedInvitation(
         ProjectId projectId,
         ParticipantId participantId
 ) implements DomainEvent {
-    @Override
-    public void getEventId() {
 
-    }
-
-    @Override
-    public void getEventType() {
-
-    }
-
-    @Override
-    public void getAggregateId() {
-
-    }
-
-    @Override
-    public void getWorkspaceId() {
-
-    }
-
-    @Override
-    public void getTimestamp() {
-
-    }
-
-    @Override
-    public void getVersion() {
-
-    }
 }

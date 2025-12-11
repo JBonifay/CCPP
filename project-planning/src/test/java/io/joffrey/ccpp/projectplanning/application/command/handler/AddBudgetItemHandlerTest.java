@@ -65,7 +65,7 @@ class AddBudgetItemHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
@@ -75,7 +75,7 @@ class AddBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
         assertThat(events.get(1)).isInstanceOf(BudgetItemAdded.class);
 
@@ -106,7 +106,7 @@ class AddBudgetItemHandlerTest {
         );
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, firstBudgetItem),
                 -1
         );
@@ -119,7 +119,7 @@ class AddBudgetItemHandlerTest {
         handler.handle(command);
 
         // THEN - should produce both BudgetItemAdded and ProjectBudgetCapExceeded
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(4);  // ProjectCreated + BudgetItemAdded + BudgetItemAdded + ProjectBudgetCapExceeded
         assertThat(events.get(2)).isInstanceOf(BudgetItemAdded.class);
         assertThat(events.get(3)).isInstanceOf(ProjectBudgetCapExceeded.class);
@@ -144,7 +144,7 @@ class AddBudgetItemHandlerTest {
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, projectMarkedAsReadyEvent),
                 -1
         );
@@ -158,7 +158,7 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(CannotModifyReadyProjectException.class)
                 .hasMessageContaining("Cannot modify project in READY status");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
     }
 
@@ -174,7 +174,7 @@ class AddBudgetItemHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         var amount = new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"));
@@ -185,7 +185,7 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Budget item description cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 
@@ -209,7 +209,7 @@ class AddBudgetItemHandlerTest {
         );
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, firstBudgetItem),
                 -1
         );
@@ -223,7 +223,7 @@ class AddBudgetItemHandlerTest {
                 .isInstanceOf(CurrencyException.class)
                 .hasMessageContaining("Cannot add budget items with different currencies");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
     }
 }

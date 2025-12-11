@@ -8,33 +8,4 @@ public record ProjectTimelineChanged(
         ProjectId projectId, DateRange newTimeline
 ) implements DomainEvent {
 
-    @Override
-    public void getEventId() {
-
-    }
-
-    @Override
-    public void getEventType() {
-
-    }
-
-    @Override
-    public void getAggregateId() {
-
-    }
-
-    @Override
-    public void getWorkspaceId() {
-
-    }
-
-    @Override
-    public void getTimestamp() {
-
-    }
-
-    @Override
-    public void getVersion() {
-
-    }
 }

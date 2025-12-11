@@ -1,9 +1,10 @@
 package com.ccpp.shared.domain;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface EventStore {
-    void append(String streamId, List<DomainEvent> events, int expectedVersion);
-    List<DomainEvent> readStream(String streamId);
+    void append(UUID streamId, List<DomainEvent> events, int expectedVersion);
+    List<DomainEvent> readStream(UUID streamId);
     List<DomainEvent> readAllEvents();
 }

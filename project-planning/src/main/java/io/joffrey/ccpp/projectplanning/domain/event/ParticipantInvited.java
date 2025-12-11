@@ -10,33 +10,5 @@ public record ParticipantInvited(
         String mail,
         String name
 ) implements DomainEvent {
-    @Override
-    public void getEventId() {
 
-    }
-
-    @Override
-    public void getEventType() {
-
-    }
-
-    @Override
-    public void getAggregateId() {
-
-    }
-
-    @Override
-    public void getWorkspaceId() {
-
-    }
-
-    @Override
-    public void getTimestamp() {
-
-    }
-
-    @Override
-    public void getVersion() {
-
-    }
 }

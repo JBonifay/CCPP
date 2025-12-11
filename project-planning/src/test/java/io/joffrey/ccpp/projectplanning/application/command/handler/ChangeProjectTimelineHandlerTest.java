@@ -59,7 +59,7 @@ class ChangeProjectTimelineHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
         var command = new ChangeProjectTimelineCommand(projectId, newTimeline);
@@ -68,7 +68,7 @@ class ChangeProjectTimelineHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
         assertThat(events.get(1)).isInstanceOf(ProjectTimelineChanged.class);
 
@@ -92,7 +92,7 @@ class ChangeProjectTimelineHandlerTest {
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         eventStore.append(
-                projectId.value().toString(),
+                projectId.value(),
                 java.util.List.of(projectCreatedEvent, projectMarkedAsReadyEvent),
                 -1
         );
@@ -106,7 +106,7 @@ class ChangeProjectTimelineHandlerTest {
                 .hasMessageContaining("Cannot modify project in READY status");
 
         // Verify no new events were persisted
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);  // Only ProjectCreated + ProjectMarkedAsReady
     }
 }

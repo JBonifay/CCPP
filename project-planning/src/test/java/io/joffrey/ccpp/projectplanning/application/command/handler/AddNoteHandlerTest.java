@@ -58,7 +58,7 @@ class AddNoteHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var command = new AddNoteCommand(projectId, "Need to book studio for recording", userId);
 
@@ -66,7 +66,7 @@ class AddNoteHandlerTest {
         handler.handle(command);
 
         // THEN
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(2);
         assertThat(events.get(1)).isInstanceOf(NoteAdded.class);
 
@@ -88,7 +88,7 @@ class AddNoteHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var command = new AddNoteCommand(projectId, "", userId);  // empty content
 
@@ -97,7 +97,7 @@ class AddNoteHandlerTest {
                 .isInstanceOf(InvalidProjectNoteException.class)
                 .hasMessageContaining("Note content cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 
@@ -113,7 +113,7 @@ class AddNoteHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.append(projectId.value().toString(), java.util.List.of(projectCreatedEvent), -1);
+        eventStore.append(projectId.value(), java.util.List.of(projectCreatedEvent), -1);
 
         var command = new AddNoteCommand(projectId, null, userId);  // null content
 
@@ -122,7 +122,7 @@ class AddNoteHandlerTest {
                 .isInstanceOf(InvalidProjectNoteException.class)
                 .hasMessageContaining("Note content cannot be empty");
 
-        var events = eventStore.readStream(projectId.value().toString());
+        var events = eventStore.readStream(projectId.value());
         assertThat(events).hasSize(1);
     }
 }

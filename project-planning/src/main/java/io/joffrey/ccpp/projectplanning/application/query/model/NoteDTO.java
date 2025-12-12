@@ -6,7 +6,6 @@ import java.time.Instant;
 
 public record NoteDTO(
         String content,
-        UserId createdBy,
-        Instant createdAt
+        UserId createdBy
 ) {
 }

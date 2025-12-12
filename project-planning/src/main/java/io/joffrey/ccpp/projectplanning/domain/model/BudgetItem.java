@@ -24,6 +24,6 @@ public class BudgetItem extends Entity {
     }
 
     public BigDecimal getCost() {
-        return amount.amount();
+        return amount.value();
     }
 }

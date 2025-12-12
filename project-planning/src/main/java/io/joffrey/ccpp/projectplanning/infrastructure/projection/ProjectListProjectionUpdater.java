@@ -1,0 +1,166 @@
+package io.joffrey.ccpp.projectplanning.infrastructure.projection;
+
+import com.ccpp.shared.domain.DomainEvent;
+import com.ccpp.shared.domain.EventListener;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.valueobjects.Money;
+import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
+import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.event.*;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ProjectListProjectionUpdater implements EventListener {
+
+    private final ProjectListReadRepository repository;
+
+    // Internal state: track budget items per project
+    private final Map<ProjectId, Map<BudgetItemId, Money>> projectBudgetItems = new ConcurrentHashMap<>();
+
+    public ProjectListProjectionUpdater(ProjectListReadRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public boolean canHandle(DomainEvent event) {
+        return event instanceof ProjectDomainEvent;
+    }
+
+    @Override
+    public void onEvent(DomainEvent event) {
+        switch (event) {
+            case ProjectCreated e -> handleProjectCreated(e);
+            case ProjectDetailsUpdated e -> handleDetailsUpdated(e);
+            case ProjectMarkedAsReady e -> handleMarkedAsReady(e);
+            case BudgetItemAdded e -> handleBudgetItemAdded(e);
+            case BudgetItemUpdated e -> handleBudgetItemUpdated(e);
+            case BudgetItemRemoved e -> handleBudgetItemRemoved(e);
+            case ParticipantInvited e -> handleParticipantInvited(e);
+            default -> {} // Ignore other events
+        }
+    }
+
+    private void handleProjectCreated(ProjectCreated event) {
+        // Initialize empty budget items map for this project
+        projectBudgetItems.put(event.projectId(), new ConcurrentHashMap<>());
+
+        var dto = new ProjectListDTO(
+                event.projectId(),
+                event.workspaceId(),
+                event.title(),
+                "PLANNING",
+                BigDecimal.ZERO,
+                0
+        );
+        repository.save(dto);
+    }
+
+    private void handleDetailsUpdated(ProjectDetailsUpdated event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    event.title(),
+                    current.status(),
+                    current.totalBudget(),
+                    current.participantCount()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleBudgetItemAdded(BudgetItemAdded event) {
+        // Update internal state
+        projectBudgetItems
+                .computeIfAbsent(event.projectId(), k -> new ConcurrentHashMap<>())
+                .put(event.budgetItemId(), event.amount());
+
+        // Recalculate total from internal state
+        var newTotal = calculateTotalBudget(event.projectId());
+
+        // Update projection
+        updateProjectListTotal(event.projectId(), newTotal);
+    }
+
+    private void handleBudgetItemUpdated(BudgetItemUpdated event) {
+        // Update internal state
+        var budgetItems = projectBudgetItems.get(event.projectId());
+        if (budgetItems != null) {
+            budgetItems.put(event.budgetItemId(), event.newAmount());
+        }
+
+        // Recalculate total from internal state
+        var newTotal = calculateTotalBudget(event.projectId());
+
+        // Update projection
+        updateProjectListTotal(event.projectId(), newTotal);
+    }
+
+    private void handleBudgetItemRemoved(BudgetItemRemoved event) {
+        // Update internal state
+        var budgetItems = projectBudgetItems.get(event.projectId());
+        if (budgetItems != null) {
+            budgetItems.remove(event.budgetItemId());
+        }
+
+        // Recalculate total from internal state
+        var newTotal = calculateTotalBudget(event.projectId());
+
+        // Update projection
+        updateProjectListTotal(event.projectId(), newTotal);
+    }
+
+    private void handleParticipantInvited(ParticipantInvited event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    current.status(),
+                    current.totalBudget(),
+                    current.participantCount() + 1
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleMarkedAsReady(ProjectMarkedAsReady event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    "READY",
+                    current.totalBudget(),
+                    current.participantCount()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private BigDecimal calculateTotalBudget(ProjectId projectId) {
+        return projectBudgetItems.getOrDefault(projectId, Map.of())
+                .values()
+                .stream()
+                .map(Money::value)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void updateProjectListTotal(ProjectId projectId, BigDecimal newTotal) {
+        repository.findById(projectId).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    current.status(),
+                    newTotal,
+                    current.participantCount()
+            );
+            repository.update(updated);
+        });
+    }
+}

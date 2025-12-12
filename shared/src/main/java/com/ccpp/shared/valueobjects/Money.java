@@ -6,14 +6,18 @@ import java.math.BigDecimal;
 import java.util.Currency;
 
 public record Money(
-        BigDecimal amount,
+        BigDecimal value,
         Currency currency
 ) {
+
+    public static Money of(int amount, String currency) {
+        return new Money(BigDecimal.valueOf(amount), Currency.getInstance(currency));
+    }
 
     public Money add(Money money) {
         verifySameCurrency(money);
         return new Money(
-                amount.add(money.amount()),
+                value.add(money.value()),
                 currency
         );
     }
@@ -21,14 +25,14 @@ public record Money(
     public Money subtract(Money money) {
         verifySameCurrency(money);
         return new Money(
-                amount.subtract(money.amount),
+                value.subtract(money.value),
                 currency
         );
     }
 
     public Money multiply(int count) {
         return new Money(
-                amount.multiply(BigDecimal.valueOf(count)),
+                value.multiply(BigDecimal.valueOf(count)),
                 currency);
     }
 

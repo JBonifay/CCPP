@@ -12,8 +12,7 @@ public record ProjectListDTO(
         String title,
         String status,
         BigDecimal totalBudget,
-        int participantCount,
-        Instant createdAt
+        int participantCount
 ) {
 }
 

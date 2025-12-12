@@ -21,21 +21,17 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Project extends AggregateRoot {
 
-    private ProjectId projectId;
     private WorkspaceId workspaceId;
     private ProjectStatus projectStatus;
     private Map<BudgetItemId, BudgetItem> budgetItems;
     private BigDecimal budgetLimit;
 
-    public Project(ProjectId projectId) {
-        super(projectId.value());
-    }
-
-    public static Project create(
+    private Project(
             WorkspaceId workspaceId,
             UserId userId,
             ProjectId projectId,
@@ -47,9 +43,37 @@ public class Project extends AggregateRoot {
         validateTitle(title);
         validateDescription(description);
 
-        Project project = new Project(projectId);
-        project.raiseEvent(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit));
-        return project;
+        ProjectCreated projectCreated = new ProjectCreated(
+                projectId,
+                workspaceId,
+                userId,
+                title,
+                description,
+                timeline,
+                projectBudgetLimit,
+                nextEventSequenceNumber()
+        );
+        raiseEvent(projectCreated);
+    }
+
+    public Project(List<DomainEvent> events) {
+        loadFromHistory(events);
+    }
+
+    public static Project create(
+            WorkspaceId workspaceId,
+            UserId userId,
+            ProjectId projectId,
+            String title,
+            String description,
+            DateRange timeline,
+            BigDecimal projectBudgetLimit
+    ) {
+        return new Project(workspaceId, userId, projectId, title, description, timeline, projectBudgetLimit);
+    }
+
+    public static Project fromHistory(List<DomainEvent> events) {
+        return new Project(events);
     }
 
     private static void validateTitle(String title) {
@@ -67,13 +91,13 @@ public class Project extends AggregateRoot {
     public void updateDetails(String title, String description) {
         validateTitle(title);
         validateDescription(description);
-        raiseEvent(new ProjectDetailsUpdated(projectId, title, description));
+        raiseEvent(new ProjectDetailsUpdated(new ProjectId(aggregateId), title, description, nextEventSequenceNumber()));
     }
 
     public void addBudgetItem(BudgetItemId budgetItemId, String description, Money amount) {
         verifyProjectIsModifiable();
         validateBudgetItem(description, amount);
-        raiseEvent(new BudgetItemAdded(projectId, budgetItemId, description, amount));
+        raiseEvent(new BudgetItemAdded(new ProjectId(aggregateId), budgetItemId, description, amount, nextEventSequenceNumber()));
 
         BigDecimal totalBudget = calculateTotalBudget(amount);
         checkIfBudgetExceedsLimit(totalBudget, amount.currency());
@@ -103,48 +127,48 @@ public class Project extends AggregateRoot {
 
     private void checkIfBudgetExceedsLimit(BigDecimal totalBudget, Currency currency) {
         if (totalBudget.compareTo(budgetLimit) > 0) {
-            raiseEvent(new ProjectBudgetCapExceeded(projectId, new Money(totalBudget, currency)));
+            raiseEvent(new ProjectBudgetCapExceeded(new ProjectId(aggregateId), new Money(totalBudget, currency), nextEventSequenceNumber()));
         }
     }
 
     public void removeBudgetItem(BudgetItemId budgetItemId) {
         verifyProjectIsModifiable();
-        raiseEvent(new BudgetItemRemoved(projectId, budgetItemId));
+        raiseEvent(new BudgetItemRemoved(new ProjectId(aggregateId), budgetItemId, nextEventSequenceNumber()));
     }
 
     public void changeTimeline(DateRange newTimeline) {
         verifyProjectIsModifiable();
-        raiseEvent(new ProjectTimelineChanged(projectId, newTimeline));
+        raiseEvent(new ProjectTimelineChanged(new ProjectId(aggregateId), newTimeline, nextEventSequenceNumber()));
     }
 
     public void updateBudgetItem(BudgetItemId budgetItemId, String description, Money newAmount) {
         verifyProjectIsModifiable();
         verifyBudgetItemIsPresent(budgetItemId);
-        raiseEvent(new BudgetItemUpdated(projectId, budgetItemId, description, newAmount));
+        raiseEvent(new BudgetItemUpdated(new ProjectId(aggregateId), budgetItemId, description, newAmount, nextEventSequenceNumber()));
     }
 
     public void addNote(String content, UserId userId) {
         if (content == null || content.isBlank()) throw new InvalidProjectNoteException("Note content cannot be empty");
-        raiseEvent(new NoteAdded(projectId, content, userId));
+        raiseEvent(new NoteAdded(new ProjectId(aggregateId), content, userId, nextEventSequenceNumber()));
     }
 
     public void inviteParticipant(ParticipantId participantId, String mail, String name) {
         if (mail == null || mail.isBlank()) throw new InvalidParticipantDataException("Participant email cannot be empty");
         if (name == null || name.isBlank()) throw new InvalidParticipantDataException("Participant name cannot be empty");
-        raiseEvent(new ParticipantInvited(projectId, participantId, mail, name));
+        raiseEvent(new ParticipantInvited(new ProjectId(aggregateId), participantId, mail, name, nextEventSequenceNumber()));
     }
 
     public void participantAcceptedInvitation(ParticipantId participantId) {
-        raiseEvent(new ParticipantAcceptedInvitation(projectId, participantId));
+        raiseEvent(new ParticipantAcceptedInvitation(new ProjectId(aggregateId), participantId, nextEventSequenceNumber()));
     }
 
     public void participantDeclinedInvitation(ParticipantId participantId) {
-        raiseEvent(new ParticipantDeclinedInvitation(projectId, participantId));
+        raiseEvent(new ParticipantDeclinedInvitation(new ProjectId(aggregateId), participantId, nextEventSequenceNumber()));
     }
 
     public void markAsReady(UserId userId) {
         if (projectStatus == ProjectStatus.READY) return;
-        raiseEvent(new ProjectMarkedAsReady(projectId, workspaceId, userId));
+        raiseEvent(new ProjectMarkedAsReady(new ProjectId(aggregateId), workspaceId, userId, nextEventSequenceNumber()));
     }
 
     private void verifyProjectIsModifiable() {
@@ -159,7 +183,7 @@ public class Project extends AggregateRoot {
     }
 
     @Override
-    protected void apply(Object event) {
+    protected void apply(DomainEvent event) {
         switch (event) {
             case ProjectCreated projectCreated -> apply(projectCreated);
             case ProjectDetailsUpdated projectDetailsUpdated -> apply(projectDetailsUpdated);
@@ -178,7 +202,7 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ProjectCreated projectCreated) {
-        projectId = projectCreated.projectId();
+        aggregateId = projectCreated.projectId().value();
         workspaceId = projectCreated.workspaceId();
         projectStatus = ProjectStatus.PLANNING;
         budgetItems = new HashMap<>();

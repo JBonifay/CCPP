@@ -14,16 +14,6 @@ public class InviteParticipantHandler implements CommandHandler<InviteParticipan
 
     @Override
     public void handle(InviteParticipantCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = new Project(command.projectId());
-        project.loadFromHistory(events);
 
-        project.inviteParticipant(command.participantId(), command.email(), command.name());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
     }
 }

@@ -14,16 +14,6 @@ public class ChangeProjectTimelineHandler implements CommandHandler<ChangeProjec
 
     @Override
     public void handle(ChangeProjectTimelineCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = new Project(command.projectId());
-        project.loadFromHistory(events);
 
-        project.changeTimeline(command.newTimeline());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
     }
 }

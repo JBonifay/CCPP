@@ -14,16 +14,6 @@ public class AddBudgetItemHandler implements CommandHandler<AddBudgetItemCommand
 
     @Override
     public void handle(AddBudgetItemCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = new Project(command.projectId());
-        project.loadFromHistory(events);
 
-        project.addBudgetItem(command.budgetItemId(), command.description(), command.amount());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
     }
 }

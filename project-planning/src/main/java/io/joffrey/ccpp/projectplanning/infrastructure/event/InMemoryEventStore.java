@@ -1,12 +1,15 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.event;
 
+import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventStore;
 import com.ccpp.shared.domain.StoredEvent;
 import com.ccpp.shared.exception.ConcurrencyException;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEventStore implements EventStore {
@@ -23,7 +26,7 @@ public class InMemoryEventStore implements EventStore {
     }
 
     @Override
-    public void append(UUID streamId, List<Object> events, int expectedVersion) {
+    public void append(UUID streamId, List<DomainEvent> events, int expectedVersion) {
         synchronized (streams) {
             var stream = streams.getOrDefault(streamId, new ArrayList<>());
             int currentVersion = stream.size() - 1;
@@ -38,7 +41,7 @@ public class InMemoryEventStore implements EventStore {
             var timestamp = clock.instant();
             int version = currentVersion;
 
-            for (Object event : events) {
+            for (DomainEvent event : events) {
                 version++;
                 stream.add(new StoredEvent(
                     UUID.randomUUID(),
@@ -54,7 +57,7 @@ public class InMemoryEventStore implements EventStore {
     }
 
     @Override
-    public List<Object> readStream(UUID streamId) {
+    public List<DomainEvent> readStream(UUID streamId) {
         return streams.getOrDefault(streamId, List.of())
             .stream()
             .map(StoredEvent::payload)

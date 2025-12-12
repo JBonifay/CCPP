@@ -14,16 +14,6 @@ public class UpdateProjectDetailsHandler implements CommandHandler<UpdateProject
 
     @Override
     public void handle(UpdateProjectDetailsCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = new Project(command.projectId());
-        project.loadFromHistory(events);
 
-        project.updateDetails(command.title(), command.description());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
     }
 }

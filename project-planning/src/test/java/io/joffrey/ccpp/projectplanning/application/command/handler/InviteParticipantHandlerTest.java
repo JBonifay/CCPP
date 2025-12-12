@@ -32,14 +32,13 @@ class InviteParticipantHandlerTest {
     String title = "Q1 Video Series";
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-    private ParticipantId participantId;
+    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
 
 
     @Test
     void should_invite_participant_to_project() {
         eventStore.append(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
 
-        participantId = new ParticipantId(UUID.randomUUID());
         handler.handle(new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "McFly"));
 
         assertThat(eventStore.readStream(projectId.value()))

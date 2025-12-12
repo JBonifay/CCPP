@@ -31,11 +31,10 @@ class DeclineParticipantInvitationHandlerTest {
     String title = "Q1 Video Series";
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-    private ParticipantId participantId;
+    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
 
     @Test
     void should_decline_participant_invitation() {
-        participantId = new ParticipantId(UUID.randomUUID());
         eventStore.append(
                 projectId.value(),
                 List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),

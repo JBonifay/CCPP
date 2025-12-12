@@ -876,6 +876,104 @@ ccpp/
 
 ---
 
+### Phase 2.5: REST API + Basic Authentication (Week 3.5)
+
+**Goals**:
+
+- ✅ REST Controllers for Project Planning
+- ✅ Basic HTTP authentication (no JWT yet)
+- ✅ E2E tests via HTTP
+- ✅ Validate CQRS architecture end-to-end
+
+**Tasks**:
+
+1. **REST Controllers** in `project-planning` module
+   - `ProjectCommandController` (POST /api/projects, POST /api/projects/{id}/budget-items, etc.)
+   - `ProjectQueryController` (GET /api/projects, GET /api/projects/{id})
+   - Request/Response DTOs (separate from domain/query DTOs)
+   - Exception handling (@ControllerAdvice)
+
+2. **Simple Authentication Middleware**
+   - Extract `X-Workspace-Id` and `X-User-Id` from headers
+   - No JWT validation yet (hardcoded for testing)
+   - Multi-tenant enforcement at controller level
+
+3. **API Gateway Configuration** (basic routing)
+   - Route `/api/projects/**` to project-planning service
+   - Pass through authentication headers
+
+4. **E2E HTTP Tests**
+   - `@SpringBootTest(webEnvironment = RANDOM_PORT)`
+   - TestRestTemplate for HTTP calls
+   - Full project lifecycle via HTTP (create → add budget → mark ready)
+   - Test multi-tenant isolation via headers
+
+5. **OpenAPI Documentation** (basic)
+   - Swagger/Springdoc integration
+   - Document all endpoints
+   - Available at `/swagger-ui.html`
+
+**API Endpoints to Implement**:
+
+```
+POST   /api/projects                              → CreateProjectCommand
+GET    /api/projects?workspaceId={id}            → GetProjectListQuery
+GET    /api/projects/{id}                        → GetProjectDetailQuery
+PUT    /api/projects/{id}                        → UpdateProjectDetailsCommand
+PUT    /api/projects/{id}/timeline               → ChangeProjectTimelineCommand
+POST   /api/projects/{id}/budget-items           → AddBudgetItemCommand
+PUT    /api/projects/{id}/budget-items/{itemId}  → UpdateBudgetItemCommand
+DELETE /api/projects/{id}/budget-items/{itemId}  → RemoveBudgetItemCommand
+POST   /api/projects/{id}/participants           → InviteParticipantCommand
+POST   /api/projects/{id}/notes                  → AddNoteCommand
+POST   /api/projects/{id}/ready                  → MarkProjectAsReadyCommand
+```
+
+**Request/Response DTO Examples**:
+
+```java
+// Request DTO (API layer)
+public record CreateProjectRequest(
+    String title,
+    String description,
+    LocalDate startDate,
+    LocalDate endDate,
+    BigDecimal budgetLimit
+) {}
+
+// Response DTO (API layer)
+public record ProjectResponse(
+    String projectId,
+    String workspaceId,
+    String title,
+    String description,
+    String status,
+    List<BudgetItemResponse> budgetItems,
+    DateRangeResponse timeline
+) {
+    static ProjectResponse from(ProjectDetailDTO dto) { ... }
+}
+```
+
+**Success Criteria**:
+
+- ✅ All command/query handlers accessible via HTTP
+- ✅ E2E tests pass (HTTP → Controller → Handler → EventStore → Projection → Query)
+- ✅ Multi-tenant isolation enforced (workspaceId in headers)
+- ✅ Swagger UI shows all endpoints
+- ✅ Can demo working API with Postman/curl
+- ✅ No JWT yet (deferred to Phase 6)
+
+**Why Phase 2.5 Now?**
+
+1. Validates CQRS architecture works end-to-end
+2. Enables immediate testing/demo via HTTP
+3. Provides feedback before building more bounded contexts
+4. More motivating to see working API
+5. API Gateway routing can be simple (defer complex auth to Phase 6)
+
+---
+
 ### Phase 3: Workspace + Multi-Tenancy (Week 4)
 
 **Goals**:
@@ -889,9 +987,9 @@ ccpp/
 1. Implement `Workspace` aggregate
 2. Subscription tier logic (freemium/premium)
 3. Project creation approval saga
-4. Add `workspaceId` to all aggregates
-5. Filter all queries by `workspaceId`
-6. API Gateway context injection
+4. Add `workspaceId` to all aggregates (already done)
+5. Filter all queries by `workspaceId` (already done)
+6. API Gateway context injection (basic version done in Phase 2.5, enhance here)
 
 **Success Criteria**:
 

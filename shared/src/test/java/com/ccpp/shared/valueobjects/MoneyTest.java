@@ -1,7 +1,6 @@
 package com.ccpp.shared.valueobjects;
 
 import com.ccpp.shared.exception.CurrencyException;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ class MoneyTest {
     void should_create_money_with_amount_and_currency() {
         Money money = new Money(BigDecimal.valueOf(100), Currency.getInstance("EUR"));
 
-        assertThat(money.amount()).isEqualTo(new BigDecimal(100));
+        assertThat(money.value()).isEqualTo(new BigDecimal(100));
         assertThat(money.currency()).isEqualTo(Currency.getInstance("EUR"));
     }
 

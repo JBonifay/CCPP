@@ -10,7 +10,6 @@ import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +17,6 @@ public class ProjectListProjectionUpdater implements EventListener {
 
     private final ProjectListReadRepository repository;
 
-    // Internal state: track budget items per project
     private final Map<ProjectId, Map<BudgetItemId, Money>> projectBudgetItems = new ConcurrentHashMap<>();
 
     public ProjectListProjectionUpdater(ProjectListReadRepository repository) {

@@ -21,8 +21,7 @@ public class InMemoryEventStore implements EventStore {
             List<DomainEvent> events,
             int expectedVersion
     ) {
-        List<DomainEvent> stream =
-                streams.computeIfAbsent(aggregateId, id -> new ArrayList<>());
+        List<DomainEvent> stream = streams.computeIfAbsent(aggregateId, id -> new ArrayList<>());
 
         int currentVersion = stream.size() - 1;
 

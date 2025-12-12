@@ -13,24 +13,28 @@ public abstract class AggregateRoot {
     protected abstract void apply(DomainEvent event);
 
     protected void raiseEvent(DomainEvent event) {
-        uncommittedEvents.add(event);
         apply(event);
+        uncommittedEvents.add(event);
+    }
+
+    public void loadFromHistory(List<DomainEvent> history) {
+        for (DomainEvent event : history) {
+            apply(event);
+            version++;
+        }
+    }
+
+    public int version() {
+        return version;
     }
 
     public List<DomainEvent> uncommittedEvents() {
         return List.copyOf(uncommittedEvents);
     }
 
-    public void clearUncommittedEvents() {
-        this.uncommittedEvents.clear();
-    }
-
-    public void loadFromHistory(List<DomainEvent> events) {
-        events.forEach(this::apply);
-    }
-
-    protected Integer nextEventSequenceNumber() {
-        return ++version;
+    public void markEventsAsCommitted() {
+        version += uncommittedEvents.size();
+        uncommittedEvents.clear();
     }
 
 }

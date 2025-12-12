@@ -68,8 +68,7 @@ class CreateProjectHandlerTest {
                                 title,
                                 description,
                                 timeline,
-                                projectBudgetLimit,
-                                0
+                                projectBudgetLimit
                         )
                 );
     }

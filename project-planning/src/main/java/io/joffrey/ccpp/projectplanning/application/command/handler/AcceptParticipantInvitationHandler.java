@@ -1,8 +1,11 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventStore;
 import io.joffrey.ccpp.projectplanning.application.command.AcceptParticipantInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
+
+import java.util.List;
 
 public class AcceptParticipantInvitationHandler implements CommandHandler<AcceptParticipantInvitationCommand> {
 
@@ -14,15 +17,11 @@ public class AcceptParticipantInvitationHandler implements CommandHandler<Accept
 
     @Override
     public void handle(AcceptParticipantInvitationCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = Project.fromHistory(events);
+        List<DomainEvent> projectEvents = eventStore.readStream(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
 
         project.participantAcceptedInvitation(command.participantId());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
+        eventStore.append(command.projectId().value(), project.uncommittedEvents(), project.version());
         project.markEventsAsCommitted();
     }
 }

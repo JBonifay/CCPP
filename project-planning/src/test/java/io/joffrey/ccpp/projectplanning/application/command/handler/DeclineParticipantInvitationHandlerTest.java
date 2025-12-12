@@ -1,91 +1,51 @@
-//package io.joffrey.ccpp.projectplanning.application.command.handler;
-//
-//import com.ccpp.shared.identities.ProjectId;
-//import com.ccpp.shared.identities.UserId;
-//import com.ccpp.shared.identities.WorkspaceId;
-//import com.ccpp.shared.valueobjects.DateRange;
-//import io.joffrey.ccpp.projectplanning.application.command.DeclineParticipantInvitationCommand;
-//import io.joffrey.ccpp.projectplanning.domain.event.ParticipantDeclinedInvitation;
-//import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
-//import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-//import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
-//import io.joffrey.ccpp.projectplanning.infrastructure.event.InMemoryEventStore;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//
-//import java.math.BigDecimal;
-//import java.time.LocalDate;
-//import java.util.UUID;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//class DeclineParticipantInvitationHandlerTest {
-//
-//    private InMemoryEventStore eventStore;
-//    private DeclineParticipantInvitationHandler handler;
-//
-//    private WorkspaceId workspaceId;
-//    private UserId userId;
-//    private ProjectId projectId;
-//    private DateRange timeline;
-//    private String title;
-//    private String description;
-//    private BigDecimal projectBudgetLimit;
-//
-//    @BeforeEach
-//    void setUp() {
-//        eventStore = new InMemoryEventStore();
-//        handler = new DeclineParticipantInvitationHandler(eventStore);
-//
-//        workspaceId = new WorkspaceId(UUID.randomUUID());
-//        userId = new UserId(UUID.randomUUID());
-//        projectId = new ProjectId(UUID.randomUUID());
-//        timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-//        title = "Q1 Video Series";
-//        description = "Educational content";
-//        projectBudgetLimit = BigDecimal.valueOf(1000);
-//    }
-//
-//    @Test
-//    void should_decline_participant_invitation() {
-//        // GIVEN - project with invited participant
-//        var participantId = new ParticipantId(UUID.randomUUID());
-//
-//        var projectCreatedEvent = new ProjectCreated(
-//                projectId,
-//                workspaceId,
-//                userId,
-//                title,
-//                description,
-//                timeline,
-//                projectBudgetLimit
-//        );
-//        var participantInvitedEvent = new ParticipantInvited(
-//                projectId,
-//                participantId,
-//                "mcfly@example.com",
-//                "McFly"
-//        );
-//
-//        eventStore.append(
-//                projectId.value(),
-//                java.util.List.of(projectCreatedEvent, participantInvitedEvent),
-//                -1
-//        );
-//
-//        var command = new DeclineParticipantInvitationCommand(projectId, participantId);
-//
-//        // WHEN
-//        handler.handle(command);
-//
-//        // THEN
-//        assertThat(eventStore.readStream(projectId.value()))
-//                .hasSize(3)
-//                .satisfies(events -> {
-//                    assertThat(events.get(2)).isInstanceOf(ParticipantDeclinedInvitation.class);
-//                    var declinedEvent = (ParticipantDeclinedInvitation) events.get(2);
-//                    assertThat(declinedEvent.projectId()).isEqualTo(projectId);
-//                    assertThat(declinedEvent.participantId()).isEqualTo(participantId);
-//                });
-//    }
-//}
+package io.joffrey.ccpp.projectplanning.application.command.handler;
+
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import io.joffrey.ccpp.projectplanning.application.command.DeclineParticipantInvitationCommand;
+import io.joffrey.ccpp.projectplanning.domain.event.ParticipantDeclinedInvitation;
+import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
+import io.joffrey.ccpp.projectplanning.infrastructure.event.InMemoryEventStore;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class DeclineParticipantInvitationHandlerTest {
+
+    InMemoryEventStore eventStore = new InMemoryEventStore();
+    DeclineParticipantInvitationHandler handler = new DeclineParticipantInvitationHandler(eventStore);
+
+    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    UserId userId = new UserId(UUID.randomUUID());
+    ProjectId projectId = new ProjectId(UUID.randomUUID());
+    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+    String title = "Q1 Video Series";
+    String description = "Educational content";
+    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+    private ParticipantId participantId;
+
+    @Test
+    void should_decline_participant_invitation() {
+        participantId = new ParticipantId(UUID.randomUUID());
+        eventStore.append(
+                projectId.value(),
+                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                        new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
+                -1);
+
+        handler.handle(new DeclineParticipantInvitationCommand(projectId, participantId));
+
+        assertThat(eventStore.readStream(projectId.value()))
+                .last()
+                .isEqualTo(new ParticipantDeclinedInvitation(projectId, participantId));
+    }
+}

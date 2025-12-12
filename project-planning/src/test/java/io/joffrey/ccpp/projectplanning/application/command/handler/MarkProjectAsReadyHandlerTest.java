@@ -7,7 +7,7 @@ import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.MarkProjectAsReadyCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
-import io.joffrey.ccpp.projectplanning.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

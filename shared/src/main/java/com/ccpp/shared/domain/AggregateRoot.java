@@ -6,21 +6,18 @@ import java.util.UUID;
 
 public abstract class AggregateRoot {
 
-    protected final UUID aggregateId;
-    protected final List<Object> uncommittedEvents = new ArrayList<>();
+    protected final List<DomainEvent> uncommittedEvents = new ArrayList<>();
+    protected UUID aggregateId;
+    protected int version = -1;
 
-    protected AggregateRoot(UUID aggregateId) {
-        this.aggregateId = aggregateId;
-    }
+    protected abstract void apply(DomainEvent event);
 
-    protected abstract void apply(Object event);
-
-    protected void raiseEvent(Object event) {
-        this.uncommittedEvents.add(event);
+    protected void raiseEvent(DomainEvent event) {
+        uncommittedEvents.add(event);
         apply(event);
     }
 
-    public List<Object> uncommittedEvents() {
+    public List<DomainEvent> uncommittedEvents() {
         return List.copyOf(uncommittedEvents);
     }
 
@@ -28,8 +25,12 @@ public abstract class AggregateRoot {
         this.uncommittedEvents.clear();
     }
 
-    public void loadFromHistory(List<Object> history) {
-        history.forEach(this::apply);
+    public void loadFromHistory(List<DomainEvent> events) {
+        events.forEach(this::apply);
+    }
+
+    protected Integer nextEventSequenceNumber() {
+        return ++version;
     }
 
 }

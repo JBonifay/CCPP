@@ -14,16 +14,6 @@ public class MarkProjectAsReadyHandler implements CommandHandler<MarkProjectAsRe
 
     @Override
     public void handle(MarkProjectAsReadyCommand command) {
-        var streamId = command.projectId().value();
-        var events = eventStore.readStream(streamId);
-        var project = new Project(command.projectId());
-        project.loadFromHistory(events);
 
-        project.markAsReady(command.userId());
-
-        var newEvents = project.uncommittedEvents();
-        int expectedVersion = events.size() - 1;
-        eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
     }
 }

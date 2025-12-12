@@ -8,5 +8,5 @@ public record StoredEvent(
     UUID aggregateId,
     int version,
     Instant occurredOn,
-    Object payload
+    DomainEvent payload
 ) {}

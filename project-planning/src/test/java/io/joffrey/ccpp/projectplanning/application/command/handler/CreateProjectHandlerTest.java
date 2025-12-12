@@ -21,30 +21,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateProjectHandlerTest {
 
-    private InMemoryEventStore eventStore;
-    private CreateProjectHandler handler;
+    InMemoryEventStore eventStore = new InMemoryEventStore();
+    CreateProjectHandler handler = new CreateProjectHandler(eventStore);
 
-    private WorkspaceId workspaceId;
-    private UserId userId;
-    private ProjectId projectId;
-    private DateRange timeline;
-    private String title;
-    private String description;
-    private BigDecimal projectBudgetLimit;
-
-    @BeforeEach
-    void setUp() {
-        eventStore = new InMemoryEventStore();
-        handler = new CreateProjectHandler(eventStore);
-
-        workspaceId = new WorkspaceId(UUID.randomUUID());
-        userId = new UserId(UUID.randomUUID());
-        projectId = new ProjectId(UUID.randomUUID());
-        timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-        title = "Q1 Video Series";
-        description = "Educational content";
-        projectBudgetLimit = BigDecimal.valueOf(1000);
-    }
+    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    UserId userId = new UserId(UUID.randomUUID());
+    ProjectId projectId = new ProjectId(UUID.randomUUID());
+    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+    String title = "Q1 Video Series";
+    String description = "Educational content";
+    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
 
     @Test
     void should_create_project_with_valid_data() {

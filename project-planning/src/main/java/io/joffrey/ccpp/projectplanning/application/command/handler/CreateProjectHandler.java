@@ -26,6 +26,6 @@ public class CreateProjectHandler implements CommandHandler<CreateProjectCommand
 
         var events = project.uncommittedEvents();
         eventStore.append(command.projectId().value(), events, -1);
-        project.clearUncommittedEvents();
+        project.markEventsAsCommitted();
     }
 }

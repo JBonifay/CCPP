@@ -23,6 +23,6 @@ public class AcceptParticipantInvitationHandler implements CommandHandler<Accept
         var newEvents = project.uncommittedEvents();
         int expectedVersion = events.size() - 1;
         eventStore.append(streamId, newEvents, expectedVersion);
-        project.clearUncommittedEvents();
+        project.markEventsAsCommitted();
     }
 }

@@ -8,7 +8,7 @@ import io.joffrey.ccpp.projectplanning.application.command.UpdateProjectDetailsC
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectDetailsUpdated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
-import io.joffrey.ccpp.projectplanning.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

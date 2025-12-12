@@ -8,8 +8,7 @@ import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
-import io.joffrey.ccpp.projectplanning.infrastructure.event.InMemoryEventStore;
-import org.junit.jupiter.api.BeforeEach;
+import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

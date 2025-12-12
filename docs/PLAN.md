@@ -328,7 +328,6 @@ $
 ```
 
  Choreography Flow                                    
-$
  1. User → ConvertBrainstormToProjectCommand          
     ↓                                                 
  2. Ideation Context                                 

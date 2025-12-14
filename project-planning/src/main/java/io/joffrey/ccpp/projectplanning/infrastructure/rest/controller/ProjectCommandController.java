@@ -70,6 +70,29 @@ public class ProjectCommandController {
         return new ResponseEntity<>(budgetItemId.value(), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{projectId}/budget-items/{budgetItemId}")
+    public ResponseEntity<Void> removeBudgetItem(
+            @PathVariable String projectId,
+            @PathVariable String budgetItemId
+    ) {
+        commandBus.execute(new RemoveBudgetItemCommand(new ProjectId(projectId), new BudgetItemId(budgetItemId)));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{projectId}/budget-items/{budgetItemId}")
+    public ResponseEntity<Void> updateBudgetItem(
+            @PathVariable String projectId,
+            @PathVariable String budgetItemId,
+            @RequestBody UpdateBudgetItemRequest updateBudgetItemRequest
+    ) {
+        commandBus.execute(new UpdateBudgetItemCommand(
+                new ProjectId(projectId),
+                new BudgetItemId(budgetItemId),
+                updateBudgetItemRequest.description(),
+                updateBudgetItemRequest.amount()));
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{projectId}/participants")
     public ResponseEntity<UUID> inviteParticipant(
             @PathVariable String projectId,
@@ -83,6 +106,15 @@ public class ProjectCommandController {
                 inviteParticipantRequest.name()
         ));
         return new ResponseEntity<>(participantId.value(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{projectId}/participants/{participantId}/accept")
+    public ResponseEntity<UUID> participantAcceptedInvitation(
+            @PathVariable String projectId,
+            @PathVariable String participantId
+    ) {
+        commandBus.execute(new AcceptParticipantInvitationCommand(new ProjectId(projectId), new ParticipantId(UUID.fromString(participantId))));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{projectId}/notes")

@@ -4,11 +4,15 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
+import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockBudgetItemIdGenerator;
 import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockParticipantIdGenerator;
 import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockProjectIdGenerator;
@@ -24,6 +28,7 @@ import org.springframework.context.annotation.Primary;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Currency;
 import java.util.UUID;
 
 @Import(AbstractE2eTest.AbstractE2eTestConfiguration.class)
@@ -94,4 +99,11 @@ public class AbstractE2eTest {
         ));
     }
 
+    public void aBudgetItemIsPresent(ProjectId projectId, BudgetItemId budgetItemId) {
+        commandBus.execute(new AddBudgetItemCommand(projectId, budgetItemId, "description", new Money(BigDecimal.ZERO, Currency.getInstance("EUR"))));
+    }
+
+    protected void aParticipantIsInvited(ProjectId projectId, ParticipantId participantId) {
+        commandBus.execute(new InviteParticipantCommand(projectId, participantId, "mcfly@mcfly.com", "McFly"));
+    }
 }

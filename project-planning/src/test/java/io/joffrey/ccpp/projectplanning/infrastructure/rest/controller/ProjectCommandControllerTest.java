@@ -7,13 +7,14 @@ import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.AbstractE2eTest;
-import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.AddBudgetItemRequest;
-import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.AddNoteRequest;
-import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.CreateProjectRequest;
-import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.InviteParticipantRequest;
+import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.*;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,66 +46,6 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .log().all()
                 .statusCode(201)
                 .body("projectId", equalTo(projectIdGenerator.getValue()));
-    }
-
-    @Test
-    void should_add_budget_item() {
-        var workspaceId = new WorkspaceId(UUID.randomUUID());
-        var userId = new UserId(UUID.randomUUID());
-        var projectId = new ProjectId(UUID.randomUUID());
-        aProjectExist(workspaceId, userId, projectId);
-
-        given()
-                .header("X-Workspace-Id", workspaceId.value().toString())
-                .header("X-User-Id", userId.value().toString())
-                .contentType(ContentType.JSON)
-                .body(new AddBudgetItemRequest(
-                        "Hotel 2x nights",
-                        new BigDecimal("300"),
-                        "USD"
-                ))
-                .when()
-                .post("/api/projects/" + projectId.value() + "/budget-items")
-                .then()
-                .log().all()
-                .statusCode(201);
-
-        assertThat(projectDetailRepository.findById(projectId).get().budgetItems()).containsExactly(
-                new BudgetItemDTO(
-                        budgetItemIdGenerator.generate(),
-                        "Hotel 2x nights",
-                        new Money(new BigDecimal("300"), Currency.getInstance("USD"))
-                ));
-    }
-
-    @Test
-    void should_invite_participant() {
-        var workspaceId = new WorkspaceId(UUID.randomUUID());
-        var userId = new UserId(UUID.randomUUID());
-        var projectId = new ProjectId(UUID.randomUUID());
-        aProjectExist(workspaceId, userId, projectId);
-
-        given()
-                .header("X-Workspace-Id", workspaceId.value().toString())
-                .header("X-User-Id", userId.value().toString())
-                .contentType(ContentType.JSON)
-                .body(new InviteParticipantRequest(
-                        "mcfly@mcfly.com",
-                        "McFly"
-                ))
-                .when()
-                .post("/api/projects/" + projectId.value() + "/participants")
-                .then()
-                .log().all()
-                .statusCode(201);
-
-        assertThat(projectDetailRepository.findById(projectId).get().participants()).containsExactly(
-                new ParticipantDTO(
-                        participantIdGenerator.generate(),
-                        "McFly",
-                        "mcfly@mcfly.com",
-                        "INVITED"
-                ));
     }
 
     @Test
@@ -150,6 +91,155 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
 
         assertThat(projectDetailRepository.findById(projectId).get().status())
                 .isEqualTo("READY");
+    }
+
+    @Nested
+    class BudgetItemTests {
+        @Test
+        void should_add_budget_item() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .body(new AddBudgetItemRequest(
+                            "Hotel 2x nights",
+                            new BigDecimal("300"),
+                            "USD"
+                    ))
+                    .when()
+                    .post("/api/projects/" + projectId.value() + "/budget-items")
+                    .then()
+                    .log().all()
+                    .statusCode(201);
+
+            assertThat(projectDetailRepository.findById(projectId).get().budgetItems()).containsExactly(
+                    new BudgetItemDTO(
+                            budgetItemIdGenerator.generate(),
+                            "Hotel 2x nights",
+                            new Money(new BigDecimal("300"), Currency.getInstance("USD"))
+                    ));
+        }
+
+        @Test
+        void should_remove_budget_item() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+            aBudgetItemIsPresent(projectId, budgetItemId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .delete("/api/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
+                    .then()
+                    .log().all()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            assertThat(projectDetailRepository.findById(projectId).get().budgetItems()).isEmpty();
+        }
+
+        @Test
+        void should_update_budget_item() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            var budgetItemId = new BudgetItemId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+            aBudgetItemIsPresent(projectId, budgetItemId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .body(new UpdateBudgetItemRequest(
+                            "Hotel 5x nights",
+                            new Money(new BigDecimal("9999"), Currency.getInstance("USD"))
+                    ))
+                    .when()
+                    .patch("/api/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
+                    .then()
+                    .log().all()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            assertThat(projectDetailRepository.findById(projectId).get().budgetItems()).containsExactly(
+                    new BudgetItemDTO(
+                            budgetItemId,
+                            "Hotel 5x nights",
+                            new Money(new BigDecimal("9999"), Currency.getInstance("USD"))
+                    ));
+        }
+
+    }
+
+    @Nested
+    class ParticipantTests {
+
+        @Test
+        void should_invite_participant() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .body(new InviteParticipantRequest(
+                            "mcfly@mcfly.com",
+                            "McFly"
+                    ))
+                    .when()
+                    .post("/api/projects/" + projectId.value() + "/participants")
+                    .then()
+                    .log().all()
+                    .statusCode(201);
+
+            assertThat(projectDetailRepository.findById(projectId).get().participants()).containsExactly(
+                    new ParticipantDTO(
+                            participantIdGenerator.generate(),
+                            "McFly",
+                            "mcfly@mcfly.com",
+                            "INVITED"
+                    ));
+        }
+
+        @Test
+        void should_accept_participant_invitation() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            var participantId = new ParticipantId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+            aParticipantIsInvited(projectId, participantId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .post("/api/projects/" + projectId.value() + "/participants/" + participantId.value() + "/accept")
+                    .then()
+                    .log().all()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            assertThat(projectDetailRepository.findById(projectId).get().participants()).containsExactly(
+                    new ParticipantDTO(
+                            participantId,
+                            "McFly",
+                            "mcfly@mcfly.com",
+                            "ACCEPTED"
+                    ));
+        }
     }
 
 }

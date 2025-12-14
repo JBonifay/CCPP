@@ -1,6 +1,21 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.dto;
 
-public record ParticipantResponse(
+import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
 
+public record ParticipantResponse(
+        String participantId,
+        String name,
+        String email,
+        String status
 ) {
+
+    public static ParticipantResponse from(ParticipantDTO participantDTO) {
+        return new ParticipantResponse(
+                participantDTO.participantId().value().toString(),
+                participantDTO.name(),
+                participantDTO.email(),
+                participantDTO.invitationStatus()
+        );
+    }
+
 }

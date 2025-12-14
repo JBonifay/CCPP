@@ -16,12 +16,12 @@ public class InMemoryProjectListReadRepository implements ProjectListReadReposit
 
     @Override
     public void save(ProjectListDTO dto) {
-        store.put(dto.getProjectId(), dto);
+        store.put(dto.projectId(), dto);
     }
 
     @Override
     public void update(ProjectListDTO dto) {
-        store.put(dto.getProjectId(), dto);
+        store.put(dto.projectId(), dto);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class InMemoryProjectListReadRepository implements ProjectListReadReposit
     @Override
     public List<ProjectListDTO> findByWorkspaceId(WorkspaceId workspaceId) {
         return store.values().stream()
-                .filter(dto -> dto.getWorkspaceId().equals(workspaceId))
+                .filter(dto -> dto.workspaceId().equals(workspaceId))
                 .toList();
     }
 

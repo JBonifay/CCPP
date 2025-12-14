@@ -4,10 +4,7 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
-import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.*;
 import io.joffrey.ccpp.projectplanning.domain.spi.BudgetItemIdGenerator;
 import io.joffrey.ccpp.projectplanning.domain.spi.ParticipantIdGenerator;
 import io.joffrey.ccpp.projectplanning.domain.spi.ProjectIdGenerator;
@@ -96,4 +93,13 @@ public class ProjectCommandController {
         commandBus.execute(new AddNoteCommand(new ProjectId(projectId), addNoteRequest.content(), RequestContext.getUserId()));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @PostMapping("/{projectId}/ready")
+    public ResponseEntity<Void> markProjectAsReady(
+            @PathVariable String projectId
+    ) {
+        commandBus.execute(new MarkProjectAsReadyCommand(new ProjectId(projectId), RequestContext.getUserId()));
+        return ResponseEntity.ok().build();
+    }
+
 }

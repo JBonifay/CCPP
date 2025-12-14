@@ -133,4 +133,23 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 ));
     }
 
+    @Test
+    void should_mark_project_as_ready() {
+        var workspaceId = new WorkspaceId(UUID.randomUUID());
+        var userId = new UserId(UUID.randomUUID());
+        var projectId = new ProjectId(UUID.randomUUID());
+        aProjectExist(workspaceId, userId, projectId);
+
+        given()
+                .header("X-Workspace-Id", workspaceId.value().toString())
+                .header("X-User-Id", userId.value().toString())
+                .when()
+                .post("/api/projects/" + projectId.value() + "/ready")
+                .then()
+                .statusCode(200);
+
+        assertThat(projectDetailRepository.findById(projectId).get().status())
+                .isEqualTo("READY");
+    }
+
 }

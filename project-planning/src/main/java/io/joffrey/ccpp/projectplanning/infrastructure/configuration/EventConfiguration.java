@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.infrastructure.event;
+package io.joffrey.ccpp.projectplanning.infrastructure.configuration;
 
 import com.ccpp.shared.domain.EventStore;
 import com.ccpp.shared.repository.InMemoryEventStore;

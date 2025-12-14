@@ -4,7 +4,7 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
-import io.joffrey.ccpp.projectplanning.application.command.AddNoteCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.NoteAdded;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;

@@ -7,7 +7,7 @@ import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.command.*;
+import io.joffrey.ccpp.projectplanning.application.command.command.*;
 import io.joffrey.ccpp.projectplanning.application.command.handler.*;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;

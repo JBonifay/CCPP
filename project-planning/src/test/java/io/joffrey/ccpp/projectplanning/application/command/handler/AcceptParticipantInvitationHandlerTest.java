@@ -4,7 +4,7 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
-import io.joffrey.ccpp.projectplanning.application.command.AcceptParticipantInvitationCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.AcceptParticipantInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;

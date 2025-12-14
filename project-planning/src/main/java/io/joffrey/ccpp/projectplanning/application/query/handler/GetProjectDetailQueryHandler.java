@@ -5,7 +5,7 @@ import io.joffrey.ccpp.projectplanning.application.query.exception.ProjectNotFou
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 
-public class GetProjectDetailQueryHandler {
+public class GetProjectDetailQueryHandler implements QueryHandler<GetProjectDetailQuery, ProjectDetailDTO> {
 
     private final ProjectDetailReadRepository repository;
 

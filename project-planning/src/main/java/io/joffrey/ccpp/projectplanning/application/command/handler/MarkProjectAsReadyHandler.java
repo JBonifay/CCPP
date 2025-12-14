@@ -2,7 +2,7 @@ package io.joffrey.ccpp.projectplanning.application.command.handler;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventStore;
-import io.joffrey.ccpp.projectplanning.application.command.MarkProjectAsReadyCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.MarkProjectAsReadyCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;

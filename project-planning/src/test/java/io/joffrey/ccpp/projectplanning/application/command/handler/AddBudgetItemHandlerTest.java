@@ -6,7 +6,7 @@ import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.command.AddBudgetItemCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectBudgetCapExceeded;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;

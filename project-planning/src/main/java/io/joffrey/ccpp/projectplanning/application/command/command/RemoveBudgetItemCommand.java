@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.application.command;
+package io.joffrey.ccpp.projectplanning.application.command.command;
 
 import com.ccpp.shared.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;

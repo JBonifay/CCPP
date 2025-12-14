@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
 import com.ccpp.shared.domain.EventStore;
-import io.joffrey.ccpp.projectplanning.application.command.CreateProjectCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
 public class CreateProjectHandler implements CommandHandler<CreateProjectCommand> {

@@ -1,9 +1,9 @@
-package io.joffrey.ccpp.projectplanning.application.command;
+package io.joffrey.ccpp.projectplanning.application.command.command;
 
 import com.ccpp.shared.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 
-public record AcceptParticipantInvitationCommand(
+public record DeclineParticipantInvitationCommand(
         ProjectId projectId,
         ParticipantId participantId
 ) {

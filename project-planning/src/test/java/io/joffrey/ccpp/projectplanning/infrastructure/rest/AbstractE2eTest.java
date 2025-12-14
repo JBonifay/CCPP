@@ -1,8 +1,16 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest;
 
 import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
+import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockBudgetItemIdGenerator;
+import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockParticipantIdGenerator;
 import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockProjectIdGenerator;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +22,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Import(AbstractE2eTest.AbstractE2eTestConfiguration.class)
@@ -27,6 +37,15 @@ public class AbstractE2eTest {
     protected MockProjectIdGenerator projectIdGenerator;
 
     @Autowired
+    protected MockBudgetItemIdGenerator budgetItemIdGenerator;
+
+    @Autowired
+    protected MockParticipantIdGenerator participantIdGenerator;
+
+    @Autowired
+    CommandBus commandBus;
+
+    @Autowired
     protected ProjectListReadRepository projectListRepository;
 
     @Autowired
@@ -37,6 +56,7 @@ public class AbstractE2eTest {
         RestAssured.port = port;
         RestAssured.basePath = "";
         projectIdGenerator.setMock(new ProjectId(UUID.randomUUID()));
+        budgetItemIdGenerator.setMock(new BudgetItemId(UUID.randomUUID()));
     }
 
     @TestConfiguration
@@ -48,6 +68,30 @@ public class AbstractE2eTest {
             return new MockProjectIdGenerator();
         }
 
+        @Bean
+        @Primary
+        MockBudgetItemIdGenerator testBudgetItemIdGenerator() {
+            return new MockBudgetItemIdGenerator();
+        }
+
+        @Bean
+        @Primary
+        MockParticipantIdGenerator testParticipantIdGenerator() {
+            return new MockParticipantIdGenerator();
+        }
+
+    }
+
+    public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
+        commandBus.execute(new CreateProjectCommand(
+                workspaceId,
+                userId,
+                projectId,
+                "Title",
+                "Description",
+                new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
+                BigDecimal.valueOf(1000)
+        ));
     }
 
 }

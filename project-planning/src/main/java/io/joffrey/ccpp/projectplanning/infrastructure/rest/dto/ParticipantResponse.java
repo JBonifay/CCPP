@@ -14,7 +14,7 @@ public record ParticipantResponse(
                 participantDTO.participantId().value().toString(),
                 participantDTO.name(),
                 participantDTO.email(),
-                participantDTO.invitationStatus()
+                participantDTO.invitationStatus().name()
         );
     }
 

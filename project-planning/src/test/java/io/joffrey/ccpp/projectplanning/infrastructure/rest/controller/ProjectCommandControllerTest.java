@@ -8,6 +8,7 @@ import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
+import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.AbstractE2eTest;
@@ -239,7 +240,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             participantIdGenerator.generate(),
                             "McFly",
                             "mcfly@mcfly.com",
-                            "INVITED"
+                            InvitationStatus.INVITED
                     ));
         }
 
@@ -267,7 +268,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             participantId,
                             "McFly",
                             "mcfly@mcfly.com",
-                            "ACCEPTED"
+                            InvitationStatus.ACCEPTED
                     ));
         }
 
@@ -295,7 +296,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             participantId,
                             "McFly",
                             "mcfly@mcfly.com",
-                            "DECLINED"
+                            InvitationStatus.DECLINED
                     ));
 
         }

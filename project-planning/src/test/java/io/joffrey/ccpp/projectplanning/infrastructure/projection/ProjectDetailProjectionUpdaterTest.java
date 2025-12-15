@@ -11,6 +11,7 @@ import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
+import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
@@ -193,7 +194,7 @@ class ProjectDetailProjectionUpdaterTest {
                         "Description",
                         "PLANNING",
                         List.of(),
-                        List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", "INVITED")),
+                        List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", InvitationStatus.INVITED)),
                         List.of(),
                         timeline
                 )
@@ -218,7 +219,7 @@ class ProjectDetailProjectionUpdaterTest {
                         "Description",
                         "PLANNING",
                         List.of(),
-                        List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", "ACCEPTED")),
+                        List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", InvitationStatus.ACCEPTED)),
                         List.of(),
                         timeline
                 )

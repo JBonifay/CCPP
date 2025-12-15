@@ -9,6 +9,7 @@ import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
+import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 
 import java.util.ArrayList;
 
@@ -167,7 +168,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
                     event.participantId(),
                     event.name(),
                     event.mail(),
-                    "INVITED"
+                    InvitationStatus.INVITED
             ));
 
             var updated = new ProjectDetailDTO(
@@ -189,7 +190,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
                     .map(p -> p.participantId().equals(event.participantId())
-                            ? new ParticipantDTO(p.participantId(), p.name(), p.email(), "ACCEPTED")
+                            ? new ParticipantDTO(p.participantId(), p.name(), p.email(), InvitationStatus.ACCEPTED)
                             : p)
                     .toList();
 
@@ -212,7 +213,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
                     .map(p -> p.participantId().equals(event.participantId())
-                            ? new ParticipantDTO(p.participantId(), p.name(), p.email(), "DECLINED")
+                            ? new ParticipantDTO(p.participantId(), p.name(), p.email(), InvitationStatus.DECLINED)
                             : p)
                     .toList();
 

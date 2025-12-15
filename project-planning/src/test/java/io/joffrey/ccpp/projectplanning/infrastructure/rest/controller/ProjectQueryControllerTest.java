@@ -7,6 +7,7 @@ import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.*;
+import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.AbstractE2eTest;
@@ -102,7 +103,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 "Project description",
                 "READY",
                 List.of(new BudgetItemDTO(new BudgetItemId(UUID.fromString("678fae98-70e0-4fdd-845f-d12753a76aa8")), "A budget item", new Money(BigDecimal.valueOf(10), Currency.getInstance("EUR")))),
-                List.of(new ParticipantDTO(new ParticipantId(UUID.fromString("67dfc6b2-2a7f-4f47-99f1-97f214b5ff97")), "McFly", "mcfly@mcfly.com", "CREATED")),
+                List.of(new ParticipantDTO(new ParticipantId(UUID.fromString("67dfc6b2-2a7f-4f47-99f1-97f214b5ff97")), "McFly", "mcfly@mcfly.com", InvitationStatus.INVITED)),
                 List.of(new NoteDTO("Example of a note", new UserId(userId))),
                 new DateRange(LocalDate.of(2015, 1, 2), LocalDate.of(2015, 1, 31))
         ));
@@ -129,7 +130,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 .body("participants[0].participantId", equalTo("67dfc6b2-2a7f-4f47-99f1-97f214b5ff97"))
                 .body("participants[0].name", equalTo("McFly"))
                 .body("participants[0].email", equalTo("mcfly@mcfly.com"))
-                .body("participants[0].status", equalTo("CREATED"))
+                .body("participants[0].status", equalTo("INVITED"))
                 .body("notes.size()", equalTo(1))
                 .body("notes[0].userId", equalTo(userId.toString()))
                 .body("notes[0].content", equalTo("Example of a note"))

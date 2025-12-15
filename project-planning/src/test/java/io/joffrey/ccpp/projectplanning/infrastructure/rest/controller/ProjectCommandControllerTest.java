@@ -3,6 +3,7 @@ package io.joffrey.ccpp.projectplanning.infrastructure.rest.controller;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
@@ -28,7 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 class ProjectCommandControllerTest extends AbstractE2eTest {
 
     @Test
-    void should_create_project_via_http() {
+    void should_create_project() {
         given()
                 .header("X-Workspace-Id", UUID.randomUUID().toString())
                 .header("X-User-Id", UUID.randomUUID().toString())
@@ -44,7 +45,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .post("/api/projects")
                 .then()
                 .log().all()
-                .statusCode(201)
+                .statusCode(HttpStatus.CREATED.value())
                 .body("projectId", equalTo(projectIdGenerator.getValue()));
     }
 
@@ -65,7 +66,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .when()
                 .post("/api/projects/" + projectId.value() + "/notes")
                 .then()
-                .statusCode(201);
+                .statusCode(HttpStatus.CREATED.value());
 
         assertThat(projectDetailRepository.findById(projectId).get().notes()).containsExactly(
                 new NoteDTO(
@@ -87,10 +88,39 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .when()
                 .post("/api/projects/" + projectId.value() + "/ready")
                 .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.NO_CONTENT.value());
 
         assertThat(projectDetailRepository.findById(projectId).get().status())
                 .isEqualTo("READY");
+    }
+
+    @Test
+    void should_change_project_timeline() {
+        var workspaceId = new WorkspaceId(UUID.randomUUID());
+        var userId = new UserId(UUID.randomUUID());
+        var projectId = new ProjectId(UUID.randomUUID());
+        aProjectExist(workspaceId, userId, projectId);
+
+        given()
+                .header("X-Workspace-Id", workspaceId.value().toString())
+                .header("X-User-Id", userId.value().toString())
+                .contentType(ContentType.JSON)
+                .body(new ChangeProjectTimelineRequest(
+                        LocalDate.of(2025, 1, 2),
+                        LocalDate.of(2025, 1, 25)
+                ))
+                .when()
+                .patch("/api/projects/" + projectId.value() + "/timeline")
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        assertThat(projectDetailRepository.findById(projectId).get().timeline()).isEqualTo(
+                new DateRange(LocalDate.of(2025, 1, 2), LocalDate.of(2025, 1, 25)));
+    }
+
+    @Test
+    void should_update_project_details() {
+
     }
 
     @Nested
@@ -239,6 +269,35 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             "mcfly@mcfly.com",
                             "ACCEPTED"
                     ));
+        }
+
+        @Test
+        void should_decline_participant_invitation() {
+            var workspaceId = new WorkspaceId(UUID.randomUUID());
+            var userId = new UserId(UUID.randomUUID());
+            var projectId = new ProjectId(UUID.randomUUID());
+            var participantId = new ParticipantId(UUID.randomUUID());
+            aProjectExist(workspaceId, userId, projectId);
+            aParticipantIsInvited(projectId, participantId);
+
+            given()
+                    .header("X-Workspace-Id", workspaceId.value().toString())
+                    .header("X-User-Id", userId.value().toString())
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .post("/api/projects/" + projectId.value() + "/participants/" + participantId.value() + "/decline")
+                    .then()
+                    .log().all()
+                    .statusCode(HttpStatus.NO_CONTENT.value());
+
+            assertThat(projectDetailRepository.findById(projectId).get().participants()).containsExactly(
+                    new ParticipantDTO(
+                            participantId,
+                            "McFly",
+                            "mcfly@mcfly.com",
+                            "DECLINED"
+                    ));
+
         }
     }
 

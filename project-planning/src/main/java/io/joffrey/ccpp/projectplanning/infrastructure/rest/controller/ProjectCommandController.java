@@ -53,6 +53,15 @@ public class ProjectCommandController {
         return new ResponseEntity<>(new CreateProjectResponse(projectId.value()), HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{projectId}/timeline")
+    public ResponseEntity<Void> changeProjectTimeline(
+            @PathVariable String projectId,
+            @RequestBody ChangeProjectTimelineRequest changeProjectTimelineRequest
+    ) {
+        commandBus.execute(new ChangeProjectTimelineCommand(new ProjectId(projectId), new DateRange(changeProjectTimelineRequest.startDate(), changeProjectTimelineRequest.endDate())));
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{projectId}/budget-items")
     public ResponseEntity<UUID> addBudgetItem(
             @PathVariable String projectId,
@@ -117,6 +126,15 @@ public class ProjectCommandController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PostMapping("/{projectId}/participants/{participantId}/decline")
+    public ResponseEntity<UUID> participantDeclinedInvitation(
+            @PathVariable String projectId,
+            @PathVariable String participantId
+    ) {
+        commandBus.execute(new DeclineParticipantInvitationCommand(new ProjectId(projectId), new ParticipantId(UUID.fromString(participantId))));
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/{projectId}/notes")
     public ResponseEntity<UUID> addNote(
             @PathVariable String projectId,
@@ -131,7 +149,7 @@ public class ProjectCommandController {
             @PathVariable String projectId
     ) {
         commandBus.execute(new MarkProjectAsReadyCommand(new ProjectId(projectId), RequestContext.getUserId()));
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

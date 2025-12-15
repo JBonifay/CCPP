@@ -23,7 +23,9 @@ public class CommandBusConfiguration {
                 MarkProjectAsReadyCommand.class, new MarkProjectAsReadyHandler(eventStore),
                 RemoveBudgetItemCommand.class, new RemoveBudgetItemHandler(eventStore),
                 UpdateBudgetItemCommand.class, new UpdateBudgetItemHandler(eventStore),
-                AcceptParticipantInvitationCommand.class, new AcceptParticipantInvitationHandler(eventStore)
+                AcceptParticipantInvitationCommand.class, new AcceptParticipantInvitationHandler(eventStore),
+                DeclineParticipantInvitationCommand.class, new DeclineParticipantInvitationHandler(eventStore),
+                ChangeProjectTimelineCommand.class, new ChangeProjectTimelineHandler(eventStore)
         ));
     }
 

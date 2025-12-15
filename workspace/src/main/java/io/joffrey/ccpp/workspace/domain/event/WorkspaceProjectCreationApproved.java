@@ -1,6 +1,8 @@
 package io.joffrey.ccpp.workspace.domain.event;
 
-public record WorkspaceProjectCreationApproved(
+import com.ccpp.shared.identities.WorkspaceId;
 
+public record WorkspaceProjectCreationApproved(
+        WorkspaceId workspaceId
 ) implements WorkspaceDomainEvent {
 }

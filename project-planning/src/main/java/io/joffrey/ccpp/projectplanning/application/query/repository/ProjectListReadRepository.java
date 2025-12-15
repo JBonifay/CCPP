@@ -10,7 +10,6 @@ import java.util.Optional;
 public interface ProjectListReadRepository {
     void save(ProjectListDTO dto);
     void update(ProjectListDTO dto);
-    void deleteById(ProjectId projectId);
 
     Optional<ProjectListDTO> findById(ProjectId projectId);
     List<ProjectListDTO> findByWorkspaceId(WorkspaceId workspaceId);

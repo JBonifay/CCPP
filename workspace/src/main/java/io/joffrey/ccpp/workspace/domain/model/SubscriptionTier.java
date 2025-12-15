@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.workspace.domain.model;
 
-public enum Membership {
+public enum SubscriptionTier {
     FREEMIUM,
     PREMIUM
 }

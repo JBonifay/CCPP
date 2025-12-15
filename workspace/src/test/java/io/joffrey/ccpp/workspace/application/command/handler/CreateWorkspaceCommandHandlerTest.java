@@ -5,7 +5,7 @@ import com.ccpp.shared.repository.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
-import io.joffrey.ccpp.workspace.domain.model.Membership;
+import io.joffrey.ccpp.workspace.domain.model.SubscriptionTier;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -26,7 +26,7 @@ class CreateWorkspaceCommandHandlerTest {
 
         assertThat(eventStore.readStream(workspaceId.value()))
                 .last()
-                .isEqualTo(new WorkspaceCreated(workspaceId, "Creator workspace", Membership.FREEMIUM));
+                .isEqualTo(new WorkspaceCreated(workspaceId, "Creator workspace", SubscriptionTier.FREEMIUM));
     }
 
     @Test

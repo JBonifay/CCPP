@@ -21,7 +21,7 @@ public class UpgradeWorkspaceSubscriptionCommandHandler implements CommandHandle
         List<DomainEvent> workspaceEvents = eventStore.readStream(command.workspaceId().value());
         var workspace = Workspace.fromHistory(workspaceEvents);
 
-        workspace.upgradeMembership();
+        workspace.upgradeSubscriptionTier();
 
         eventStore.append(command.workspaceId().value(), workspace.uncommittedEvents(), workspace.version());
         workspace.markEventsAsCommitted();

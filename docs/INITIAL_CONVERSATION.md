@@ -88,7 +88,7 @@ Options were:
 **Claude**: "Does Workspace have business rules?"
 
 **User's Answer**:
-> "I think workspace will have business rules depending on the membership, like freemium 2 projects, premium unlimited"
+> "I think workspace will have business rules depending on the SubscriptionTier, like freemium 2 projects, premium unlimited"
 
 **Decision**: Workspace is FULL AGGREGATE with business rules:
 - Freemium tier: max 2 projects

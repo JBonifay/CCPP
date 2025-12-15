@@ -2,9 +2,9 @@ package io.joffrey.ccpp.workspace.domain.exception;
 
 import com.ccpp.shared.exception.DomainException;
 
-public class MembershipException extends DomainException {
+public class SubscriptionTierException extends DomainException {
 
-    public MembershipException(String message) {
+    public SubscriptionTierException(String message) {
         super(message);
     }
 

@@ -4,7 +4,7 @@ import com.ccpp.shared.domain.EventStore;
 import com.ccpp.shared.command.CommandBus;
 import io.joffrey.ccpp.projectplanning.application.command.command.*;
 import io.joffrey.ccpp.projectplanning.application.command.handler.*;
-import io.joffrey.ccpp.projectplanning.infrastructure.command.SimpleCommandBus;
+import com.ccpp.shared.command.SimpleCommandBus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

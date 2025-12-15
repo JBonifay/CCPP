@@ -6,7 +6,7 @@ import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.NoteAdded;
-import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
+import com.ccpp.shared.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.Test;

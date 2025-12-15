@@ -7,7 +7,7 @@ import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.AcceptParticipantInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
-import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
+import com.ccpp.shared.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.Test;

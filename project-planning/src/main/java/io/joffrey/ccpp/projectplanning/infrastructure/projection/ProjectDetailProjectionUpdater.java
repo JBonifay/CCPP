@@ -3,6 +3,7 @@ package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventListener;
+import com.ccpp.shared.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;

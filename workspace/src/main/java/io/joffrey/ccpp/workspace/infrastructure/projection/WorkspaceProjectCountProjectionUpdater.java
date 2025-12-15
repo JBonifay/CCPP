@@ -8,7 +8,7 @@ import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceDomainEvent;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
-import io.joffrey.ccpp.workspace.domain.model.Membership;
+import io.joffrey.ccpp.workspace.domain.model.SubscriptionTier;
 
 public class WorkspaceProjectCountProjectionUpdater implements EventListener {
 
@@ -38,7 +38,7 @@ public class WorkspaceProjectCountProjectionUpdater implements EventListener {
         var dto = new WorkspaceProjectCountDTO(
                 workspaceCreated.workspaceId(),
                 0,
-                workspaceCreated.membership()
+                workspaceCreated.subscriptionTier()
         );
         repository.save(dto);
     }
@@ -48,7 +48,7 @@ public class WorkspaceProjectCountProjectionUpdater implements EventListener {
             var dto = new WorkspaceProjectCountDTO(
                     current.workspaceId(),
                     current.projectCount() + 1,
-                    current.membership()
+                    current.subscriptionTier()
             );
             repository.save(dto);
         });
@@ -59,7 +59,7 @@ public class WorkspaceProjectCountProjectionUpdater implements EventListener {
             var dto = new WorkspaceProjectCountDTO(
                     current.workspaceId(),
                     current.projectCount(),
-                    Membership.PREMIUM
+                    SubscriptionTier.PREMIUM
             );
             repository.save(dto);
         });

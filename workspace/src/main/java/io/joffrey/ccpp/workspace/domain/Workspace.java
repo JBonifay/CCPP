@@ -7,15 +7,15 @@ import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import io.joffrey.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
-import io.joffrey.ccpp.workspace.domain.exception.MembershipException;
+import io.joffrey.ccpp.workspace.domain.exception.SubscriptionTierException;
 import io.joffrey.ccpp.workspace.domain.exception.ProjectLimitReachedException;
-import io.joffrey.ccpp.workspace.domain.model.Membership;
+import io.joffrey.ccpp.workspace.domain.model.SubscriptionTier;
 
 import java.util.List;
 
 public class Workspace extends AggregateRoot {
 
-    private Membership currentMembership;
+    private SubscriptionTier currentSubscriptionTier;
     private int actualProjectCount;
 
     public Workspace(List<DomainEvent> workspaceDomainEvents) {
@@ -26,7 +26,7 @@ public class Workspace extends AggregateRoot {
         validateWorkspaceId(workspaceId);
         validateWorkspaceName(workspaceName);
 
-        raiseEvent(new WorkspaceCreated(workspaceId, workspaceName, Membership.FREEMIUM));
+        raiseEvent(new WorkspaceCreated(workspaceId, workspaceName, SubscriptionTier.FREEMIUM));
     }
 
     public static Workspace create(WorkspaceId workspaceId, String workspaceName) {
@@ -47,13 +47,14 @@ public class Workspace extends AggregateRoot {
             throw new InvalidWorkspaceDataException("Workspace name cannot be empty");
     }
 
-    public void upgradeMembership() {
-        if (currentMembership == Membership.PREMIUM) throw new MembershipException("Already premium member");
-        raiseEvent(new WorkspaceSubscriptionUpgraded(new WorkspaceId(aggregateId), Membership.PREMIUM));
+    public void upgradeSubscriptionTier() {
+        if (currentSubscriptionTier == SubscriptionTier.PREMIUM) throw new SubscriptionTierException("Already premium member");
+        raiseEvent(new WorkspaceSubscriptionUpgraded(new WorkspaceId(aggregateId), SubscriptionTier.PREMIUM));
     }
 
     public void approveProjectCreation() {
-        if (currentMembership == Membership.FREEMIUM && actualProjectCount >= 2) throw new ProjectLimitReachedException("Workspace has already reached max projects limit for membership.");
+        if (currentSubscriptionTier == SubscriptionTier.FREEMIUM && actualProjectCount >= 2)
+            throw new ProjectLimitReachedException("Workspace has already reached max projects limit for subscription tier.");
         raiseEvent(new WorkspaceProjectCreationApproved(new WorkspaceId(aggregateId)));
     }
 
@@ -69,11 +70,11 @@ public class Workspace extends AggregateRoot {
 
     private void apply(WorkspaceCreated workspaceCreated) {
         aggregateId = workspaceCreated.workspaceId().value();
-        currentMembership = workspaceCreated.membership();
+        currentSubscriptionTier = workspaceCreated.subscriptionTier();
     }
 
     private void apply(WorkspaceSubscriptionUpgraded workspaceSubscriptionUpgraded) {
-        this.currentMembership = workspaceSubscriptionUpgraded.newMembership();
+        this.currentSubscriptionTier = workspaceSubscriptionUpgraded.newSubscriptionTier();
     }
 
     private void  apply(WorkspaceProjectCreationApproved workspaceProjectCreationApproved) {

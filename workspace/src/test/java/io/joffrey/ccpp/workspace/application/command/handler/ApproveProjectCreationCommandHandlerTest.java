@@ -6,7 +6,7 @@ import io.joffrey.ccpp.workspace.application.command.command.ApproveProjectCreat
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import io.joffrey.ccpp.workspace.domain.exception.ProjectLimitReachedException;
-import io.joffrey.ccpp.workspace.domain.model.Membership;
+import io.joffrey.ccpp.workspace.domain.model.SubscriptionTier;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class ApproveProjectCreationCommandHandlerTest {
 
     @Test
     void should_approve_project_creation_freemium_0_projects() {
-        eventStore.append(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "Workspace name", Membership.FREEMIUM)), -1);
+        eventStore.append(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.FREEMIUM)), -1);
 
         handler.handle(new ApproveProjectCreationCommand(workspaceId));
 
@@ -36,20 +36,20 @@ public class ApproveProjectCreationCommandHandlerTest {
     @Test
     void should_reject_project_creation_fremium_2_projects() {
         eventStore.append(workspaceId.value(), List.of(
-                new WorkspaceCreated(workspaceId, "Workspace name", Membership.FREEMIUM),
+                new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.FREEMIUM),
                 new WorkspaceProjectCreationApproved(workspaceId),
                 new WorkspaceProjectCreationApproved(workspaceId)
         ), -1);
 
         assertThatThrownBy(() -> handler.handle(new ApproveProjectCreationCommand(workspaceId)))
                 .isInstanceOf(ProjectLimitReachedException.class)
-                .hasMessage("Workspace has already reached max projects limit for membership.");
+                .hasMessage("Workspace has already reached max projects limit for subscription tier.");
     }
 
     @Test
     void should_create_infinite_project_premium() {
         eventStore.append(workspaceId.value(), List.of(
-                new WorkspaceCreated(workspaceId, "Workspace name", Membership.PREMIUM),
+                new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.PREMIUM),
                 new WorkspaceProjectCreationApproved(workspaceId),
                 new WorkspaceProjectCreationApproved(workspaceId),
                 new WorkspaceProjectCreationApproved(workspaceId),

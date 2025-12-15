@@ -1166,7 +1166,7 @@ public record ProjectResponse(
 - No independent business rules for budget
 - Consistency boundary is clear
 
-**Alternative considered**: Separate BudgetManagement context
+**Alternative considered**: Separate Workplace context
 **Decision**: Keep inside Project for simplicity and consistency
 
 ---

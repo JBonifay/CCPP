@@ -36,9 +36,5 @@ public class InMemoryProjectListReadRepository implements ProjectListReadReposit
                 .toList();
     }
 
-    @Override
-    public void deleteById(ProjectId projectId) {
-        store.remove(projectId);
-    }
 }
 

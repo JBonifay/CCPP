@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.configuration;
 
 import com.ccpp.shared.domain.EventStore;
-import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
+import com.ccpp.shared.command.CommandBus;
 import io.joffrey.ccpp.projectplanning.application.command.command.*;
 import io.joffrey.ccpp.projectplanning.application.command.handler.*;
 import io.joffrey.ccpp.projectplanning.infrastructure.command.SimpleCommandBus;

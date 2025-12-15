@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.projectplanning.application.query.handler;
+package com.ccpp.shared.query;
 
 public interface QueryHandler<Query, Result> {
     Result handle(Query query);

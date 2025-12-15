@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class ChangeProjectTimelineHandler implements CommandHandler<ChangeProjectTimelineCommand> {
+public class ChangeProjectTimelineHandler implements com.ccpp.shared.command.CommandHandler<ChangeProjectTimelineCommand> {
 
     private final EventStore eventStore;
 

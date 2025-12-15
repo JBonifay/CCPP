@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class AcceptParticipantInvitationHandler implements CommandHandler<AcceptParticipantInvitationCommand> {
+public class AcceptParticipantInvitationHandler implements com.ccpp.shared.command.CommandHandler<AcceptParticipantInvitationCommand> {
 
     private final EventStore eventStore;
 

@@ -6,7 +6,7 @@ import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListR
 
 import java.util.List;
 
-public class GetProjectListQueryHandler implements QueryHandler<GetProjectListQuery, List<ProjectListDTO>> {
+public class GetProjectListQueryHandler implements com.ccpp.shared.query.QueryHandler<GetProjectListQuery, List<ProjectListDTO>> {
 
     private final ProjectListReadRepository repository;
 

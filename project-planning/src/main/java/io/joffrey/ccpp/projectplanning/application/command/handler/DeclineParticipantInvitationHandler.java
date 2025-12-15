@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class DeclineParticipantInvitationHandler implements CommandHandler<DeclineParticipantInvitationCommand> {
+public class DeclineParticipantInvitationHandler implements com.ccpp.shared.command.CommandHandler<DeclineParticipantInvitationCommand> {
 
     private final EventStore eventStore;
 

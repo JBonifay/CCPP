@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class RemoveBudgetItemHandler implements CommandHandler<RemoveBudgetItemCommand> {
+public class RemoveBudgetItemHandler implements com.ccpp.shared.command.CommandHandler<RemoveBudgetItemCommand> {
 
     private final EventStore eventStore;
 

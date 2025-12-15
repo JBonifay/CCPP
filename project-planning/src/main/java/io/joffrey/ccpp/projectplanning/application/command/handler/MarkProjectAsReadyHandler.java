@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class MarkProjectAsReadyHandler implements CommandHandler<MarkProjectAsReadyCommand> {
+public class MarkProjectAsReadyHandler implements com.ccpp.shared.command.CommandHandler<MarkProjectAsReadyCommand> {
 
     private final EventStore eventStore;
 

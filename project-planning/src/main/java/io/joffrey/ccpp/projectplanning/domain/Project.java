@@ -2,6 +2,7 @@ package io.joffrey.ccpp.projectplanning.domain;
 
 import com.ccpp.shared.domain.AggregateRoot;
 import com.ccpp.shared.domain.DomainEvent;
+import com.ccpp.shared.domain.event.ProjectCreated;
 import com.ccpp.shared.exception.CurrencyException;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
@@ -170,6 +171,10 @@ public class Project extends AggregateRoot {
         raiseEvent(new ProjectMarkedAsReady(new ProjectId(aggregateId), workspaceId, userId));
     }
 
+    public void cancel(String reason) {
+        raiseEvent(new ProjectCreationCancelled(new ProjectId(aggregateId), reason));
+    }
+
     private void verifyProjectIsModifiable() {
         if (projectStatus == ProjectStatus.READY)
             throw new CannotModifyReadyProjectException("Cannot modify project in READY status");
@@ -185,6 +190,7 @@ public class Project extends AggregateRoot {
     protected void apply(DomainEvent event) {
         switch (event) {
             case ProjectCreated projectCreated -> apply(projectCreated);
+            case ProjectCreationCancelled projectCreationCancelled -> apply(projectCreationCancelled);
             case ProjectDetailsUpdated projectDetailsUpdated -> apply(projectDetailsUpdated);
             case ProjectMarkedAsReady projectMarkedAsReady -> apply(projectMarkedAsReady);
             case ProjectTimelineChanged projectTimelineChanged -> apply(projectTimelineChanged);
@@ -207,6 +213,8 @@ public class Project extends AggregateRoot {
         budgetItems = new HashMap<>();
         budgetLimit = projectCreated.projectBudgetLimit();
     }
+
+    private void apply(ProjectCreationCancelled projectCreationCancelled) {}
 
     private void apply(ProjectDetailsUpdated projectDetailsUpdated) {}
 

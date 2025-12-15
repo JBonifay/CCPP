@@ -1,5 +1,6 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
+import com.ccpp.shared.domain.event.ProjectCreated;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;

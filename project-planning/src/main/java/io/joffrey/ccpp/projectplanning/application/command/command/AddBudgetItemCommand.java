@@ -1,5 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.command.command;
 
+import com.ccpp.shared.command.Command;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
@@ -9,5 +10,5 @@ public record AddBudgetItemCommand(
         BudgetItemId budgetItemId,
         String description,
         Money amount
-) {
+) implements Command {
 }

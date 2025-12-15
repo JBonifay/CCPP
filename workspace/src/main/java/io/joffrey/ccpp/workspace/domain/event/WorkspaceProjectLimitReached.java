@@ -1,6 +1,8 @@
 package io.joffrey.ccpp.workspace.domain.event;
 
-public record WorkspaceProjectLimitReached(
+import com.ccpp.shared.identities.WorkspaceId;
 
+public record WorkspaceProjectLimitReached(
+        WorkspaceId workspaceId
 ) implements WorkspaceDomainEvent {
 }

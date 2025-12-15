@@ -15,6 +15,7 @@ import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectDetai
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectListQueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.projection.ProjectDetailProjectionUpdater;
@@ -197,7 +198,7 @@ class CQRSIntegrationTest {
                 .satisfies(p -> {
                     assertThat(p.name()).isEqualTo("John Doe");
                     assertThat(p.email()).isEqualTo("john@example.com");
-                    assertThat(p.invitationStatus()).isEqualTo("INVITED");
+                    assertThat(p.invitationStatus()).isEqualTo(InvitationStatus.INVITED);
                 });
     }
 

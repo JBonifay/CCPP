@@ -1,15 +1,18 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
 import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.event.EventPublisher;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
 public class CreateProjectHandler implements com.ccpp.shared.command.CommandHandler<CreateProjectCommand> {
 
     private final EventStore eventStore;
+    private final EventPublisher eventPublisher;
 
-    public CreateProjectHandler(EventStore eventStore) {
+    public CreateProjectHandler(EventStore eventStore, EventPublisher eventPublisher) {
         this.eventStore = eventStore;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -24,7 +27,11 @@ public class CreateProjectHandler implements com.ccpp.shared.command.CommandHand
                 command.budgetLimit()
         );
 
-        eventStore.append(command.projectId().value(), project.uncommittedEvents(), project.version());
+        var events = project.uncommittedEvents();
+        eventStore.append(command.projectId().value(), events, project.version());
         project.markEventsAsCommitted();
+
+        // Publish events to other bounded contexts (sagas, projections, etc.)
+        events.forEach(eventPublisher::publish);
     }
 }

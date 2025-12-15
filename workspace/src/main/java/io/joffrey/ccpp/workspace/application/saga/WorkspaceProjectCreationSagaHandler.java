@@ -8,9 +8,12 @@ import io.joffrey.ccpp.workspace.application.command.command.ApproveProjectCreat
 import io.joffrey.ccpp.workspace.application.command.command.RejectProjectCreationCommand;
 import io.joffrey.ccpp.workspace.domain.Workspace;
 import io.joffrey.ccpp.workspace.domain.exception.ProjectLimitReachedException;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class WorkspaceProjectCreationSagaHandler {
 
     private final EventStore eventStore;
@@ -21,6 +24,7 @@ public class WorkspaceProjectCreationSagaHandler {
         this.commandBus = commandBus;
     }
 
+    @EventListener
     public void onProjectCreated(ProjectCreated event) {
         List<DomainEvent> workspaceEvents = eventStore.readStream(event.workspaceId().value());
         Workspace workspace = Workspace.fromHistory(workspaceEvents);

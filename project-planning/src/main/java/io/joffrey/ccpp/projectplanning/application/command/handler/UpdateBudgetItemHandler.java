@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class UpdateBudgetItemHandler implements CommandHandler<UpdateBudgetItemCommand> {
+public class UpdateBudgetItemHandler implements com.ccpp.shared.command.CommandHandler<UpdateBudgetItemCommand> {
 
     private final EventStore eventStore;
 

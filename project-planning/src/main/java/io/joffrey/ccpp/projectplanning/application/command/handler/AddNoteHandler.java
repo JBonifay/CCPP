@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class AddNoteHandler implements CommandHandler<AddNoteCommand> {
+public class AddNoteHandler implements com.ccpp.shared.command.CommandHandler<AddNoteCommand> {
 
     private final EventStore eventStore;
 

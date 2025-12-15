@@ -7,7 +7,7 @@ import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class UpdateProjectDetailsHandler implements CommandHandler<UpdateProjectDetailsCommand> {
+public class UpdateProjectDetailsHandler implements com.ccpp.shared.command.CommandHandler<UpdateProjectDetailsCommand> {
 
     private final EventStore eventStore;
 

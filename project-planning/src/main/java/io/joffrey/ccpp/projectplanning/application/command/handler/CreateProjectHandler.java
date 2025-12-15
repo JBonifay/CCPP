@@ -4,7 +4,7 @@ import com.ccpp.shared.domain.EventStore;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
-public class CreateProjectHandler implements CommandHandler<CreateProjectCommand> {
+public class CreateProjectHandler implements com.ccpp.shared.command.CommandHandler<CreateProjectCommand> {
 
     private final EventStore eventStore;
 
@@ -24,8 +24,7 @@ public class CreateProjectHandler implements CommandHandler<CreateProjectCommand
                 command.budgetLimit()
         );
 
-        var events = project.uncommittedEvents();
-        eventStore.append(command.projectId().value(), events, -1);
+        eventStore.append(command.projectId().value(), project.uncommittedEvents(), project.version());
         project.markEventsAsCommitted();
     }
 }

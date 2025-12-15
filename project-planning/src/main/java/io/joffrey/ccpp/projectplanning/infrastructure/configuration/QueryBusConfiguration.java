@@ -2,7 +2,7 @@ package io.joffrey.ccpp.projectplanning.infrastructure.configuration;
 
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
-import io.joffrey.ccpp.projectplanning.application.query.QueryBus;
+import com.ccpp.shared.query.QueryBus;
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectDetailQueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectListQueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;

@@ -1,4 +1,4 @@
-package io.joffrey.ccpp.budgetmanagement;
+package io.joffrey.ccpp.workspace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

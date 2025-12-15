@@ -5,7 +5,7 @@ import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
+import com.ccpp.shared.command.CommandBus;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;

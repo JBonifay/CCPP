@@ -17,7 +17,7 @@ public abstract class AggregateRoot {
         uncommittedEvents.add(event);
     }
 
-    public void loadFromHistory(List<DomainEvent> history) {
+    public void loadFromHistory(List<? extends DomainEvent> history) {
         for (DomainEvent event : history) {
             apply(event);
             version++;

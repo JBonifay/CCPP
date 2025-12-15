@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.command;
 
-import io.joffrey.ccpp.projectplanning.application.command.CommandBus;
-import io.joffrey.ccpp.projectplanning.application.command.handler.CommandHandler;
+import com.ccpp.shared.command.CommandBus;
+import com.ccpp.shared.command.CommandHandler;
 
 import java.util.Map;
 

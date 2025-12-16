@@ -1,16 +1,19 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest;
 
+import com.ccpp.shared.command.CommandBus;
+import com.ccpp.shared.domain.EventStore;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import com.ccpp.shared.command.CommandBus;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
+import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.spi.MockBudgetItemIdGenerator;
@@ -29,6 +32,7 @@ import org.springframework.context.annotation.Primary;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Currency;
+import java.util.List;
 import java.util.UUID;
 
 @Import(AbstractE2eTest.AbstractE2eTestConfiguration.class)
@@ -49,6 +53,9 @@ public class AbstractE2eTest {
 
     @Autowired
     CommandBus commandBus;
+
+    @Autowired
+    EventStore eventStore;
 
     @Autowired
     protected ProjectListReadRepository projectListRepository;
@@ -88,14 +95,24 @@ public class AbstractE2eTest {
     }
 
     public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
-        commandBus.execute(new CreateProjectCommand(
+        eventStore.append(projectId.value(), List.of(
+                new ProjectCreated(projectId,
+                        workspaceId,
+                        userId,
+                        "Title",
+                        "Description",
+                        new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
+                        BigDecimal.valueOf(1000))
+        ), -1);
+        projectDetailRepository.save(new ProjectDetailDTO(projectId,
                 workspaceId,
-                userId,
-                projectId,
                 "Title",
                 "Description",
-                new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
-                BigDecimal.valueOf(1000)
+                ProjectStatus.READY,
+                List.of(),
+                List.of(),
+                List.of(),
+                new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2))
         ));
     }
 

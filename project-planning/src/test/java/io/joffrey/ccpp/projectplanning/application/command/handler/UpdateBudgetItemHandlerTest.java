@@ -8,7 +8,7 @@ import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.UpdateBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import io.joffrey.ccpp.projectplanning.domain.event.BudgetItemUpdated;
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;

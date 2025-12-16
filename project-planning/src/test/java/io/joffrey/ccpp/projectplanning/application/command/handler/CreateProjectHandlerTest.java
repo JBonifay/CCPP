@@ -1,6 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
+import com.ccpp.shared.event.SpyEventPublisher;
 import com.ccpp.shared.exception.DateRangeException;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
@@ -20,8 +21,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateProjectHandlerTest {
 
+    SpyEventPublisher eventPublisher = new SpyEventPublisher();
     InMemoryEventStore eventStore = new InMemoryEventStore();
-    CreateProjectHandler handler = new CreateProjectHandler(eventStore, null);
+    CreateProjectHandler handler = new CreateProjectHandler(eventStore, eventPublisher);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());

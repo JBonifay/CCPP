@@ -24,7 +24,7 @@ public record ProjectDetailResponse(
                 projectDetailDTO.workspaceId().value().toString(),
                 projectDetailDTO.title(),
                 projectDetailDTO.description(),
-                projectDetailDTO.status(),
+                projectDetailDTO.status().name(),
                 projectDetailDTO.budgetItems().stream().map(BudgetItemResponse::from).toList(),
                 projectDetailDTO.participants().stream().map(ParticipantResponse::from).toList(),
                 projectDetailDTO.notes().stream().map(NoteResponse::from).toList(),

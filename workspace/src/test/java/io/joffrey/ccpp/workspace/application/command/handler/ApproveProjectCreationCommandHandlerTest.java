@@ -1,5 +1,6 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
+import com.ccpp.shared.event.SpyEventPublisher;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
@@ -17,8 +18,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ApproveProjectCreationCommandHandlerTest {
 
+    SpyEventPublisher eventPublisher = new SpyEventPublisher();
     InMemoryEventStore eventStore = new InMemoryEventStore();
-    ApproveProjectCreationCommandHandler handler = new ApproveProjectCreationCommandHandler(eventStore);
+    ApproveProjectCreationCommandHandler handler = new ApproveProjectCreationCommandHandler(eventStore, eventPublisher);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
 

@@ -5,7 +5,7 @@ import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.MarkProjectAsReadyCommand;
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.BeforeEach;

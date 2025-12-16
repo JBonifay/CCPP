@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
@@ -9,6 +9,7 @@ import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
@@ -50,8 +51,8 @@ class ProjectListProjectionUpdaterTest {
                         projectId,
                         workspaceId,
                         "New Project",
-                        "PLANNING",
-                        BigDecimal.ZERO,
+                        ProjectStatus.PLANNING,
+                        BigDecimal.valueOf(1000),
                         0
                 ));
     }
@@ -155,7 +156,7 @@ class ProjectListProjectionUpdaterTest {
 
         // THEN
         var projection = repository.findById(projectId);
-        assertThat(projection.get().status()).isEqualTo("READY");
+        assertThat(projection.get().status()).isEqualTo(ProjectStatus.READY);
     }
 
     private void givenProjectCreated() {

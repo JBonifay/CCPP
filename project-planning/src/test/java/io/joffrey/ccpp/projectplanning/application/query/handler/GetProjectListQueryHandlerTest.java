@@ -1,19 +1,18 @@
 package io.joffrey.ccpp.projectplanning.application.query.handler;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.WorkspaceId;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class GetProjectListQueryHandlerTest {
 
@@ -51,7 +50,7 @@ class GetProjectListQueryHandlerTest {
     }
 
     public ProjectListDTO projectListDTOExists(WorkspaceId workspaceId) {
-        ProjectListDTO projectListDTO = new ProjectListDTO(new ProjectId(UUID.randomUUID()), workspaceId, "Project", "PLANNING", BigDecimal.ZERO, 0);
+        ProjectListDTO projectListDTO = new ProjectListDTO(new ProjectId(UUID.randomUUID()), workspaceId, "Project", ProjectStatus.PLANNING, BigDecimal.ZERO, 0);
         repository.save(projectListDTO);
         return projectListDTO;
     }

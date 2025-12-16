@@ -2,12 +2,13 @@ package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventListener;
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
 import java.math.BigDecimal;
@@ -44,15 +45,14 @@ public class ProjectListProjectionUpdater implements EventListener {
     }
 
     private void handleProjectCreated(ProjectCreated event) {
-        // Initialize empty budget items map for this project
         projectBudgetItems.put(event.projectId(), new ConcurrentHashMap<>());
 
         var dto = new ProjectListDTO(
                 event.projectId(),
                 event.workspaceId(),
                 event.title(),
-                "PLANNING",
-                BigDecimal.ZERO,
+                ProjectStatus.PLANNING,
+                event.projectBudgetLimit(),
                 0
         );
         repository.save(dto);
@@ -133,7 +133,7 @@ public class ProjectListProjectionUpdater implements EventListener {
                     current.projectId(),
                     current.workspaceId(),
                     current.title(),
-                    "READY",
+                    ProjectStatus.READY,
                     current.totalBudget(),
                     current.participantCount()
             );

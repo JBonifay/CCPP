@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
@@ -13,6 +13,7 @@ import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
@@ -55,7 +56,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "New Project",
                         "Project Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(),
                         List.of(),
@@ -80,7 +81,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Updated Title",
                         "Updated Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(),
                         List.of(),
@@ -109,7 +110,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(new BudgetItemDTO(budgetItemId, "Hotel", Money.of(300, "USD"))),
                         List.of(),
                         List.of(),
@@ -139,7 +140,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(new BudgetItemDTO(budgetItemId, "Hotel (updated)", Money.of(450, "USD"))),
                         List.of(),
                         List.of(),
@@ -164,7 +165,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(),
                         List.of(),
@@ -193,7 +194,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", InvitationStatus.INVITED)),
                         List.of(),
@@ -218,7 +219,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(new ParticipantDTO(participantId, "John Doe", "john@example.com", InvitationStatus.ACCEPTED)),
                         List.of(),
@@ -241,7 +242,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(),
                         List.of(new NoteDTO("Important note", userId)),
@@ -265,7 +266,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "PLANNING",
+                        ProjectStatus.PLANNING,
                         List.of(),
                         List.of(),
                         List.of(),
@@ -288,7 +289,7 @@ class ProjectDetailProjectionUpdaterTest {
                         workspaceId,
                         "Test Project",
                         "Description",
-                        "READY",
+                        ProjectStatus.READY,
                         List.of(),
                         List.of(),
                         List.of(),

@@ -7,6 +7,7 @@ import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.exception.ProjectNotFoundException;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +58,7 @@ class GetProjectDetailQueryHandlerTest {
                 workspaceId,
                 title,
                 "Description",
-                "PLANNING",
+                ProjectStatus.PLANNING,
                 List.of(),
                 List.of(),
                 List.of(),

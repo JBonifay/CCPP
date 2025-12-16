@@ -31,7 +31,6 @@ public class CreateProjectHandler implements com.ccpp.shared.command.CommandHand
         eventStore.append(command.projectId().value(), events, project.version());
         project.markEventsAsCommitted();
 
-        // Publish events to other bounded contexts (sagas, projections, etc.)
         events.forEach(eventPublisher::publish);
     }
 }

@@ -30,7 +30,6 @@ public class ApproveProjectCreationCommandHandler implements CommandHandler<Appr
         eventStore.append(approveProjectCreationCommand.workspaceId().value(), events, workspace.version());
         workspace.markEventsAsCommitted();
 
-        // Publish events to other bounded contexts
         events.forEach(eventPublisher::publish);
     }
 

@@ -1,13 +1,13 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.event.SpyEventPublisher;
-import com.ccpp.shared.exception.DateRangeException;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.repository.InMemoryEventStore;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.infrastructure.event.SpyEventBus;
+import com.ccpp.shared.domain.exception.DateRangeException;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.domain.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateProjectHandlerTest {
 
-    SpyEventPublisher eventPublisher = new SpyEventPublisher();
+    SpyEventBus eventPublisher = new SpyEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore();
     CreateProjectHandler handler = new CreateProjectHandler(eventStore, eventPublisher);
 
@@ -47,7 +47,7 @@ class CreateProjectHandlerTest {
 
         handler.handle(command);
 
-        assertThat(eventStore.readStream(projectId.value())).containsExactly(
+        assertThat(eventStore.loadEvents(projectId.value())).containsExactly(
                         new ProjectCreated(
                                 projectId,
                                 workspaceId,

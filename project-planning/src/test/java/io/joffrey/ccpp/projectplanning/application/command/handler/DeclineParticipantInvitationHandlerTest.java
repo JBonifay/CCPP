@@ -1,15 +1,15 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.DeclineParticipantInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantDeclinedInvitation;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -35,7 +35,7 @@ class DeclineParticipantInvitationHandlerTest {
 
     @Test
     void should_decline_participant_invitation() {
-        eventStore.append(
+        eventStore.saveEvents(
                 projectId.value(),
                 List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
@@ -43,7 +43,7 @@ class DeclineParticipantInvitationHandlerTest {
 
         handler.handle(new DeclineParticipantInvitationCommand(projectId, participantId));
 
-        assertThat(eventStore.readStream(projectId.value()))
+        assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
                 .isEqualTo(new ParticipantDeclinedInvitation(projectId, participantId));
     }

@@ -1,8 +1,8 @@
 package io.joffrey.ccpp.projectplanning.application.query.model;
 
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 
 import java.util.List;

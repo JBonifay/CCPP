@@ -1,8 +1,8 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.event.SpyEventPublisher;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.infrastructure.event.SpyEventBus;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ApproveProjectCreationCommandHandlerTest {
 
-    SpyEventPublisher eventPublisher = new SpyEventPublisher();
+    SpyEventBus eventPublisher = new SpyEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore();
     ApproveProjectCreationCommandHandler handler = new ApproveProjectCreationCommandHandler(eventStore, eventPublisher);
 
@@ -26,18 +26,18 @@ public class ApproveProjectCreationCommandHandlerTest {
 
     @Test
     void should_approve_project_creation_freemium_0_projects() {
-        eventStore.append(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.FREEMIUM)), -1);
+        eventStore.saveEvents(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.FREEMIUM)), -1);
 
         handler.handle(new ApproveProjectCreationCommand(workspaceId));
 
-        assertThat(eventStore.readStream(workspaceId.value()))
+        assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()
                 .isEqualTo(new WorkspaceProjectCreationApproved(workspaceId));
     }
 
     @Test
     void should_reject_project_creation_fremium_2_projects() {
-        eventStore.append(workspaceId.value(), List.of(
+        eventStore.saveEvents(workspaceId.value(), List.of(
                 new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.FREEMIUM),
                 new WorkspaceProjectCreationApproved(workspaceId),
                 new WorkspaceProjectCreationApproved(workspaceId)
@@ -50,7 +50,7 @@ public class ApproveProjectCreationCommandHandlerTest {
 
     @Test
     void should_create_infinite_project_premium() {
-        eventStore.append(workspaceId.value(), List.of(
+        eventStore.saveEvents(workspaceId.value(), List.of(
                 new WorkspaceCreated(workspaceId, "Workspace name", SubscriptionTier.PREMIUM),
                 new WorkspaceProjectCreationApproved(workspaceId),
                 new WorkspaceProjectCreationApproved(workspaceId),
@@ -66,7 +66,7 @@ public class ApproveProjectCreationCommandHandlerTest {
 
         handler.handle(new ApproveProjectCreationCommand(workspaceId));
 
-        assertThat(eventStore.readStream(workspaceId.value()))
+        assertThat(eventStore.loadEvents(workspaceId.value()))
                 .hasSize(12)
                 .last()
                 .isEqualTo(new WorkspaceProjectCreationApproved(workspaceId));

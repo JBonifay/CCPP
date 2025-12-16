@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.workspace.infrastructure.projection;
 
-import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
 import io.joffrey.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import io.joffrey.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
@@ -25,7 +25,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_create_projection_on_workspace_created() {
         var event = new WorkspaceCreated(workspaceId, "My Workspace", SubscriptionTier.FREEMIUM);
 
-        updater.onEvent(event);
+        updater.handle(event);
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(
@@ -40,7 +40,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_increment_project_count_on_approval() {
         repository.save(new WorkspaceProjectCountDTO(workspaceId, 0, SubscriptionTier.FREEMIUM));
 
-        updater.onEvent(new WorkspaceProjectCreationApproved(workspaceId));
+        updater.handle(new WorkspaceProjectCreationApproved(workspaceId));
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(
@@ -56,7 +56,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_update_tier_on_subscription_upgrade() {
         repository.save(new WorkspaceProjectCountDTO(workspaceId, 2, SubscriptionTier.FREEMIUM));
 
-        updater.onEvent(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
+        updater.handle(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(

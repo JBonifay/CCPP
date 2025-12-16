@@ -1,16 +1,15 @@
 package io.joffrey.ccpp.workspace.infrastructure.projection;
 
-import com.ccpp.shared.domain.DomainEvent;
-import com.ccpp.shared.domain.EventListener;
+import com.ccpp.shared.infrastructure.event.DomainEvent;
+import com.ccpp.shared.infrastructure.event.EventHandler;
 import io.joffrey.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import io.joffrey.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
-import io.joffrey.ccpp.workspace.domain.event.WorkspaceDomainEvent;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import io.joffrey.ccpp.workspace.domain.model.SubscriptionTier;
 
-public class WorkspaceProjectCountProjectionUpdater implements EventListener {
+public class WorkspaceProjectCountProjectionUpdater implements EventHandler {
 
     private final WorkspaceProjectCountReadRepository repository;
 
@@ -19,12 +18,7 @@ public class WorkspaceProjectCountProjectionUpdater implements EventListener {
     }
 
     @Override
-    public boolean canHandle(DomainEvent event) {
-        return event instanceof WorkspaceDomainEvent;
-    }
-
-    @Override
-    public void onEvent(DomainEvent event) {
+    public void handle(DomainEvent event) {
         switch (event) {
             case WorkspaceCreated workspaceCreated -> handleWorkspaceCreated(workspaceCreated);
             case WorkspaceProjectCreationApproved approved -> handleWorkspaceProjectCreationApproved(approved);

@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
@@ -24,7 +24,7 @@ class CreateWorkspaceCommandHandlerTest {
 
         createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(workspaceId, "Creator workspace"));
 
-        assertThat(eventStore.readStream(workspaceId.value()))
+        assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()
                 .isEqualTo(new WorkspaceCreated(workspaceId, "Creator workspace", SubscriptionTier.FREEMIUM));
     }

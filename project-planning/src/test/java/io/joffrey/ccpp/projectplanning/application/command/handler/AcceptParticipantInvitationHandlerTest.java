@@ -1,15 +1,15 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.AcceptParticipantInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -38,11 +38,11 @@ class AcceptParticipantInvitationHandlerTest {
         var participantId = new ParticipantId(UUID.randomUUID());
         var projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         var participantInvitedEvent = new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly");
-        eventStore.append(projectId.value(), List.of(projectCreatedEvent, participantInvitedEvent), -1);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent, participantInvitedEvent), -1);
 
         handler.handle(new AcceptParticipantInvitationCommand(projectId, participantId));
 
-        assertThat(eventStore.readStream(projectId.value()))
+        assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
                 .isEqualTo(
                         new ParticipantAcceptedInvitation(projectId, participantId)

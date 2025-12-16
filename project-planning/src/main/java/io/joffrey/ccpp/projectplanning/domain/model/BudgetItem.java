@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.domain.model;
 
 import com.ccpp.shared.domain.Entity;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
 import java.math.BigDecimal;

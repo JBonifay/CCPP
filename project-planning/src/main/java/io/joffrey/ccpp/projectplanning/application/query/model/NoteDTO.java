@@ -1,8 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.query.model;
 
-import com.ccpp.shared.identities.UserId;
-
-import java.time.Instant;
+import com.ccpp.shared.domain.identities.UserId;
 
 public record NoteDTO(
         String content,

@@ -1,8 +1,8 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.command.CommandHandler;
-import com.ccpp.shared.domain.DomainEvent;
-import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.infrastructure.command.CommandHandler;
+import com.ccpp.shared.infrastructure.event.DomainEvent;
+import com.ccpp.shared.infrastructure.event.EventStore;
 import io.joffrey.ccpp.workspace.application.command.command.UpgradeWorkspaceSubscriptionCommand;
 import io.joffrey.ccpp.workspace.domain.Workspace;
 
@@ -18,12 +18,12 @@ public class UpgradeWorkspaceSubscriptionCommandHandler implements CommandHandle
 
     @Override
     public void handle(UpgradeWorkspaceSubscriptionCommand command) {
-        List<DomainEvent> workspaceEvents = eventStore.readStream(command.workspaceId().value());
+        List<DomainEvent> workspaceEvents = eventStore.loadEvents(command.workspaceId().value());
         var workspace = Workspace.fromHistory(workspaceEvents);
 
         workspace.upgradeSubscriptionTier();
 
-        eventStore.append(command.workspaceId().value(), workspace.uncommittedEvents(), workspace.version());
+        eventStore.saveEvents(command.workspaceId().value(), workspace.uncommittedEvents(), workspace.version());
         workspace.markEventsAsCommitted();
     }
 

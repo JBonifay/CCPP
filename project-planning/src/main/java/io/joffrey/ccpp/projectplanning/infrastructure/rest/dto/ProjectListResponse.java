@@ -23,7 +23,7 @@ public record ProjectListResponse(
                 projectListDTO.projectId().value().toString(),
                 projectListDTO.workspaceId().value().toString(),
                 projectListDTO.title(),
-                projectListDTO.status(),
+                projectListDTO.status().name(),
                 projectListDTO.totalBudget(),
                 projectListDTO.participantCount()
         );

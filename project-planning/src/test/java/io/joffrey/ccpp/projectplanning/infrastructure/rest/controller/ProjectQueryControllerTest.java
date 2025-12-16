@@ -8,6 +8,7 @@ import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.*;
 import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.AbstractE2eTest;
@@ -56,7 +57,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 new ProjectId(UUID.randomUUID()),
                 workspace1,
                 "Workspace 1 Project",
-                "READY",
+                ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
                 1
         ));
@@ -64,7 +65,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 new ProjectId(UUID.randomUUID()),
                 workspace2,
                 "Workspace 2 Project",
-                "READY",
+                ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
                 1
         ));
@@ -101,7 +102,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 new WorkspaceId(workspaceId),
                 "Project test",
                 "Project description",
-                "READY",
+                ProjectStatus.READY,
                 List.of(new BudgetItemDTO(new BudgetItemId(UUID.fromString("678fae98-70e0-4fdd-845f-d12753a76aa8")), "A budget item", new Money(BigDecimal.valueOf(10), Currency.getInstance("EUR")))),
                 List.of(new ParticipantDTO(new ParticipantId(UUID.fromString("67dfc6b2-2a7f-4f47-99f1-97f214b5ff97")), "McFly", "mcfly@mcfly.com", InvitationStatus.INVITED)),
                 List.of(new NoteDTO("Example of a note", new UserId(userId))),
@@ -143,7 +144,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 projectIdGenerator.generate(),
                 new WorkspaceId(workspaceId),
                 "Project test",
-                "READY",
+                ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
                 1
         ));

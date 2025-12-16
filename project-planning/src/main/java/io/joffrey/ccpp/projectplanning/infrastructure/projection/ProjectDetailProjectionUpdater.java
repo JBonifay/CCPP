@@ -3,7 +3,7 @@ package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
 import com.ccpp.shared.domain.DomainEvent;
 import com.ccpp.shared.domain.EventListener;
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
@@ -11,6 +11,7 @@ import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
                 event.workspaceId(),
                 event.title(),
                 event.description(),
-                "PLANNING",
+                ProjectStatus.PLANNING,
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -263,7 +264,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
                     current.workspaceId(),
                     current.title(),
                     current.description(),
-                    "READY",
+                    ProjectStatus.READY,
                     current.budgetItems(),
                     current.participants(),
                     current.notes(),

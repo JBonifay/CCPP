@@ -9,6 +9,7 @@ import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;
 import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.AbstractE2eTest;
@@ -92,7 +93,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
         assertThat(projectDetailRepository.findById(projectId).get().status())
-                .isEqualTo("READY");
+                .isEqualTo(ProjectStatus.READY);
     }
 
     @Test

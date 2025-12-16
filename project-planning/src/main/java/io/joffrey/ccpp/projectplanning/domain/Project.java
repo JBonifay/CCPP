@@ -2,7 +2,7 @@ package io.joffrey.ccpp.projectplanning.domain;
 
 import com.ccpp.shared.domain.AggregateRoot;
 import com.ccpp.shared.domain.DomainEvent;
-import com.ccpp.shared.domain.event.ProjectCreated;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import com.ccpp.shared.exception.CurrencyException;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;

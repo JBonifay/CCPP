@@ -1,43 +1,59 @@
 package io.joffrey.ccpp.projectplanning.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.event.EventPublisher;
+import com.ccpp.shared.event.SpyEventPublisher;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.repository.InMemoryEventStore;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.command.command.*;
-import io.joffrey.ccpp.projectplanning.application.command.handler.*;
+import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.MarkProjectAsReadyCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.RemoveBudgetItemCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.UpdateBudgetItemCommand;
+import io.joffrey.ccpp.projectplanning.application.command.handler.AddBudgetItemHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.AddNoteHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.CreateProjectHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.InviteParticipantHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.MarkProjectAsReadyHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.RemoveBudgetItemHandler;
+import io.joffrey.ccpp.projectplanning.application.command.handler.UpdateBudgetItemHandler;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectDetailQueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectListQueryHandler;
+import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
+import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.projection.ProjectDetailProjectionUpdater;
 import io.joffrey.ccpp.projectplanning.infrastructure.projection.ProjectListProjectionUpdater;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class CQRSIntegrationTest {
 
+    EventPublisher eventPublisher = new SpyEventPublisher();
     EventStore eventStore = new InMemoryEventStore();
     ProjectListReadRepository listRepository = new InMemoryProjectListReadRepository();
     ProjectDetailReadRepository detailRepository = new InMemoryProjectDetailReadRepository();
 
-    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, null);
+    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, eventPublisher);
     AddBudgetItemHandler addBudgetItemHandler = new AddBudgetItemHandler(eventStore);
     UpdateBudgetItemHandler updateBudgetItemHandler = new UpdateBudgetItemHandler(eventStore);
     RemoveBudgetItemHandler removeBudgetItemHandler = new RemoveBudgetItemHandler(eventStore);
@@ -55,34 +71,33 @@ class CQRSIntegrationTest {
 
     @BeforeEach
     void setUp() {
-
         eventStore.subscribe(new ProjectListProjectionUpdater(listRepository));
         eventStore.subscribe(new ProjectDetailProjectionUpdater(detailRepository));
     }
 
     @Test
     void should_project_created_project_to_both_read_models() {
-        // WHEN - Execute command
-        var command = new CreateProjectCommand(
-                workspaceId,
-                userId,
+        createProjectHandler.handle(new CreateProjectCommand(
+            workspaceId,
+            userId,
+            projectId,
+            "Q1 2025 Video Series",
+            "Educational content about Event Sourcing",
+            timeline,
+            BigDecimal.valueOf(5000)
+        ));
+
+        assertThat(listQueryHandler.handle(new GetProjectListQuery(workspaceId))).containsExactly(
+            new ProjectListDTO(
                 projectId,
+                workspaceId,
                 "Q1 2025 Video Series",
-                "Educational content about Event Sourcing",
-                timeline,
-                BigDecimal.valueOf(5000)
+                ProjectStatus.PLANNING,
+                BigDecimal.valueOf(5000),
+                0
+            )
         );
-        createProjectHandler.handle(command);
 
-        // THEN - List query returns projected data
-        var listQuery = new GetProjectListQuery(workspaceId);
-        var list = listQueryHandler.handle(listQuery);
-
-        assertThat(list).hasSize(1);
-        assertThat(list.get(0).title()).isEqualTo("Q1 2025 Video Series");
-        assertThat(list.get(0).status()).isEqualTo("PLANNING");
-
-        // AND - Detail query returns complete data
         var detailQuery = new GetProjectDetailQuery(projectId, workspaceId);
         var detail = detailQueryHandler.handle(detailQuery);
 
@@ -237,11 +252,11 @@ class CQRSIntegrationTest {
 
         // THEN - List projection shows READY status
         var list = listQueryHandler.handle(new GetProjectListQuery(workspaceId));
-        assertThat(list.get(0).status()).isEqualTo("READY");
+        assertThat(list.get(0).status()).isEqualTo(ProjectStatus.READY);
 
         // AND - Detail projection shows READY status
         var detail = detailQueryHandler.handle(new GetProjectDetailQuery(projectId, workspaceId));
-        assertThat(detail.status()).isEqualTo("READY");
+        assertThat(detail.status()).isEqualTo(ProjectStatus.READY);
     }
 
     @Test

@@ -1,14 +1,14 @@
 package io.joffrey.ccpp.projectplanning.domain;
 
 import com.ccpp.shared.domain.AggregateRoot;
-import com.ccpp.shared.domain.DomainEvent;
+import com.ccpp.shared.infrastructure.event.DomainEvent;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.exception.CurrencyException;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.domain.exception.CurrencyException;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
@@ -173,6 +173,14 @@ public class Project extends AggregateRoot {
 
     public void cancel(String reason) {
         raiseEvent(new ProjectCreationCancelled(new ProjectId(aggregateId), reason));
+    }
+
+    public void activate() {
+
+    }
+
+    public void failCreation(String reason) {
+
     }
 
     private void verifyProjectIsModifiable() {

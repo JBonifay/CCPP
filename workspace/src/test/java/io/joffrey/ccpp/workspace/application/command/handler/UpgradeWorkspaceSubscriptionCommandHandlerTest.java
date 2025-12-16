@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.UpgradeWorkspaceSubscriptionCommand;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
@@ -23,11 +23,11 @@ public class UpgradeWorkspaceSubscriptionCommandHandlerTest {
     @Test
     void should_upgrade_subscribtion() {
         var workspaceId = new WorkspaceId(UUID.randomUUID());
-        eventStore.append(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "WorkspaceName", SubscriptionTier.FREEMIUM)), -1);
+        eventStore.saveEvents(workspaceId.value(), List.of(new WorkspaceCreated(workspaceId, "WorkspaceName", SubscriptionTier.FREEMIUM)), -1);
 
         handler.handle(new UpgradeWorkspaceSubscriptionCommand(workspaceId));
 
-        assertThat(eventStore.readStream(workspaceId.value()))
+        assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()
                 .isEqualTo(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
     }
@@ -35,7 +35,7 @@ public class UpgradeWorkspaceSubscriptionCommandHandlerTest {
     @Test
     void should_fail_if_workspace_is_already_premium() {
         var workspaceId = new WorkspaceId(UUID.randomUUID());
-        eventStore.append(workspaceId.value(), List.of(
+        eventStore.saveEvents(workspaceId.value(), List.of(
                 new WorkspaceCreated(workspaceId, "WorkspaceName", SubscriptionTier.FREEMIUM),
                 new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM)
         ), -1);

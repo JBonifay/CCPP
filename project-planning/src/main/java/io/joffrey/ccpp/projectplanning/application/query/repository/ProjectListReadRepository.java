@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.query.repository;
 
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.context;
 
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
 
 public class RequestContext {
 

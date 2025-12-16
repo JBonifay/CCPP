@@ -1,8 +1,8 @@
 
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
-import com.ccpp.shared.domain.DomainEvent;
-import com.ccpp.shared.domain.EventListener;
+import com.ccpp.shared.infrastructure.event.DomainEvent;
+import com.ccpp.shared.infrastructure.event.EventHandler;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
@@ -15,7 +15,7 @@ import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 
 import java.util.ArrayList;
 
-public class ProjectDetailProjectionUpdater implements EventListener {
+public class ProjectDetailProjectionUpdater implements EventHandler {
 
     private final ProjectDetailReadRepository repository;
 
@@ -24,12 +24,7 @@ public class ProjectDetailProjectionUpdater implements EventListener {
     }
 
     @Override
-    public boolean canHandle(DomainEvent event) {
-        return event instanceof ProjectDomainEvent;
-    }
-
-    @Override
-    public void onEvent(DomainEvent event) {
+    public void handle(DomainEvent event) {
         switch (event) {
             case ProjectCreated e -> handleProjectCreated(e);
             case ProjectDetailsUpdated e -> handleDetailsUpdated(e);

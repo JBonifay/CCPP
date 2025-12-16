@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.command.CommandHandler;
-import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.infrastructure.command.CommandHandler;
+import com.ccpp.shared.infrastructure.event.EventStore;
 import io.joffrey.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import io.joffrey.ccpp.workspace.domain.Workspace;
 
@@ -20,7 +20,7 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
                 createWorkspaceCommand.workspaceName()
         );
 
-        eventStore.append(createWorkspaceCommand.workspaceId().value(), workspace.uncommittedEvents(), workspace.version());
+        eventStore.saveEvents(createWorkspaceCommand.workspaceId().value(), workspace.uncommittedEvents(), workspace.version());
         workspace.markEventsAsCommitted();
     }
 

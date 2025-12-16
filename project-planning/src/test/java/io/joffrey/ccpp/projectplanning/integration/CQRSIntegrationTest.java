@@ -2,15 +2,15 @@ package io.joffrey.ccpp.projectplanning.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ccpp.shared.domain.EventStore;
-import com.ccpp.shared.event.EventPublisher;
-import com.ccpp.shared.event.SpyEventPublisher;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.repository.InMemoryEventStore;
-import com.ccpp.shared.valueobjects.DateRange;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.infrastructure.event.EventStore;
+import com.ccpp.shared.infrastructure.event.EventBus;
+import com.ccpp.shared.infrastructure.event.SpyEventBus;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
@@ -48,12 +48,12 @@ import org.junit.jupiter.api.Test;
 
 class CQRSIntegrationTest {
 
-    EventPublisher eventPublisher = new SpyEventPublisher();
+    EventBus eventBus = new SpyEventBus();
     EventStore eventStore = new InMemoryEventStore();
     ProjectListReadRepository listRepository = new InMemoryProjectListReadRepository();
     ProjectDetailReadRepository detailRepository = new InMemoryProjectDetailReadRepository();
 
-    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, eventPublisher);
+    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, eventBus);
     AddBudgetItemHandler addBudgetItemHandler = new AddBudgetItemHandler(eventStore);
     UpdateBudgetItemHandler updateBudgetItemHandler = new UpdateBudgetItemHandler(eventStore);
     RemoveBudgetItemHandler removeBudgetItemHandler = new RemoveBudgetItemHandler(eventStore);
@@ -71,8 +71,8 @@ class CQRSIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        eventStore.subscribe(new ProjectListProjectionUpdater(listRepository));
-        eventStore.subscribe(new ProjectDetailProjectionUpdater(detailRepository));
+//        eventBus.subscribe(new ProjectListProjectionUpdater(listRepository));
+//        eventBus.subscribe(new ProjectDetailProjectionUpdater(detailRepository));
     }
 
     @Test

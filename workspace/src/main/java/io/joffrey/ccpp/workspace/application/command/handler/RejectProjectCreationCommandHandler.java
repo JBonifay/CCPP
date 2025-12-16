@@ -1,16 +1,16 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.command.CommandHandler;
+import com.ccpp.shared.infrastructure.command.CommandHandler;
 import com.ccpp.shared.domain.event.WorkspaceProjectCreationRejected;
-import com.ccpp.shared.event.EventPublisher;
+import com.ccpp.shared.infrastructure.event.EventBus;
 import io.joffrey.ccpp.workspace.application.command.command.RejectProjectCreationCommand;
 
 public class RejectProjectCreationCommandHandler implements CommandHandler<RejectProjectCreationCommand> {
 
-    private final EventPublisher eventPublisher;
+    private final EventBus eventBus;
 
-    public RejectProjectCreationCommandHandler(EventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
+    public RejectProjectCreationCommandHandler(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -20,6 +20,6 @@ public class RejectProjectCreationCommandHandler implements CommandHandler<Rejec
             command.projectId(),
             command.reason()
         );
-        eventPublisher.publish(rejection);
+        eventBus.publish(rejection);
     }
 }

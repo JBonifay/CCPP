@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.query.exception;
 
-import com.ccpp.shared.exception.DomainException;
-import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.domain.exception.DomainException;
+import com.ccpp.shared.domain.identities.ProjectId;
 
 public class ProjectNotFoundException extends DomainException {
 

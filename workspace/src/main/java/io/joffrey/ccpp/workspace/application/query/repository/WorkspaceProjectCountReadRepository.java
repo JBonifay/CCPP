@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.workspace.application.query.repository;
 
-import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
 import io.joffrey.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 
 import java.util.Optional;

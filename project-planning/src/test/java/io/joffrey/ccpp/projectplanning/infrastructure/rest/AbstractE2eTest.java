@@ -1,13 +1,13 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest;
 
-import com.ccpp.shared.command.CommandBus;
-import com.ccpp.shared.domain.EventStore;
+import com.ccpp.shared.infrastructure.command.CommandBus;
+import com.ccpp.shared.infrastructure.event.EventStore;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
@@ -95,7 +95,7 @@ public class AbstractE2eTest {
     }
 
     public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
-        eventStore.append(projectId.value(), List.of(
+        eventStore.saveEvents(projectId.value(), List.of(
                 new ProjectCreated(projectId,
                         workspaceId,
                         userId,

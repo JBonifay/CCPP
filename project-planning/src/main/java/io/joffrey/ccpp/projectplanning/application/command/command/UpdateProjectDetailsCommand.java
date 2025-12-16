@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.command;
 
-import com.ccpp.shared.command.Command;
-import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.infrastructure.command.Command;
+import com.ccpp.shared.domain.identities.ProjectId;
 
 public record UpdateProjectDetailsCommand(
         ProjectId projectId,

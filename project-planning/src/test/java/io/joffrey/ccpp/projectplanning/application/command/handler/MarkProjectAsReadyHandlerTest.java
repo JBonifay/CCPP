@@ -1,13 +1,13 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.MarkProjectAsReadyCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
-import com.ccpp.shared.repository.InMemoryEventStore;
+import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,11 +47,11 @@ class MarkProjectAsReadyHandlerTest {
 
     @Test
     void should_mark_project_as_ready() {
-        eventStore.append(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
 
         handler.handle(new MarkProjectAsReadyCommand(projectId, userId));
 
-        assertThat(eventStore.readStream(projectId.value()))
+        assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
                 .isEqualTo(
                         new ProjectMarkedAsReady(projectId, workspaceId, userId)
@@ -62,13 +62,13 @@ class MarkProjectAsReadyHandlerTest {
     void should_be_idempotent_when_marking_ready_project_as_ready() {
         var projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
-        eventStore.append(projectId.value(), List.of(projectCreatedEvent, projectMarkedAsReadyEvent), -1);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent, projectMarkedAsReadyEvent), -1);
 
         var command = new MarkProjectAsReadyCommand(projectId, userId);
 
         handler.handle(command);
 
-        assertThat(eventStore.readStream(projectId.value())).containsExactly(
+        assertThat(eventStore.loadEvents(projectId.value())).containsExactly(
                 projectCreatedEvent,
                 projectMarkedAsReadyEvent
         );

@@ -1,9 +1,9 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.controller;
 
-import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.domain.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
-import com.ccpp.shared.query.QueryBus;
+import com.ccpp.shared.infrastructure.query.QueryBus;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.infrastructure.rest.context.RequestContext;

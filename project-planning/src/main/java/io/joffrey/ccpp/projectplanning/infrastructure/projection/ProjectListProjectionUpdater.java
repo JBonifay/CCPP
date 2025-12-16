@@ -1,10 +1,10 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
-import com.ccpp.shared.domain.DomainEvent;
-import com.ccpp.shared.domain.EventListener;
+import com.ccpp.shared.infrastructure.event.DomainEvent;
+import com.ccpp.shared.infrastructure.event.EventHandler;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ProjectListProjectionUpdater implements EventListener {
+public class ProjectListProjectionUpdater implements EventHandler {
 
     private final ProjectListReadRepository repository;
 
@@ -26,12 +26,7 @@ public class ProjectListProjectionUpdater implements EventListener {
     }
 
     @Override
-    public boolean canHandle(DomainEvent event) {
-        return event instanceof ProjectDomainEvent;
-    }
-
-    @Override
-    public void onEvent(DomainEvent event) {
+    public void handle(DomainEvent event) {
         switch (event) {
             case ProjectCreated e -> handleProjectCreated(e);
             case ProjectDetailsUpdated e -> handleDetailsUpdated(e);

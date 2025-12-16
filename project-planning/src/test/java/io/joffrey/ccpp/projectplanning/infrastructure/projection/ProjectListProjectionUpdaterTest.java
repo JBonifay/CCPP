@@ -1,11 +1,11 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.identities.ProjectId;
-import com.ccpp.shared.identities.UserId;
-import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.valueobjects.DateRange;
-import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.domain.identities.UserId;
+import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.domain.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;
@@ -43,7 +43,7 @@ class ProjectListProjectionUpdaterTest {
                 BigDecimal.valueOf(1000)
         );
 
-        updater.onEvent(event);
+        updater.handle(event);
 
         Optional<ProjectListDTO> projection = repository.findById(projectId);
         assertThat(projection.get()).isEqualTo(
@@ -63,7 +63,7 @@ class ProjectListProjectionUpdaterTest {
 
         ProjectDetailsUpdated event = new ProjectDetailsUpdated(projectId, "Updated Title", "Updated Description");
 
-        updater.onEvent(event);
+        updater.handle(event);
 
         assertThat(repository.findById(projectId).get().title()).isEqualTo("Updated Title");
     }
@@ -80,7 +80,7 @@ class ProjectListProjectionUpdaterTest {
         );
 
         // WHEN
-        updater.onEvent(event);
+        updater.handle(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -92,12 +92,12 @@ class ProjectListProjectionUpdaterTest {
     void should_decrement_total_budget_on_budget_item_removed() {
         givenProjectCreated();
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.onEvent(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(500, "USD")));
+        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(500, "USD")));
 
         var event = new BudgetItemRemoved(projectId, budgetItemId);
 
         // WHEN
-        updater.onEvent(event);
+        updater.handle(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -109,7 +109,7 @@ class ProjectListProjectionUpdaterTest {
     void should_update_budget_on_budget_item_updated() {
         givenProjectCreated();
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.onEvent(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
+        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
 
         var event = new BudgetItemUpdated(
                 projectId,
@@ -118,7 +118,7 @@ class ProjectListProjectionUpdaterTest {
                 Money.of(450, "USD")  // Only newAmount - no oldAmount!
         );
 
-        updater.onEvent(event);
+        updater.handle(event);
 
         var projection = repository.findById(projectId);
         assertThat(projection.get().totalBudget())
@@ -138,7 +138,7 @@ class ProjectListProjectionUpdaterTest {
         );
 
         // WHEN
-        updater.onEvent(event);
+        updater.handle(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -152,7 +152,7 @@ class ProjectListProjectionUpdaterTest {
         var event = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         // WHEN
-        updater.onEvent(event);
+        updater.handle(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -160,7 +160,7 @@ class ProjectListProjectionUpdaterTest {
     }
 
     private void givenProjectCreated() {
-        updater.onEvent(new ProjectCreated(
+        updater.handle(new ProjectCreated(
                 projectId,
                 workspaceId,
                 userId,

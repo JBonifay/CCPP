@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.query;
 
-import com.ccpp.shared.query.QueryBus;
-import com.ccpp.shared.query.QueryHandler;
+import com.ccpp.shared.infrastructure.query.QueryBus;
+import com.ccpp.shared.infrastructure.query.QueryHandler;
 
 import java.util.Map;
 

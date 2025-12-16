@@ -37,7 +37,7 @@ class CQRSIntegrationTest {
     ProjectListReadRepository listRepository = new InMemoryProjectListReadRepository();
     ProjectDetailReadRepository detailRepository = new InMemoryProjectDetailReadRepository();
 
-    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore);
+    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, null);
     AddBudgetItemHandler addBudgetItemHandler = new AddBudgetItemHandler(eventStore);
     UpdateBudgetItemHandler updateBudgetItemHandler = new UpdateBudgetItemHandler(eventStore);
     RemoveBudgetItemHandler removeBudgetItemHandler = new RemoveBudgetItemHandler(eventStore);

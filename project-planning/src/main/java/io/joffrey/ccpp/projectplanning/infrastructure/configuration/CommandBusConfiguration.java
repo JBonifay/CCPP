@@ -16,18 +16,18 @@ public class CommandBusConfiguration {
 
     @Bean
     public CommandBus commandBus(EventStore eventStore, EventPublisher eventPublisher) {
-        return new SimpleCommandBus(Map.of(
-                CreateProjectCommand.class, new CreateProjectHandler(eventStore, eventPublisher),
-                AddBudgetItemCommand.class, new AddBudgetItemHandler(eventStore),
-                InviteParticipantCommand.class, new InviteParticipantHandler(eventStore),
-                AddNoteCommand.class, new AddNoteHandler(eventStore),
-                MarkProjectAsReadyCommand.class, new MarkProjectAsReadyHandler(eventStore),
-                RemoveBudgetItemCommand.class, new RemoveBudgetItemHandler(eventStore),
-                UpdateBudgetItemCommand.class, new UpdateBudgetItemHandler(eventStore),
-                AcceptParticipantInvitationCommand.class, new AcceptParticipantInvitationHandler(eventStore),
-                DeclineParticipantInvitationCommand.class, new DeclineParticipantInvitationHandler(eventStore),
-                ChangeProjectTimelineCommand.class, new ChangeProjectTimelineHandler(eventStore),
-                CancelProjectCreationCommand.class, new CancelProjectCreationCommandHandler(eventStore)
+        return new SimpleCommandBus(Map.ofEntries(
+                Map.entry(CreateProjectCommand.class, new CreateProjectHandler(eventStore, eventPublisher)),
+                Map.entry(AddBudgetItemCommand.class, new AddBudgetItemHandler(eventStore)),
+                Map.entry(InviteParticipantCommand.class, new InviteParticipantHandler(eventStore)),
+                Map.entry(AddNoteCommand.class, new AddNoteHandler(eventStore)),
+                Map.entry(MarkProjectAsReadyCommand.class, new MarkProjectAsReadyHandler(eventStore)),
+                Map.entry(RemoveBudgetItemCommand.class, new RemoveBudgetItemHandler(eventStore)),
+                Map.entry(UpdateBudgetItemCommand.class, new UpdateBudgetItemHandler(eventStore)),
+                Map.entry(AcceptParticipantInvitationCommand.class, new AcceptParticipantInvitationHandler(eventStore)),
+                Map.entry(DeclineParticipantInvitationCommand.class, new DeclineParticipantInvitationHandler(eventStore)),
+                Map.entry(ChangeProjectTimelineCommand.class, new ChangeProjectTimelineHandler(eventStore)),
+                Map.entry(CancelProjectCreationCommand.class, new CancelProjectCreationCommandHandler(eventStore))
         ));
     }
 

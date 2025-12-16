@@ -1,14 +1,14 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.domain.event.ProjectCreated;
 import com.ccpp.shared.exception.DateRangeException;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.repository.InMemoryEventStore;
 import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
-import com.ccpp.shared.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
-import com.ccpp.shared.repository.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CreateProjectHandlerTest {
 
     InMemoryEventStore eventStore = new InMemoryEventStore();
-    CreateProjectHandler handler = new CreateProjectHandler(eventStore);
+    CreateProjectHandler handler = new CreateProjectHandler(eventStore, null);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());

@@ -13,11 +13,25 @@ public record UpdateBudgetItemCommand(
         BudgetItemId budgetItemId,
         String description,
         Money newAmount,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 ) implements Command {
+
+    public UpdateBudgetItemCommand(ProjectId projectId, BudgetItemId budgetItemId, String description, Money newAmount, UUID correlationId, UUID causationId) {
+        this(UUID.randomUUID(), projectId, budgetItemId, description, newAmount, correlationId);
+    }
+
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

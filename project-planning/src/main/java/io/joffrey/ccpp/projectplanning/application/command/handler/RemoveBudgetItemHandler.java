@@ -18,12 +18,13 @@ public class RemoveBudgetItemHandler implements CommandHandler<RemoveBudgetItemC
 
     @Override
     public void handle(RemoveBudgetItemCommand command) {
-//        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
-//        Project project = Project.fromHistory(projectEvents);
-//
-//        project.removeBudgetItem(command.budgetItemId());
-//
-//        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), project.version());
-//        project.markEventsAsCommitted();
+        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
+        int initialVersion = project.version();
+
+        project.removeBudgetItem(command.budgetItemId());
+
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
 }

@@ -11,12 +11,26 @@ public record AddNoteCommand(
         ProjectId projectId,
         String content,
         UserId userId,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 )  implements Command {
+
+    public AddNoteCommand( ProjectId projectId, String content, UserId userId, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, content, userId, correlationId);
+    }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
     }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
+    }
+
 }

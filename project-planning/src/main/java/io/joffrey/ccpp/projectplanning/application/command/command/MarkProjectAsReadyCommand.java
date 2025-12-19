@@ -10,12 +10,25 @@ public record MarkProjectAsReadyCommand(
         UUID commandId,
         ProjectId projectId,
         UserId userId,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 )  implements Command {
+
+    public MarkProjectAsReadyCommand(ProjectId projectId, UserId userId, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, userId, correlationId);
+    }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

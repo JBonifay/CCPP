@@ -1,5 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
@@ -9,7 +10,6 @@ import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectTimelineChanged;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
-import com.ccpp.shared.eventstore.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -21,41 +21,53 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ChangeProjectTimelineHandlerTest {
-//
-//    InMemoryEventStore eventStore = new InMemoryEventStore();
-//    ChangeProjectTimelineHandler handler = new ChangeProjectTimelineHandler(eventStore);
-//
-//    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
-//    UserId userId = new UserId(UUID.randomUUID());
-//    ProjectId projectId = new ProjectId(UUID.randomUUID());
-//    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-//    String title = "Q1 Video Series";
-//    String description = "Educational content";
-//    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-//
-//    @Test
-//    void should_change_timeline_when_planning() {
-//        var projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
-//        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null,null);
-//
-//        var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
-//        var command = new ChangeProjectTimelineCommand(projectId, newTimeline);
-//
-//        handler.handle(command);
-//
-//        assertThat(eventStore.loadEvents(projectId.value()))
-//                .last()
-//                .isEqualTo(new ProjectTimelineChanged(projectId, newTimeline));
-//    }
-//
-//    @Test
-//    void should_prevent_changing_timeline_when_ready() {
-//        eventStore.saveEvents(projectId.value(), List.of(
-//                        new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-//                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null,null);
-//
-//        assertThatThrownBy(() -> handler.handle(new ChangeProjectTimelineCommand(projectId, new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30)))))
-//                .isInstanceOf(CannotModifyReadyProjectException.class)
-//                .hasMessageContaining("Cannot modify project in READY status");
-//    }
+
+    InMemoryEventStore eventStore = new InMemoryEventStore();
+    ChangeProjectTimelineHandler handler = new ChangeProjectTimelineHandler(eventStore);
+
+    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    UserId userId = new UserId(UUID.randomUUID());
+    ProjectId projectId = new ProjectId(UUID.randomUUID());
+    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+    String title = "Q1 Video Series";
+    String description = "Educational content";
+    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+
+    UUID commandId = UUID.randomUUID();
+    UUID correlationId = UUID.randomUUID();
+
+    @Test
+    void should_change_timeline_when_planning() {
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+
+        var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
+
+        handler.handle(new ChangeProjectTimelineCommand(
+                commandId,
+                projectId,
+                newTimeline,
+                correlationId
+        ));
+
+        assertThat(eventStore.loadEvents(projectId.value()))
+                .last()
+                .isEqualTo(new ProjectTimelineChanged(projectId, newTimeline));
+    }
+
+    @Test
+    void should_prevent_changing_timeline_when_ready() {
+        eventStore.saveEvents(projectId.value(), List.of(
+                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
+
+        assertThatThrownBy(() -> handler.handle(
+                new ChangeProjectTimelineCommand(
+                        commandId,
+                        projectId,
+                        new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30)),
+                        correlationId
+                )))
+                .isInstanceOf(CannotModifyReadyProjectException.class)
+                .hasMessageContaining("Cannot modify project in READY status");
+    }
 }

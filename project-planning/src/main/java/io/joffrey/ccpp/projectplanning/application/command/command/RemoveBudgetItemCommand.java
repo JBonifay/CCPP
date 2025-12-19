@@ -10,12 +10,25 @@ public record RemoveBudgetItemCommand(
         UUID commandId,
         ProjectId projectId,
         BudgetItemId budgetItemId,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 )  implements Command {
+
+    public RemoveBudgetItemCommand( ProjectId projectId, BudgetItemId budgetItemId, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, budgetItemId, correlationId);
+    }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

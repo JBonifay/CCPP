@@ -80,7 +80,7 @@ public class JpaEventStore implements EventStore {
     }
 
     @Override
-    public List<EventEnvelope> loadEvents(UUID aggregateId) {
+    public List<DomainEvent> loadEvents(UUID aggregateId) {
         return null;
     }
 }

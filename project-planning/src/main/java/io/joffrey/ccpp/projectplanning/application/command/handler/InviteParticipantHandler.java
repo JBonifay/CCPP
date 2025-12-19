@@ -17,13 +17,14 @@ public class InviteParticipantHandler implements CommandHandler<InviteParticipan
     }
 
     @Override
-    public void handle(InviteParticipantCommand inviteParticipantCommand) {
-//        List<DomainEvent> projectEvents = eventStore.loadEvents(inviteParticipantCommand.projectId().value());
-//        Project project = Project.fromHistory(projectEvents);
-//
-//        project.inviteParticipant(inviteParticipantCommand.participantId(), inviteParticipantCommand.email(), inviteParticipantCommand.name());
-//
-//        eventStore.saveEvents(inviteParticipantCommand.projectId().value(), project.uncommittedEvents(), project.version());
-//        project.markEventsAsCommitted();
+    public void handle(InviteParticipantCommand command) {
+        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
+        int initialVersion = project.version();
+
+        project.inviteParticipant(command.participantId(), command.email(), command.name());
+
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
 }

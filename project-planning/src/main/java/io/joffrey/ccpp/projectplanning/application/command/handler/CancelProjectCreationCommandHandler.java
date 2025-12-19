@@ -17,14 +17,15 @@ public class CancelProjectCreationCommandHandler implements CommandHandler<Cance
     }
 
     @Override
-    public void handle(CancelProjectCreationCommand cancelProjectCreationCommand) {
-//        List<DomainEvent> projectEvents = eventStore.loadEvents(cancelProjectCreationCommand.projectId().value());
-//        Project project = Project.fromHistory(projectEvents);
-//
-//        project.cancel(cancelProjectCreationCommand.reason());
-//
-//        eventStore.saveEvents(cancelProjectCreationCommand.projectId().value(), project.uncommittedEvents(), project.version());
-//        project.markEventsAsCommitted();
+    public void handle(CancelProjectCreationCommand command) {
+        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
+        int initialVersion = project.version();
+
+        project.cancel(command.reason());
+
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
 
 }

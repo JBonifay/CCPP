@@ -26,6 +26,10 @@ public abstract class AggregateRoot {
         }
     }
 
+    public UUID aggregateId() {
+        return aggregateId;
+    }
+
     public int version() {
         return version;
     }

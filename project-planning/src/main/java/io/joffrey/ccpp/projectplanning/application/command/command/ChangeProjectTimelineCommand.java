@@ -7,26 +7,15 @@ import com.ccpp.shared.valueobjects.DateRange;
 import java.util.UUID;
 
 public record ChangeProjectTimelineCommand(
+        UUID commandId,
         ProjectId projectId,
-        DateRange newTimeline
+        DateRange newTimeline,
+        UUID correlationId,
+        UUID causationId
 )  implements Command {
-    @Override
-    public UUID getCommandId() {
-        return null;
-    }
 
     @Override
-    public UUID getAggregateId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCorrelationId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCausationId() {
+    public UUID aggregateId() {
         return null;
     }
 }

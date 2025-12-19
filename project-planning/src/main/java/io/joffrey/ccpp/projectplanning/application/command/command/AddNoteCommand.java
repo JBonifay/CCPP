@@ -7,27 +7,16 @@ import com.ccpp.shared.identities.UserId;
 import java.util.UUID;
 
 public record AddNoteCommand(
+        UUID commandId,
         ProjectId projectId,
         String content,
-        UserId userId
+        UserId userId,
+        UUID correlationId,
+        UUID causationId
 )  implements Command {
-    @Override
-    public UUID getCommandId() {
-        return null;
-    }
 
     @Override
-    public UUID getAggregateId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCorrelationId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCausationId() {
+    public UUID aggregateId() {
         return null;
     }
 }

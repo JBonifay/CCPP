@@ -7,28 +7,23 @@ import java.util.*;
 
 public class InMemoryEventStore implements EventStore {
 
-    private final Map<UUID, List<DomainEvent>> events = new HashMap<>();
+    private final Map<UUID, List<EventEnvelope>> events = new HashMap<>();
 
     @Override
-    public void saveEvents(UUID aggregateId, List<DomainEvent> events, int expectedVersion, UUID correlationId, UUID causationId) {
-        List<DomainEvent> stream = this.events.computeIfAbsent(aggregateId, id -> new ArrayList<>());
+    public void saveEvents(UUID aggregateId, List<DomainEvent> domainEvents, int expectedVersion, UUID correlationId, UUID causationId) {
 
-        int currentVersion = (stream.size() - 1);
+        List<EventEnvelope> stream = events.computeIfAbsent(aggregateId, id -> new ArrayList<>());
+        int currentVersion = stream.size() - 1;
 
         if (currentVersion != expectedVersion) {
-            throw new OptimisticLockException(
-                    aggregateId,
-                    expectedVersion,
-                    currentVersion
-            );
+            throw new OptimisticLockException(aggregateId, expectedVersion, currentVersion);
         }
 
-        stream.addAll(events);
+        domainEvents.forEach(e -> stream.add(new EventEnvelope(e, correlationId, causationId)));
     }
 
     @Override
-    public List<DomainEvent> loadEvents(UUID aggregateId) {
-        return List.of();
+    public List<EventEnvelope> loadEvents(UUID aggregateId) {
+        return List.copyOf(events.getOrDefault(aggregateId, List.of()));
     }
-
 }

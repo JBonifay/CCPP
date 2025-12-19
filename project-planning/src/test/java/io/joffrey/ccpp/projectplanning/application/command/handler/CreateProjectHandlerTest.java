@@ -1,5 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventstore.EventEnvelope;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.exception.DateRangeException;
 import com.ccpp.shared.identities.ProjectId;
@@ -31,29 +32,32 @@ class CreateProjectHandlerTest {
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
 
+    UUID commandId = UUID.randomUUID();
+    UUID correlationId = UUID.randomUUID();
+
     @Test
     void should_create_project_with_valid_data() {
         var command = new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 title,
                 description,
                 timeline,
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         );
 
         handler.handle(command);
 
-        assertThat(eventStore.loadEvents(projectId.value())).containsExactly(
-                        new ProjectCreated(
-                                projectId,
-                                workspaceId,
-                                userId,
-                                title,
-                                description,
-                                timeline,
-                                projectBudgetLimit
+        assertThat(eventStore.loadEvents(projectId.value()))
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("eventId")
+                .containsExactly(
+                        new EventEnvelope(
+                                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                                command.correlationId(),
+                                command.causationId()
                         )
                 );
     }
@@ -61,13 +65,15 @@ class CreateProjectHandlerTest {
     @Test
     void should_reject_project_with_invalid_timeline() {
         assertThatThrownBy(() -> new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 title,
                 description,
                 new DateRange(LocalDate.of(2025, 3, 31), LocalDate.of(2025, 1, 1)),
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         ))
                 .isInstanceOf(DateRangeException.class)
                 .hasMessageContaining("Start date must be before end date");
@@ -76,13 +82,15 @@ class CreateProjectHandlerTest {
     @Test
     void should_reject_project_with_empty_title() {
         var command = new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 "",  // empty title
                 description,
                 timeline,
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         );
 
         assertThatThrownBy(() -> handler.handle(command))
@@ -93,13 +101,15 @@ class CreateProjectHandlerTest {
     @Test
     void should_reject_project_with_null_title() {
         var command = new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 null,  // null title
                 description,
                 timeline,
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         );
 
         assertThatThrownBy(() -> handler.handle(command))
@@ -110,13 +120,15 @@ class CreateProjectHandlerTest {
     @Test
     void should_reject_project_with_empty_description() {
         var command = new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 title,
                 "",  // empty description
                 timeline,
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         );
 
         assertThatThrownBy(() -> handler.handle(command))
@@ -127,13 +139,15 @@ class CreateProjectHandlerTest {
     @Test
     void should_reject_project_with_null_description() {
         var command = new CreateProjectCommand(
+                commandId,
                 workspaceId,
                 userId,
                 projectId,
                 title,
                 null,  // null description
                 timeline,
-                projectBudgetLimit
+                projectBudgetLimit,
+                correlationId
         );
 
         assertThatThrownBy(() -> handler.handle(command))

@@ -8,28 +8,16 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import java.util.UUID;
 
 public record UpdateBudgetItemCommand(
+        UUID commandId,
         ProjectId projectId,
         BudgetItemId budgetItemId,
         String description,
-        Money newAmount
+        Money newAmount,
+        UUID correlationId,
+        UUID causationId
 ) implements Command {
     @Override
-    public UUID getCommandId() {
-        return null;
-    }
-
-    @Override
-    public UUID getAggregateId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCorrelationId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCausationId() {
+    public UUID aggregateId() {
         return null;
     }
 }

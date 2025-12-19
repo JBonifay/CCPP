@@ -35,92 +35,92 @@ import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
-@Import(AbstractE2eTest.AbstractE2eTestConfiguration.class)
+//@Import(AbstractE2eTest.AbstractE2eTestConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AbstractE2eTest {
 
-    @LocalServerPort
-    protected int port;
-
-    @Autowired
-    protected MockProjectIdGenerator projectIdGenerator;
-
-    @Autowired
-    protected MockBudgetItemIdGenerator budgetItemIdGenerator;
-
-    @Autowired
-    protected MockParticipantIdGenerator participantIdGenerator;
-
-    @Autowired
-    CommandBus commandBus;
-
-    @Autowired
-    EventStore eventStore;
-
-    @Autowired
-    protected ProjectListReadRepository projectListRepository;
-
-    @Autowired
-    protected ProjectDetailReadRepository projectDetailRepository;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-        RestAssured.basePath = "";
-        projectIdGenerator.setMock(new ProjectId(UUID.randomUUID()));
-        budgetItemIdGenerator.setMock(new BudgetItemId(UUID.randomUUID()));
-    }
-
-    @TestConfiguration
-    public static class AbstractE2eTestConfiguration {
-
-        @Bean
-        @Primary
-        MockProjectIdGenerator testProjectIdGenerator() {
-            return new MockProjectIdGenerator();
-        }
-
-        @Bean
-        @Primary
-        MockBudgetItemIdGenerator testBudgetItemIdGenerator() {
-            return new MockBudgetItemIdGenerator();
-        }
-
-        @Bean
-        @Primary
-        MockParticipantIdGenerator testParticipantIdGenerator() {
-            return new MockParticipantIdGenerator();
-        }
-
-    }
-
-    public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
-        eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreated(projectId,
-                        workspaceId,
-                        userId,
-                        "Title",
-                        "Description",
-                        new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
-                        BigDecimal.valueOf(1000))
-        ), -1, null, null);
-        projectDetailRepository.save(new ProjectDetailDTO(projectId,
-                workspaceId,
-                "Title",
-                "Description",
-                ProjectStatus.READY,
-                List.of(),
-                List.of(),
-                List.of(),
-                new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2))
-        ));
-    }
-
-    public void aBudgetItemIsPresent(ProjectId projectId, BudgetItemId budgetItemId) {
-        commandBus.execute(new AddBudgetItemCommand(projectId, budgetItemId, "description", new Money(BigDecimal.ZERO, Currency.getInstance("EUR"))));
-    }
-
-    protected void aParticipantIsInvited(ProjectId projectId, ParticipantId participantId) {
-        commandBus.execute(new InviteParticipantCommand(projectId, participantId, "mcfly@mcfly.com", "McFly"));
-    }
+//    @LocalServerPort
+//    protected int port;
+//
+//    @Autowired
+//    protected MockProjectIdGenerator projectIdGenerator;
+//
+//    @Autowired
+//    protected MockBudgetItemIdGenerator budgetItemIdGenerator;
+//
+//    @Autowired
+//    protected MockParticipantIdGenerator participantIdGenerator;
+//
+//    @Autowired
+//    CommandBus commandBus;
+//
+//    @Autowired
+//    EventStore eventStore;
+//
+//    @Autowired
+//    protected ProjectListReadRepository projectListRepository;
+//
+//    @Autowired
+//    protected ProjectDetailReadRepository projectDetailRepository;
+//
+//    @BeforeEach
+//    void setUp() {
+//        RestAssured.port = port;
+//        RestAssured.basePath = "";
+//        projectIdGenerator.setMock(new ProjectId(UUID.randomUUID()));
+//        budgetItemIdGenerator.setMock(new BudgetItemId(UUID.randomUUID()));
+//    }
+//
+//    @TestConfiguration
+//    public static class AbstractE2eTestConfiguration {
+//
+//        @Bean
+//        @Primary
+//        MockProjectIdGenerator testProjectIdGenerator() {
+//            return new MockProjectIdGenerator();
+//        }
+//
+//        @Bean
+//        @Primary
+//        MockBudgetItemIdGenerator testBudgetItemIdGenerator() {
+//            return new MockBudgetItemIdGenerator();
+//        }
+//
+//        @Bean
+//        @Primary
+//        MockParticipantIdGenerator testParticipantIdGenerator() {
+//            return new MockParticipantIdGenerator();
+//        }
+//
+//    }
+//
+//    public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
+//        eventStore.saveEvents(projectId.value(), List.of(
+//                new ProjectCreated(projectId,
+//                        workspaceId,
+//                        userId,
+//                        "Title",
+//                        "Description",
+//                        new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
+//                        BigDecimal.valueOf(1000))
+//        ), -1, null, null);
+//        projectDetailRepository.save(new ProjectDetailDTO(projectId,
+//                workspaceId,
+//                "Title",
+//                "Description",
+//                ProjectStatus.READY,
+//                List.of(),
+//                List.of(),
+//                List.of(),
+//                new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2))
+//        ));
+//    }
+//
+//    public void aBudgetItemIsPresent(ProjectId projectId, BudgetItemId budgetItemId) {
+//        commandBus.execute(new AddBudgetItemCommand(projectId, budgetItemId, "description", new Money(BigDecimal.ZERO, Currency.getInstance("EUR"))));
+//    }
+//
+//    protected void aParticipantIsInvited(ProjectId projectId, ParticipantId participantId) {
+//        commandBus.execute(new InviteParticipantCommand(projectId, participantId, "mcfly@mcfly.com", "McFly"));
+//    }
 }

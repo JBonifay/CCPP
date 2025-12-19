@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CommandBusConfiguration {
 
-    @Bean
-    public EventStore eventStore() {
-        return new InMemoryEventStore();
-    }
+//    @Bean
+//    public EventStore eventStore() {
+//        return new InMemoryEventStore();
+//    }
 
     @Bean
     public CommandBus commandBus(EventStore eventStore) {

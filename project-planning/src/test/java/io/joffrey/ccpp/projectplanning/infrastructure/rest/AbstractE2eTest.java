@@ -1,18 +1,18 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest;
 
-import com.ccpp.shared.infrastructure.command.CommandBus;
-import com.ccpp.shared.infrastructure.event.EventStore;
-import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
+import com.ccpp.shared.command.CommandBus;
+import com.ccpp.shared.eventstore.EventStore;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
+import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
@@ -103,7 +103,7 @@ public class AbstractE2eTest {
                         "Description",
                         new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
                         BigDecimal.valueOf(1000))
-        ), -1);
+        ), -1, null, null);
         projectDetailRepository.save(new ProjectDetailDTO(projectId,
                 workspaceId,
                 "Title",

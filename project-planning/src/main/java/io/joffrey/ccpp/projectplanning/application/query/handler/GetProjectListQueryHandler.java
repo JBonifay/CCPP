@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.query.handler;
 
-import com.ccpp.shared.infrastructure.query.QueryHandler;
+import com.ccpp.shared.query.QueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;

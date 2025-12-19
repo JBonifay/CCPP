@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.application.query.handler;
 
-import com.ccpp.shared.infrastructure.query.QueryHandler;
+import com.ccpp.shared.query.QueryHandler;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.exception.ProjectNotFoundException;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;

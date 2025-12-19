@@ -1,10 +1,10 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.controller;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.NoteDTO;
 import io.joffrey.ccpp.projectplanning.application.query.model.ParticipantDTO;

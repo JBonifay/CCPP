@@ -1,8 +1,8 @@
 package io.joffrey.ccpp.workspace.domain;
 
-import com.ccpp.shared.domain.AggregateRoot;
-import com.ccpp.shared.infrastructure.event.DomainEvent;
-import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.aggregate.AggregateRoot;
+import com.ccpp.shared.event.DomainEvent;
+import com.ccpp.shared.identities.WorkspaceId;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;

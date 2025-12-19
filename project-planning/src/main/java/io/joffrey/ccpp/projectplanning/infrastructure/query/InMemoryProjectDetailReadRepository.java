@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.query;
 
-import com.ccpp.shared.domain.identities.ProjectId;
+import com.ccpp.shared.identities.ProjectId;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 

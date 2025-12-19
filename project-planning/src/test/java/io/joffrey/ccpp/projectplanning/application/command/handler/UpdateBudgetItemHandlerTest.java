@@ -1,10 +1,10 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.UpdateBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import io.joffrey.ccpp.projectplanning.domain.event.BudgetItemUpdated;
@@ -12,7 +12,7 @@ import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -43,7 +43,7 @@ class UpdateBudgetItemHandlerTest {
 
         eventStore.saveEvents(projectId.value(), List.of(
                 new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                new BudgetItemAdded(projectId, budgetItemId, "Hotel 2 nights", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))), -1);
+                new BudgetItemAdded(projectId, budgetItemId, "Hotel 2 nights", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))), -1, null,null);
 
         handler.handle(new UpdateBudgetItemCommand(projectId, budgetItemId, "Hotel 3 nights", new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))));
 
@@ -59,7 +59,7 @@ class UpdateBudgetItemHandlerTest {
         eventStore.saveEvents(projectId.value(),
                 List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))),
-                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1);
+                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new UpdateBudgetItemCommand(
                 projectId,

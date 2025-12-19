@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.event;
 
-import com.ccpp.shared.infrastructure.event.DomainEvent;
-import com.ccpp.shared.infrastructure.event.EventHandler;
+import com.ccpp.shared.event.DomainEvent;
+import com.ccpp.shared.eventhandler.EventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

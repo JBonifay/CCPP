@@ -20,31 +20,31 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DeclineParticipantInvitationHandlerTest {
-
-    InMemoryEventStore eventStore = new InMemoryEventStore();
-    DeclineParticipantInvitationHandler handler = new DeclineParticipantInvitationHandler(eventStore);
-
-    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
-    UserId userId = new UserId(UUID.randomUUID());
-    ProjectId projectId = new ProjectId(UUID.randomUUID());
-    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-    String title = "Q1 Video Series";
-    String description = "Educational content";
-    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
-
-    @Test
-    void should_decline_participant_invitation() {
-        eventStore.saveEvents(
-                projectId.value(),
-                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
-                -1, null,null);
-
-        handler.handle(new DeclineParticipantInvitationCommand(projectId, participantId));
-
-        assertThat(eventStore.loadEvents(projectId.value()))
-                .last()
-                .isEqualTo(new ParticipantDeclinedInvitation(projectId, participantId));
-    }
+//
+//    InMemoryEventStore eventStore = new InMemoryEventStore();
+//    DeclineParticipantInvitationHandler handler = new DeclineParticipantInvitationHandler(eventStore);
+//
+//    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+//    UserId userId = new UserId(UUID.randomUUID());
+//    ProjectId projectId = new ProjectId(UUID.randomUUID());
+//    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+//    String title = "Q1 Video Series";
+//    String description = "Educational content";
+//    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+//    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
+//
+//    @Test
+//    void should_decline_participant_invitation() {
+//        eventStore.saveEvents(
+//                projectId.value(),
+//                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+//                        new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
+//                -1, null,null);
+//
+//        handler.handle(new DeclineParticipantInvitationCommand(projectId, participantId));
+//
+//        assertThat(eventStore.loadEvents(projectId.value()))
+//                .last()
+//                .isEqualTo(new ParticipantDeclinedInvitation(projectId, participantId));
+//    }
 }

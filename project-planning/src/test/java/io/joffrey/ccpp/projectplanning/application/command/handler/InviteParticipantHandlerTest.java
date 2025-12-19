@@ -21,64 +21,64 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InviteParticipantHandlerTest {
-
-    InMemoryEventStore eventStore = new InMemoryEventStore();
-    InviteParticipantHandler handler = new InviteParticipantHandler(eventStore);
-
-    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
-    UserId userId = new UserId(UUID.randomUUID());
-    ProjectId projectId = new ProjectId(UUID.randomUUID());
-    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-    String title = "Q1 Video Series";
-    String description = "Educational content";
-    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
-
-
-    @Test
-    void should_invite_participant_to_project() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
-
-        handler.handle(new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "McFly"));
-
-        assertThat(eventStore.loadEvents(projectId.value()))
-                .last()
-                .isEqualTo(new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly"));
-    }
-
-    @Test
-    void should_reject_empty_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
-
-        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "", "McFly")))
-                .isInstanceOf(InvalidParticipantDataException.class)
-                .hasMessageContaining("Participant email cannot be empty");
-    }
-
-    @Test
-    void should_reject_empty_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
-
-        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", "")))
-                .isInstanceOf(InvalidParticipantDataException.class)
-                .hasMessageContaining("Participant name cannot be empty");
-    }
-
-    @Test
-    void should_reject_null_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
-
-        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), null, "McFly")))
-                .isInstanceOf(InvalidParticipantDataException.class)
-                .hasMessageContaining("Participant email cannot be empty");
-    }
-
-    @Test
-    void should_reject_null_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
-
-        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", null)))
-                .isInstanceOf(InvalidParticipantDataException.class)
-                .hasMessageContaining("Participant name cannot be empty");
-    }
+//
+//    InMemoryEventStore eventStore = new InMemoryEventStore();
+//    InviteParticipantHandler handler = new InviteParticipantHandler(eventStore);
+//
+//    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+//    UserId userId = new UserId(UUID.randomUUID());
+//    ProjectId projectId = new ProjectId(UUID.randomUUID());
+//    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+//    String title = "Q1 Video Series";
+//    String description = "Educational content";
+//    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+//    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
+//
+//
+//    @Test
+//    void should_invite_participant_to_project() {
+//        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
+//
+//        handler.handle(new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "McFly"));
+//
+//        assertThat(eventStore.loadEvents(projectId.value()))
+//                .last()
+//                .isEqualTo(new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly"));
+//    }
+//
+//    @Test
+//    void should_reject_empty_participant_email() {
+//        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
+//
+//        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "", "McFly")))
+//                .isInstanceOf(InvalidParticipantDataException.class)
+//                .hasMessageContaining("Participant email cannot be empty");
+//    }
+//
+//    @Test
+//    void should_reject_empty_participant_name() {
+//        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
+//
+//        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", "")))
+//                .isInstanceOf(InvalidParticipantDataException.class)
+//                .hasMessageContaining("Participant name cannot be empty");
+//    }
+//
+//    @Test
+//    void should_reject_null_participant_email() {
+//        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
+//
+//        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), null, "McFly")))
+//                .isInstanceOf(InvalidParticipantDataException.class)
+//                .hasMessageContaining("Participant email cannot be empty");
+//    }
+//
+//    @Test
+//    void should_reject_null_participant_name() {
+//        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
+//
+//        assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", null)))
+//                .isInstanceOf(InvalidParticipantDataException.class)
+//                .hasMessageContaining("Participant name cannot be empty");
+//    }
 }

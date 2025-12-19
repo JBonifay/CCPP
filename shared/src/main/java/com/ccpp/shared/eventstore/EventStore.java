@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface EventStore {
     void saveEvents(UUID aggregateId, List<DomainEvent> events, int expectedVersion, UUID correlationId, UUID causationId);
-    List<DomainEvent> loadEvents(UUID aggregateId);
+    List<EventEnvelope> loadEvents(UUID aggregateId);
 }

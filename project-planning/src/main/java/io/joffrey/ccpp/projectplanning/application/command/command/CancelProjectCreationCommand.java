@@ -6,26 +6,14 @@ import com.ccpp.shared.identities.ProjectId;
 import java.util.UUID;
 
 public record CancelProjectCreationCommand(
+        UUID commandId,
         ProjectId projectId,
-        String reason
+        String reason,
+        UUID correlationId,
+        UUID causationId
 )  implements Command {
     @Override
-    public UUID getCommandId() {
-        return null;
-    }
-
-    @Override
-    public UUID getAggregateId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCorrelationId() {
-        return null;
-    }
-
-    @Override
-    public UUID getCausationId() {
+    public UUID aggregateId() {
         return null;
     }
 }

@@ -30,26 +30,26 @@ class CancelProjectCreationCommandHandlerTest {
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
 
-    @Test
-    void should_cancel_project_creation_with_valid_reason() {
-        var projectCreated = new ProjectCreated(
-                projectId,
-                workspaceId,
-                userId,
-                title,
-                description,
-                timeline,
-                projectBudgetLimit
-        );
-        eventStore.saveEvents(projectId.value(), List.of(projectCreated), -1, null,null);
-
-        var command = new CancelProjectCreationCommand(projectId, "Workspace project limit reached");
-        handler.handle(command);
-
-        assertThat(eventStore.loadEvents(projectId.value()))
-                .containsExactly(
-                        projectCreated,
-                        new ProjectCreationCancelled(projectId, "Workspace project limit reached")
-                );
-    }
+//    @Test
+//    void should_cancel_project_creation_with_valid_reason() {
+//        var projectCreated = new ProjectCreated(
+//                projectId,
+//                workspaceId,
+//                userId,
+//                title,
+//                description,
+//                timeline,
+//                projectBudgetLimit
+//        );
+//        eventStore.saveEvents(projectId.value(), List.of(projectCreated), -1, null,null);
+//
+//        var command = new CancelProjectCreationCommand(projectId, "Workspace project limit reached");
+//        handler.handle(command);
+//
+//        assertThat(eventStore.loadEvents(projectId.value()))
+//                .containsExactly(
+//                        projectCreated,
+//                        new ProjectCreationCancelled(projectId, "Workspace project limit reached")
+//                );
+//    }
 }

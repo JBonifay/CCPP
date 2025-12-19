@@ -9,22 +9,22 @@ public record UpgradeWorkspaceSubscriptionCommand(
         WorkspaceId workspaceId
 )  implements Command {
     @Override
-    public UUID getCommandId() {
+    public UUID commandId() {
         return null;
     }
 
     @Override
-    public UUID getAggregateId() {
+    public UUID aggregateId() {
         return null;
     }
 
     @Override
-    public UUID getCorrelationId() {
+    public UUID correlationId() {
         return null;
     }
 
     @Override
-    public UUID getCausationId() {
+    public UUID causationId() {
         return null;
     }
 }

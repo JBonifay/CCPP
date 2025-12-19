@@ -10,33 +10,42 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record CreateProjectCommand(
+        UUID commandId,
         WorkspaceId workspaceId,
         UserId userId,
         ProjectId projectId,
         String title,
         String description,
         DateRange timeline,
-        BigDecimal budgetLimit
+        BigDecimal budgetLimit,
+        UUID correlationId
 ) implements Command {
 
-    @Override
-    public UUID getCommandId() {
-        return null;
+    public CreateProjectCommand(
+            WorkspaceId workspaceId,
+            UserId userId,
+            ProjectId projectId,
+            String title,
+            String description,
+            DateRange timeline,
+            BigDecimal budgetLimit,
+            UUID correlationId
+    ) {
+        this(UUID.randomUUID(), workspaceId, userId, projectId, title, description, timeline, budgetLimit, correlationId);
     }
 
     @Override
-    public UUID getAggregateId() {
-        return null;
+    public UUID aggregateId() {
+        return projectId.value();
     }
 
     @Override
-    public UUID getCorrelationId() {
-        return null;
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
     }
 
     @Override
-    public UUID getCausationId() {
-        return null;
+    public UUID causationId() {
+        return commandId;
     }
-
 }

@@ -24,8 +24,8 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
                 createWorkspaceCommand.workspaceId().value(),
                 workspace.uncommittedEvents(),
                 workspace.version(),
-                createWorkspaceCommand.getCorrelationId(),
-                createWorkspaceCommand.getCausationId()
+                createWorkspaceCommand.correlationId(),
+                createWorkspaceCommand.causationId()
         );
         workspace.markEventsAsCommitted();
     }

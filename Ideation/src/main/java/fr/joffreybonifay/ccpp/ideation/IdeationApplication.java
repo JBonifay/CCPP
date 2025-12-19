@@ -1,13 +1,13 @@
-package fr.joffreybonifay.ccpp.contentplanning;
+package fr.joffreybonifay.ccpp.ideation;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ContentPlanningApplication {
+public class IdeationApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ContentPlanningApplication.class, args);
+        SpringApplication.run(IdeationApplication.class, args);
     }
 
 }

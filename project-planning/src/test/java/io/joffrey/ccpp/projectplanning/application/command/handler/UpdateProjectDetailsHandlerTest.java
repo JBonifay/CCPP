@@ -1,5 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventbus.EventBus;
+import com.ccpp.shared.eventbus.SimpleEventBus;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
@@ -21,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UpdateProjectDetailsHandlerTest {
 
-    InMemoryEventStore eventStore = new InMemoryEventStore();
+    EventBus eventBus = new SimpleEventBus();
+    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
     UpdateProjectDetailsHandler handler = new UpdateProjectDetailsHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

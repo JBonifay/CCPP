@@ -1,0 +1,13 @@
+package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public record RequestProjectCreationRequest(
+        String title,
+        String description,
+        LocalDate startDate,
+        LocalDate endDate,
+        BigDecimal budgetLimit
+) {
+}

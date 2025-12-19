@@ -1,29 +1,57 @@
 package com.ccpp.shared.outbox;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
 @Entity
-@Table(name = "outbox")
+@Table(
+        name = "outbox",
+        indexes = {
+                @Index(name = "idx_outbox_processed", columnList = "processed"),
+                @Index(name = "idx_outbox_event_id", columnList = "eventId")
+        }
+)
 public class OutboxEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
 
+    @Column
     private UUID eventId;
+
+    @Column
     private UUID aggregateId;
+
+    @Column
     private String aggregateType;
+
+    @Column
     private Long version;
+
+    @Column
     private String eventType;
 
     @Column(columnDefinition = "TEXT")
     private String payload;
 
+    @Column
     private Instant timestamp;
+
+    @Column
     private UUID correlationId;
+
+    @Column
     private UUID causationId;
+
+    @Setter
+    @Column
     private boolean processed = false;
 
     public OutboxEntity() {}
@@ -40,16 +68,4 @@ public class OutboxEntity {
         this.causationId = causationId;
     }
 
-    public Long getId() { return id; }
-    public UUID getEventId() { return eventId; }
-    public UUID getAggregateId() { return aggregateId; }
-    public String getAggregateType() { return aggregateType; }
-    public Long getVersion() { return version; }
-    public String getEventType() { return eventType; }
-    public String getPayload() { return payload; }
-    public Instant getTimestamp() { return timestamp; }
-    public UUID getCorrelationId() { return correlationId; }
-    public UUID getCausationId() { return causationId; }
-    public boolean isProcessed() { return processed; }
-    public void setProcessed(boolean processed) { this.processed = processed; }
 }

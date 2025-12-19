@@ -1,5 +1,7 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
+import com.ccpp.shared.eventbus.EventBus;
+import com.ccpp.shared.eventbus.SimpleEventBus;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
@@ -15,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateWorkspaceCommandHandlerTest {
 
-    InMemoryEventStore eventStore = new InMemoryEventStore();
+    EventBus eventBus = new SimpleEventBus();
+    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
     CreateWorkspaceCommandHandler createWorkspaceCommandHandler = new CreateWorkspaceCommandHandler(eventStore);
 
     @Test

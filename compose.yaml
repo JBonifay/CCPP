@@ -32,7 +32,8 @@ services:
   project-planning:
     image: ghcr.io/jbonifay/project-planning:latest
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ccpp
     depends_on:
       - kafka
     networks:
@@ -41,7 +42,8 @@ services:
   workspace:
     image: ghcr.io/jbonifay/workspace:latest
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ccpp
     depends_on:
       - kafka
     networks:
@@ -50,7 +52,8 @@ services:
   ideation:
     image: ghcr.io/jbonifay/ideation:latest
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ccpp
     depends_on:
       - kafka
     networks:
@@ -59,7 +62,8 @@ services:
   notification:
     image: ghcr.io/jbonifay/notification:latest
     environment:
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ccpp
     depends_on:
       - kafka
     networks:

@@ -12,12 +12,25 @@ public record InviteParticipantCommand(
         ParticipantId participantId,
         String email,
         String name,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 ) implements Command {
+
+    public InviteParticipantCommand( ProjectId projectId, ParticipantId participantId, String email, String name, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, participantId, email, name, correlationId);
+    }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

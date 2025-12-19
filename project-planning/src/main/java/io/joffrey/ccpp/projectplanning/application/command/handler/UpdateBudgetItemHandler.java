@@ -18,12 +18,13 @@ public class UpdateBudgetItemHandler implements CommandHandler<UpdateBudgetItemC
 
     @Override
     public void handle(UpdateBudgetItemCommand command) {
-//        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
-//        Project project = Project.fromHistory(projectEvents);
-//
-//        project.updateBudgetItem(command.budgetItemId(), command.description(), command.newAmount());
-//
-//        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), project.version());
-//        project.markEventsAsCommitted();
+        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
+        int initialVersion = project.version();
+
+        project.updateBudgetItem(command.budgetItemId(), command.description(), command.newAmount());
+
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
 }

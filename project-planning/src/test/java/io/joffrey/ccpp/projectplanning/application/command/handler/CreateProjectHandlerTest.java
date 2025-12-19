@@ -1,6 +1,5 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.eventstore.EventEnvelope;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.exception.DateRangeException;
 import com.ccpp.shared.identities.ProjectId;
@@ -37,7 +36,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_create_project_with_valid_data() {
-        var command = new CreateProjectCommand(
+        handler.handle(new CreateProjectCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -47,19 +46,11 @@ class CreateProjectHandlerTest {
                 timeline,
                 projectBudgetLimit,
                 correlationId
+        ));
+
+        assertThat(eventStore.loadEvents(projectId.value())).containsExactly(
+                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)
         );
-
-        handler.handle(command);
-
-        assertThat(eventStore.loadEvents(projectId.value()))
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("eventId")
-                .containsExactly(
-                        new EventEnvelope(
-                                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                                command.correlationId(),
-                                command.causationId()
-                        )
-                );
     }
 
     @Test

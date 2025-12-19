@@ -10,12 +10,25 @@ public record ChangeProjectTimelineCommand(
         UUID commandId,
         ProjectId projectId,
         DateRange newTimeline,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 )  implements Command {
+
+    public ChangeProjectTimelineCommand( ProjectId projectId, DateRange newTimeline, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, newTimeline, correlationId);
+    }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

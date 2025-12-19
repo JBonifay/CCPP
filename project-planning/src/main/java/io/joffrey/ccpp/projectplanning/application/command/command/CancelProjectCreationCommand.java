@@ -9,11 +9,25 @@ public record CancelProjectCreationCommand(
         UUID commandId,
         ProjectId projectId,
         String reason,
-        UUID correlationId,
-        UUID causationId
+        UUID correlationId
 )  implements Command {
+
+    public CancelProjectCreationCommand( ProjectId projectId, String reason, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, reason, correlationId);
+    }
+
     @Override
     public UUID aggregateId() {
-        return null;
+        return projectId.value();
+    }
+
+    @Override
+    public UUID correlationId() {
+        return correlationId != null ? correlationId : commandId;
+    }
+
+    @Override
+    public UUID causationId() {
+        return commandId;
     }
 }

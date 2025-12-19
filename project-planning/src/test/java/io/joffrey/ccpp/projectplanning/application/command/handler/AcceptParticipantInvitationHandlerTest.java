@@ -20,33 +20,35 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AcceptParticipantInvitationHandlerTest {
-//
-//    InMemoryEventStore eventStore = new InMemoryEventStore();
-//    AcceptParticipantInvitationHandler handler = new AcceptParticipantInvitationHandler(eventStore);
-//
-//    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
-//    UserId userId = new UserId(UUID.randomUUID());
-//    ProjectId projectId = new ProjectId(UUID.randomUUID());
-//    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
-//    String title = "Q1 Video Series";
-//    String description = "Educational content";
-//    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
-//
-//
-//    @Test
-//    void should_accept_participant_invitation() {
-//        ParticipantId participantId = new ParticipantId(UUID.randomUUID());
-//        ProjectCreated projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
-//        ParticipantInvited participantInvitedEvent = new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly");
-//        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent, participantInvitedEvent), -1, null, null);
-//
-//        handler.handle(new AcceptParticipantInvitationCommand(projectId, participantId));
-//
-//        assertThat(eventStore.loadEvents(projectId.value()))
-//                .last()
-//                .isEqualTo(
-//                        new ParticipantAcceptedInvitation(projectId, participantId)
-//                );
-//
-//    }
+
+    InMemoryEventStore eventStore = new InMemoryEventStore();
+    AcceptParticipantInvitationHandler handler = new AcceptParticipantInvitationHandler(eventStore);
+
+    WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    UserId userId = new UserId(UUID.randomUUID());
+    ProjectId projectId = new ProjectId(UUID.randomUUID());
+    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
+    String title = "Q1 Video Series";
+    String description = "Educational content";
+    BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+
+    UUID commandId = UUID.randomUUID();
+    UUID correlationId = UUID.randomUUID();
+
+    @Test
+    void should_accept_participant_invitation() {
+        ParticipantId participantId = new ParticipantId(UUID.randomUUID());
+        eventStore.saveEvents(projectId.value(), List.of(
+                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
+        ), -1, correlationId, commandId);
+
+        handler.handle(new AcceptParticipantInvitationCommand(commandId, projectId, participantId, correlationId));
+
+        assertThat(eventStore.loadEvents(projectId.value()))
+                .last()
+                .isEqualTo(new ParticipantAcceptedInvitation(projectId, participantId));
+
+    }
+
 }

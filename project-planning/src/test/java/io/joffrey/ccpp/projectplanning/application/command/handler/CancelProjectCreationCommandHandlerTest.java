@@ -1,9 +1,9 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.CancelProjectCreationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
@@ -30,26 +30,32 @@ class CancelProjectCreationCommandHandlerTest {
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
 
-//    @Test
-//    void should_cancel_project_creation_with_valid_reason() {
-//        var projectCreated = new ProjectCreated(
-//                projectId,
-//                workspaceId,
-//                userId,
-//                title,
-//                description,
-//                timeline,
-//                projectBudgetLimit
-//        );
-//        eventStore.saveEvents(projectId.value(), List.of(projectCreated), -1, null,null);
-//
-//        var command = new CancelProjectCreationCommand(projectId, "Workspace project limit reached");
-//        handler.handle(command);
-//
-//        assertThat(eventStore.loadEvents(projectId.value()))
-//                .containsExactly(
-//                        projectCreated,
-//                        new ProjectCreationCancelled(projectId, "Workspace project limit reached")
-//                );
-//    }
+    UUID commandId = UUID.randomUUID();
+    UUID correlationId = UUID.randomUUID();
+
+    @Test
+    void should_cancel_project_creation_with_valid_reason() {
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+
+        handler.handle(new CancelProjectCreationCommand(
+                commandId,
+                projectId,
+                "Workspace project limit reached",
+                correlationId
+        ));
+
+        assertThat(eventStore.loadEvents(projectId.value()))
+                .containsExactly(
+                        new ProjectCreated(
+                                projectId,
+                                workspaceId,
+                                userId,
+                                title,
+                                description,
+                                timeline,
+                                projectBudgetLimit
+                        ),
+                        new ProjectCreationCancelled(projectId, "Workspace project limit reached")
+                );
+    }
 }

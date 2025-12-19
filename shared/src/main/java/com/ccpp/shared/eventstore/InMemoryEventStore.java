@@ -8,23 +8,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEventStore implements EventStore {
 
-    private final Map<UUID, List<EventEnvelope>> events = new ConcurrentHashMap<>();
+    private final Map<UUID, List<DomainEvent>> events = new ConcurrentHashMap<>();
 
     @Override
     public void saveEvents(UUID aggregateId, List<DomainEvent> domainEvents, int expectedVersion, UUID correlationId, UUID causationId) {
 
-        List<EventEnvelope> stream = events.computeIfAbsent(aggregateId, id -> new ArrayList<>());
+        List<DomainEvent> stream = events.computeIfAbsent(aggregateId, id -> new ArrayList<>());
         int currentVersion = stream.size() - 1;
 
         if (currentVersion != expectedVersion) {
             throw new OptimisticLockException(aggregateId, expectedVersion, currentVersion);
         }
 
-        domainEvents.forEach(e -> stream.add(new EventEnvelope(e, correlationId, causationId)));
+        stream.addAll(domainEvents);
     }
 
     @Override
-    public List<EventEnvelope> loadEvents(UUID aggregateId) {
-        return List.copyOf(events.getOrDefault(aggregateId, List.of()));
+    public List<DomainEvent> loadEvents(UUID aggregateId) {
+        return events.getOrDefault(aggregateId, Collections.emptyList());
     }
 }

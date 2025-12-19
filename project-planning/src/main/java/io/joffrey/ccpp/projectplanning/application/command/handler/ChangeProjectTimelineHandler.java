@@ -18,12 +18,14 @@ public class ChangeProjectTimelineHandler implements CommandHandler<ChangeProjec
 
     @Override
     public void handle(ChangeProjectTimelineCommand command) {
-//        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
-//        Project project = Project.fromHistory(projectEvents);
-//
-//        project.changeTimeline(command.newTimeline());
-//        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), project.version());
-//        project.markEventsAsCommitted();
+        List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
+        Project project = Project.fromHistory(projectEvents);
+        int initialVersion = project.version();
+
+        project.changeTimeline(command.newTimeline());
+
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
 
 }

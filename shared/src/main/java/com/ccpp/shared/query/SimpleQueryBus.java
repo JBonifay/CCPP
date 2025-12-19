@@ -1,13 +1,14 @@
 package com.ccpp.shared.query;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleQueryBus implements QueryBus {
 
-    private final Map<Class<?>, QueryHandler<?, ?>> queryHandlers;
+    private final Map<Class<?>, QueryHandler<?, ?>> queryHandlers = new HashMap<>();
 
-    public SimpleQueryBus(Map<Class<?>, QueryHandler<?, ?>> queryHandlers) {
-        this.queryHandlers = queryHandlers;
+    public void subscribe(Class<?> handlerClass, QueryHandler<?, ?> queryHandlers){
+        this.queryHandlers.put(handlerClass, queryHandlers);
     }
 
     @Override

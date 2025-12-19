@@ -1,28 +1,14 @@
 package io.joffrey.ccpp.projectplanning.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.ccpp.shared.eventstore.EventStore;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
-import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.valueobjects.DateRange;
 import com.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.MarkProjectAsReadyCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.RemoveBudgetItemCommand;
-import io.joffrey.ccpp.projectplanning.application.command.command.UpdateBudgetItemCommand;
-import io.joffrey.ccpp.projectplanning.application.command.handler.AddBudgetItemHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.AddNoteHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.CreateProjectHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.InviteParticipantHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.MarkProjectAsReadyHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.RemoveBudgetItemHandler;
-import io.joffrey.ccpp.projectplanning.application.command.handler.UpdateBudgetItemHandler;
+import io.joffrey.ccpp.projectplanning.application.command.command.*;
+import io.joffrey.ccpp.projectplanning.application.command.handler.*;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
 import io.joffrey.ccpp.projectplanning.application.query.handler.GetProjectDetailQueryHandler;
@@ -36,11 +22,13 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CQRSIntegrationTest {
 //
@@ -64,37 +52,35 @@ class CQRSIntegrationTest {
 //    UserId userId = new UserId(UUID.randomUUID());
 //    DateRange timeline = new DateRange(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 3, 31));
 //
-//    @BeforeEach
-//    void setUp() {
-////        eventBus.subscribe(new ProjectListProjectionUpdater(listRepository));
-////        eventBus.subscribe(new ProjectDetailProjectionUpdater(detailRepository));
-//    }
+//    UUID commandId = UUID.randomUUID();
+//    UUID correlationId = UUID.randomUUID();
 //
 //    @Test
 //    void should_project_created_project_to_both_read_models() {
 //        createProjectHandler.handle(new CreateProjectCommand(
-//            workspaceId,
-//            userId,
-//            projectId,
-//            "Q1 2025 Video Series",
-//            "Educational content about Event Sourcing",
-//            timeline,
-//            BigDecimal.valueOf(5000)
+//                commandId,
+//                workspaceId,
+//                userId,
+//                projectId,
+//                "Q1 2025 Video Series",
+//                "Educational content about Event Sourcing",
+//                timeline,
+//                BigDecimal.valueOf(5000),
+//                correlationId
 //        ));
 //
 //        assertThat(listQueryHandler.handle(new GetProjectListQuery(workspaceId))).containsExactly(
-//            new ProjectListDTO(
-//                projectId,
-//                workspaceId,
-//                "Q1 2025 Video Series",
-//                ProjectStatus.PLANNING,
-//                BigDecimal.valueOf(5000),
-//                0
-//            )
+//                new ProjectListDTO(
+//                        projectId,
+//                        workspaceId,
+//                        "Q1 2025 Video Series",
+//                        ProjectStatus.PLANNING,
+//                        BigDecimal.valueOf(5000),
+//                        0
+//                )
 //        );
 //
-//        var detailQuery = new GetProjectDetailQuery(projectId, workspaceId);
-//        var detail = detailQueryHandler.handle(detailQuery);
+//        var detail = detailQueryHandler.handle(new GetProjectDetailQuery(projectId, workspaceId));
 //
 //        assertThat(detail.title()).isEqualTo("Q1 2025 Video Series");
 //        assertThat(detail.description()).isEqualTo("Educational content about Event Sourcing");
@@ -109,10 +95,12 @@ class CQRSIntegrationTest {
 //        // WHEN - Add budget item
 //        var budgetItemId = new BudgetItemId(UUID.randomUUID());
 //        var addCommand = new AddBudgetItemCommand(
+//                commandId,
 //                projectId,
 //                budgetItemId,
 //                "Hotel 2x nights",
-//                Money.of(300, "USD")
+//                Money.of(300, "USD"),
+//                correlationId
 //        );
 //        addBudgetItemHandler.handle(addCommand);
 //
@@ -137,15 +125,19 @@ class CQRSIntegrationTest {
 //        givenProjectCreated();
 //        var budgetItemId = new BudgetItemId(UUID.randomUUID());
 //        addBudgetItemHandler.handle(new AddBudgetItemCommand(
-//                projectId, budgetItemId, "Hotel", Money.of(300, "USD")
+//                commandId,
+//                projectId, budgetItemId, "Hotel", Money.of(300, "USD"),
+//                correlationId
 //        ));
 //
 //        // WHEN - Update budget item
 //        var updateCommand = new UpdateBudgetItemCommand(
+//                commandId,
 //                projectId,
 //                budgetItemId,
 //                "Hotel (3 nights)",
-//                Money.of(450, "USD")
+//                Money.of(450, "USD"),
+//                correlationId
 //        );
 //        updateBudgetItemHandler.handle(updateCommand);
 //
@@ -165,11 +157,13 @@ class CQRSIntegrationTest {
 //        givenProjectCreated();
 //        var budgetItemId = new BudgetItemId(UUID.randomUUID());
 //        addBudgetItemHandler.handle(new AddBudgetItemCommand(
-//                projectId, budgetItemId, "Hotel", Money.of(300, "USD")
+//                commandId,
+//                projectId, budgetItemId, "Hotel", Money.of(300, "USD"),
+//                correlationId
 //        ));
 //
 //        // WHEN - Remove budget item
-//        var removeCommand = new RemoveBudgetItemCommand(projectId, budgetItemId);
+//        var removeCommand = new RemoveBudgetItemCommand(commandId, projectId, budgetItemId, correlationId);
 //        removeBudgetItemHandler.handle(removeCommand);
 //
 //        // THEN - List projection shows zero budget
@@ -189,10 +183,12 @@ class CQRSIntegrationTest {
 //        // WHEN - Invite participant
 //        var participantId = new ParticipantId(UUID.randomUUID());
 //        var inviteCommand = new InviteParticipantCommand(
+//                commandId,
 //                projectId,
 //                participantId,
 //                "john@example.com",
-//                "John Doe"
+//                "John Doe",
+//                correlationId
 //        );
 //        inviteParticipantHandler.handle(inviteCommand);
 //
@@ -219,9 +215,11 @@ class CQRSIntegrationTest {
 //
 //        // WHEN - Add note
 //        var addNoteCommand = new AddNoteCommand(
+//                commandId,
 //                projectId,
 //                "Remember to book equipment",
-//                userId
+//                userId,
+//                correlationId
 //        );
 //        addNoteHandler.handle(addNoteCommand);
 //
@@ -242,7 +240,7 @@ class CQRSIntegrationTest {
 //        givenProjectCreated();
 //
 //        // WHEN - Mark as ready
-//        var markReadyCommand = new MarkProjectAsReadyCommand(projectId, userId);
+//        var markReadyCommand = new MarkProjectAsReadyCommand(commandId, projectId, userId, correlationId);
 //        markReadyHandler.handle(markReadyCommand);
 //
 //        // THEN - List projection shows READY status
@@ -262,13 +260,15 @@ class CQRSIntegrationTest {
 //        var otherWorkspace = new WorkspaceId(UUID.randomUUID());
 //        var otherProjectId = new ProjectId(UUID.randomUUID());
 //        createProjectHandler.handle(new CreateProjectCommand(
+//                commandId,
 //                otherWorkspace,
 //                userId,
 //                otherProjectId,
 //                "Other Project",
 //                "Description",
 //                timeline,
-//                BigDecimal.valueOf(1000)
+//                BigDecimal.valueOf(1000),
+//                correlationId
 //        ));
 //
 //        // WHEN - Query for first workspace
@@ -290,23 +290,13 @@ class CQRSIntegrationTest {
 //        var budgetItem1 = new BudgetItemId(UUID.randomUUID());
 //        var budgetItem2 = new BudgetItemId(UUID.randomUUID());
 //
-//        addBudgetItemHandler.handle(new AddBudgetItemCommand(
-//                projectId, budgetItem1, "Hotel", Money.of(300, "USD")
-//        ));
-//        addBudgetItemHandler.handle(new AddBudgetItemCommand(
-//                projectId, budgetItem2, "Equipment", Money.of(500, "USD")
-//        ));
+//        addBudgetItemHandler.handle(new AddBudgetItemCommand(commandId, projectId, budgetItem1, "Hotel", Money.of(300, "USD"), correlationId));
+//        addBudgetItemHandler.handle(new AddBudgetItemCommand(commandId, projectId, budgetItem2, "Equipment", Money.of(500, "USD"), correlationId));
 //
-//        inviteParticipantHandler.handle(new InviteParticipantCommand(
-//                projectId, new ParticipantId(UUID.randomUUID()), "John Doe", "john@example.com"
-//        ));
-//        inviteParticipantHandler.handle(new InviteParticipantCommand(
-//                projectId, new ParticipantId(UUID.randomUUID()), "Jane Smith", "jane@example.com"
-//        ));
+//        inviteParticipantHandler.handle(new InviteParticipantCommand(commandId, projectId, new ParticipantId(UUID.randomUUID()), "John Doe", "john@example.com", correlationId));
+//        inviteParticipantHandler.handle(new InviteParticipantCommand(commandId, projectId, new ParticipantId(UUID.randomUUID()), "Jane Smith", "jane@example.com", correlationId));
 //
-//        addNoteHandler.handle(new AddNoteCommand(
-//                projectId, "Important reminder", userId
-//        ));
+//        addNoteHandler.handle(new AddNoteCommand(commandId, projectId, "Important reminder", userId, correlationId));
 //
 //        // THEN - List projection shows aggregated data
 //        var list = listQueryHandler.handle(new GetProjectListQuery(workspaceId));
@@ -322,13 +312,15 @@ class CQRSIntegrationTest {
 //
 //    private void givenProjectCreated() {
 //        createProjectHandler.handle(new CreateProjectCommand(
+//                commandId,
 //                workspaceId,
 //                userId,
 //                projectId,
 //                "Q1 2025 Video Series",
 //                "Educational content about Event Sourcing",
 //                timeline,
-//                BigDecimal.valueOf(5000)
+//                BigDecimal.valueOf(5000),
+//                correlationId
 //        ));
 //    }
 }

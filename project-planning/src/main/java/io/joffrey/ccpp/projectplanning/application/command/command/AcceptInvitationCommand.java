@@ -6,14 +6,14 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 
 import java.util.UUID;
 
-public record AcceptParticipantInvitationCommand(
+public record AcceptInvitationCommand(
         UUID commandId,
         ProjectId projectId,
         ParticipantId participantId,
         UUID correlationId
 )  implements Command {
 
-    public AcceptParticipantInvitationCommand(ProjectId projectId, ParticipantId participantId, UUID correlationId) {
+    public AcceptInvitationCommand(ProjectId projectId, ParticipantId participantId, UUID correlationId) {
         this(UUID.randomUUID(),projectId, participantId, correlationId);
     }
 

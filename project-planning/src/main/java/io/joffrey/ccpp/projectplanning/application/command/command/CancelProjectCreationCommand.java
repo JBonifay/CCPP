@@ -12,7 +12,7 @@ public record CancelProjectCreationCommand(
         UUID correlationId
 )  implements Command {
 
-    public CancelProjectCreationCommand( ProjectId projectId, String reason, UUID correlationId) {
+    public CancelProjectCreationCommand(ProjectId projectId, String reason, UUID correlationId) {
         this(UUID.randomUUID(), projectId, reason, correlationId);
     }
 

@@ -14,18 +14,18 @@ public class CommandConfiguration {
     @Bean
     CommandBus commandBus(EventStore eventStore) {
         SimpleCommandBus simpleCommandBus = new SimpleCommandBus();
-        simpleCommandBus.register(AcceptParticipantInvitationCommand.class, new AcceptParticipantInvitationHandler(eventStore));
+        simpleCommandBus.register(AcceptInvitationCommand.class, new AcceptInvitationHandler(eventStore));
         simpleCommandBus.register(AddBudgetItemCommand.class, new AddBudgetItemHandler(eventStore));
         simpleCommandBus.register(AddNoteCommand.class, new AddNoteHandler(eventStore));
-        simpleCommandBus.register(CancelProjectCreationCommand.class, new CancelProjectCreationCommandHandler(eventStore));
-        simpleCommandBus.register(ChangeProjectTimelineCommand.class, new ChangeProjectTimelineHandler(eventStore));
-        simpleCommandBus.register(CreateProjectCommand.class, new CreateProjectHandler(eventStore));
-        simpleCommandBus.register(DeclineParticipantInvitationCommand.class, new DeclineParticipantInvitationHandler(eventStore));
+        simpleCommandBus.register(CancelProjectCreationCommand.class, new CancelProjectCreationHandler(eventStore));
+        simpleCommandBus.register(ChangeTimelineCommand.class, new ChangeTimelineHandler(eventStore));
+        simpleCommandBus.register(RequestProjectCreationCommand.class, new RequestProjectCreationHandler(eventStore));
+        simpleCommandBus.register(RejectInvitationCommand.class, new RejectInvitiationHandler(eventStore));
         simpleCommandBus.register(InviteParticipantCommand.class, new InviteParticipantHandler(eventStore));
-        simpleCommandBus.register(MarkProjectAsReadyCommand.class, new MarkProjectAsReadyHandler(eventStore));
+        simpleCommandBus.register(MarkProjectReadyCommand.class, new MarkProjectReadyHandler(eventStore));
         simpleCommandBus.register(RemoveBudgetItemCommand.class, new RemoveBudgetItemHandler(eventStore));
         simpleCommandBus.register(UpdateBudgetItemCommand.class, new UpdateBudgetItemHandler(eventStore));
-        simpleCommandBus.register(UpdateProjectDetailsCommand.class, new UpdateProjectDetailsHandler(eventStore));
+        simpleCommandBus.register(UpdateDetailsCommand.class, new UpdateDetailsHandler(eventStore));
         return simpleCommandBus;
     }
 

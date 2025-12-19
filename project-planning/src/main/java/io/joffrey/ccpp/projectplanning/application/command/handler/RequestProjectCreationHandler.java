@@ -2,19 +2,19 @@ package io.joffrey.ccpp.projectplanning.application.command.handler;
 
 import com.ccpp.shared.command.CommandHandler;
 import com.ccpp.shared.eventstore.EventStore;
-import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.RequestProjectCreationCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
-public class CreateProjectHandler implements CommandHandler<CreateProjectCommand> {
+public class RequestProjectCreationHandler implements CommandHandler<RequestProjectCreationCommand> {
 
     private final EventStore eventStore;
 
-    public CreateProjectHandler(EventStore eventStore) {
+    public RequestProjectCreationHandler(EventStore eventStore) {
         this.eventStore = eventStore;
     }
 
     @Override
-    public void handle(CreateProjectCommand command) {
+    public void handle(RequestProjectCreationCommand command) {
         var project = Project.create(
                 command.workspaceId(),
                 command.userId(),

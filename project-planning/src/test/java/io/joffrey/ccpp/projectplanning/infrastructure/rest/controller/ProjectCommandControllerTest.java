@@ -108,7 +108,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .header("X-Workspace-Id", workspaceId.value().toString())
                 .header("X-User-Id", userId.value().toString())
                 .contentType(ContentType.JSON)
-                .body(new ChangeProjectTimelineRequest(
+                .body(new UpdateProjectTimelineRequest(
                         LocalDate.of(2025, 1, 2),
                         LocalDate.of(2025, 1, 25)
                 ))
@@ -132,7 +132,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .header("X-Workspace-Id", workspaceId.value().toString())
                 .header("X-User-Id", userId.value().toString())
                 .contentType(ContentType.JSON)
-                .body(new ChangeProjectDetailsRequest(
+                .body(new UpdateProjectDetailsRequest(
                         "New title",
                         "New description"
                 ))

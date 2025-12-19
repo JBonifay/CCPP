@@ -8,7 +8,7 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
-import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.RequestProjectCreationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import org.junit.jupiter.api.Test;
@@ -20,11 +20,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class CreateProjectHandlerTest {
+class RequestProjectCreationHandlerTest {
 
     EventBus eventBus = new SimpleEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
-    CreateProjectHandler handler = new CreateProjectHandler(eventStore);
+    RequestProjectCreationHandler handler = new RequestProjectCreationHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());
@@ -39,7 +39,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_create_project_with_valid_data() {
-        handler.handle(new CreateProjectCommand(
+        handler.handle(new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -58,7 +58,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_invalid_timeline() {
-        assertThatThrownBy(() -> new CreateProjectCommand(
+        assertThatThrownBy(() -> new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -75,7 +75,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_empty_title() {
-        var command = new CreateProjectCommand(
+        var command = new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -94,7 +94,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_null_title() {
-        var command = new CreateProjectCommand(
+        var command = new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -113,7 +113,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_empty_description() {
-        var command = new CreateProjectCommand(
+        var command = new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,
@@ -132,7 +132,7 @@ class CreateProjectHandlerTest {
 
     @Test
     void should_reject_project_with_null_description() {
-        var command = new CreateProjectCommand(
+        var command = new RequestProjectCreationCommand(
                 commandId,
                 workspaceId,
                 userId,

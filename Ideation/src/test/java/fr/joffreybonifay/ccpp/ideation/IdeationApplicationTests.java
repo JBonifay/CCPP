@@ -1,10 +1,10 @@
-package fr.joffreybonifay.ccpp.contentplanning;
+package fr.joffreybonifay.ccpp.ideation;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ContentPlanningApplicationTests {
+class IdeationApplicationTests {
 
     @Test
     void contextLoads() {

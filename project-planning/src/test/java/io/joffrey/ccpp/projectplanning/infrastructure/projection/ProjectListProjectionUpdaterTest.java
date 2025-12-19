@@ -1,11 +1,11 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.projection;
 
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import io.joffrey.ccpp.projectplanning.domain.event.*;

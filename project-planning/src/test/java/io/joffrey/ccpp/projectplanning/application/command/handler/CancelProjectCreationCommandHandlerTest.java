@@ -1,10 +1,10 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
-import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
+import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.CancelProjectCreationCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreationCancelled;
@@ -41,7 +41,7 @@ class CancelProjectCreationCommandHandlerTest {
                 timeline,
                 projectBudgetLimit
         );
-        eventStore.saveEvents(projectId.value(), List.of(projectCreated), -1);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreated), -1, null,null);
 
         var command = new CancelProjectCreationCommand(projectId, "Workspace project limit reached");
         handler.handle(command);

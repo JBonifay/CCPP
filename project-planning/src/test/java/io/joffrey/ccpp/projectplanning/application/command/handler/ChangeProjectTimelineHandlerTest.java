@@ -1,15 +1,15 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.ChangeProjectTimelineCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectTimelineChanged;
 import io.joffrey.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ class ChangeProjectTimelineHandlerTest {
     @Test
     void should_change_timeline_when_planning() {
         var projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
-        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null,null);
 
         var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
         var command = new ChangeProjectTimelineCommand(projectId, newTimeline);
@@ -52,7 +52,7 @@ class ChangeProjectTimelineHandlerTest {
     void should_prevent_changing_timeline_when_ready() {
         eventStore.saveEvents(projectId.value(), List.of(
                         new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1);
+                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new ChangeProjectTimelineCommand(projectId, new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30)))))
                 .isInstanceOf(CannotModifyReadyProjectException.class)

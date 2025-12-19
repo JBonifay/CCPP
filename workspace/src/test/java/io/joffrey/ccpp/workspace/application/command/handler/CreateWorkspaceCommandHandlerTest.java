@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.workspace.application.command.handler;
 
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import io.joffrey.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;
 import io.joffrey.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;

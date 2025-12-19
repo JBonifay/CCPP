@@ -26,4 +26,5 @@ public class SpiConfiguration {
     public ParticipantIdGenerator participantIdGenerator() {
     return new UuidParticipantIdGenerator();
     }
+
 }

@@ -1,15 +1,15 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -37,7 +37,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_invite_participant_to_project() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
 
         handler.handle(new InviteParticipantCommand(projectId, participantId, "mcfly@example.com", "McFly"));
 
@@ -48,7 +48,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_empty_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "", "McFly")))
                 .isInstanceOf(InvalidParticipantDataException.class)
@@ -57,7 +57,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_empty_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", "")))
                 .isInstanceOf(InvalidParticipantDataException.class)
@@ -66,7 +66,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_null_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), null, "McFly")))
                 .isInstanceOf(InvalidParticipantDataException.class)
@@ -75,7 +75,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_null_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null,null);
 
         assertThatThrownBy(() -> handler.handle(new InviteParticipantCommand(projectId, new ParticipantId(UUID.randomUUID()), "mcfly@example.com", null)))
                 .isInstanceOf(InvalidParticipantDataException.class)

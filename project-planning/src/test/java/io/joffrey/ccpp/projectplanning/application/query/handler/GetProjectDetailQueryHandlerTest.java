@@ -1,8 +1,8 @@
 package io.joffrey.ccpp.projectplanning.application.query.handler;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.valueobjects.DateRange;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import io.joffrey.ccpp.projectplanning.application.query.exception.ProjectNotFoundException;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectDetailDTO;

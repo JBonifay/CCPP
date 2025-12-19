@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.workspace.infrastructure.projection;
 
-import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.identities.WorkspaceId;
 import io.joffrey.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import io.joffrey.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;

@@ -1,9 +1,9 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.controller;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
-import com.ccpp.shared.infrastructure.command.CommandBus;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
+import com.ccpp.shared.command.CommandBus;
 import io.joffrey.ccpp.projectplanning.application.command.command.*;
 import io.joffrey.ccpp.projectplanning.domain.spi.BudgetItemIdGenerator;
 import io.joffrey.ccpp.projectplanning.domain.spi.ParticipantIdGenerator;

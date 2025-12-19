@@ -2,8 +2,8 @@ package io.joffrey.ccpp.projectplanning.application.query.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.WorkspaceId;
 import io.joffrey.ccpp.projectplanning.application.query.GetProjectListQuery;
 import io.joffrey.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import io.joffrey.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;

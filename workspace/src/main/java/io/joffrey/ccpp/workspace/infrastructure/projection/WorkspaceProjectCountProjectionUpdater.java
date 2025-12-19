@@ -1,7 +1,7 @@
 package io.joffrey.ccpp.workspace.infrastructure.projection;
 
-import com.ccpp.shared.infrastructure.event.DomainEvent;
-import com.ccpp.shared.infrastructure.event.EventHandler;
+import com.ccpp.shared.event.DomainEvent;
+import com.ccpp.shared.eventhandler.EventHandler;
 import io.joffrey.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import io.joffrey.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import io.joffrey.ccpp.workspace.domain.event.WorkspaceCreated;

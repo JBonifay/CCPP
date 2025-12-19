@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.domain.exception;
 
-import com.ccpp.shared.domain.exception.DomainException;
+import com.ccpp.shared.exception.DomainException;
 
 public class InvalidProjectNoteException extends DomainException {
 

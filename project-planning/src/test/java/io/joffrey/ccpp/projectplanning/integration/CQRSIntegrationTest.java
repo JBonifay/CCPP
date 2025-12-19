@@ -2,15 +2,13 @@ package io.joffrey.ccpp.projectplanning.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ccpp.shared.infrastructure.event.EventStore;
-import com.ccpp.shared.infrastructure.event.EventBus;
-import com.ccpp.shared.infrastructure.event.SpyEventBus;
-import com.ccpp.shared.domain.identities.ProjectId;
-import com.ccpp.shared.domain.identities.UserId;
-import com.ccpp.shared.domain.identities.WorkspaceId;
-import com.ccpp.shared.infrastructure.event.InMemoryEventStore;
-import com.ccpp.shared.domain.valueobjects.DateRange;
-import com.ccpp.shared.domain.valueobjects.Money;
+import com.ccpp.shared.eventstore.EventStore;
+import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.identities.UserId;
+import com.ccpp.shared.identities.WorkspaceId;
+import com.ccpp.shared.eventstore.InMemoryEventStore;
+import com.ccpp.shared.valueobjects.DateRange;
+import com.ccpp.shared.valueobjects.Money;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.AddNoteCommand;
 import io.joffrey.ccpp.projectplanning.application.command.command.CreateProjectCommand;
@@ -36,8 +34,6 @@ import io.joffrey.ccpp.projectplanning.domain.model.InvitationStatus;
 import io.joffrey.ccpp.projectplanning.domain.model.ProjectStatus;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import io.joffrey.ccpp.projectplanning.infrastructure.projection.ProjectDetailProjectionUpdater;
-import io.joffrey.ccpp.projectplanning.infrastructure.projection.ProjectListProjectionUpdater;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
 import io.joffrey.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
 import java.math.BigDecimal;
@@ -48,12 +44,11 @@ import org.junit.jupiter.api.Test;
 
 class CQRSIntegrationTest {
 
-    EventBus eventBus = new SpyEventBus();
     EventStore eventStore = new InMemoryEventStore();
     ProjectListReadRepository listRepository = new InMemoryProjectListReadRepository();
     ProjectDetailReadRepository detailRepository = new InMemoryProjectDetailReadRepository();
 
-    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore, eventBus);
+    CreateProjectHandler createProjectHandler = new CreateProjectHandler(eventStore);
     AddBudgetItemHandler addBudgetItemHandler = new AddBudgetItemHandler(eventStore);
     UpdateBudgetItemHandler updateBudgetItemHandler = new UpdateBudgetItemHandler(eventStore);
     RemoveBudgetItemHandler removeBudgetItemHandler = new RemoveBudgetItemHandler(eventStore);

@@ -1,10 +1,31 @@
 package io.joffrey.ccpp.workspace.application.command.command;
 
-import com.ccpp.shared.infrastructure.command.Command;
-import com.ccpp.shared.domain.identities.WorkspaceId;
+import com.ccpp.shared.command.Command;
+import com.ccpp.shared.identities.WorkspaceId;
+
+import java.util.UUID;
 
 public record CreateWorkspaceCommand(
         WorkspaceId workspaceId,
         String workspaceName
 ) implements Command {
+    @Override
+    public UUID getCommandId() {
+        return null;
+    }
+
+    @Override
+    public UUID getAggregateId() {
+        return null;
+    }
+
+    @Override
+    public UUID getCorrelationId() {
+        return null;
+    }
+
+    @Override
+    public UUID getCausationId() {
+        return null;
+    }
 }

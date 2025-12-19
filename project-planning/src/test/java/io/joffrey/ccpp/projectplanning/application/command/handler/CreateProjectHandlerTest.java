@@ -1,5 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventbus.EventBus;
+import com.ccpp.shared.eventbus.SimpleEventBus;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.exception.DateRangeException;
 import com.ccpp.shared.identities.ProjectId;
@@ -20,7 +22,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateProjectHandlerTest {
 
-    InMemoryEventStore eventStore = new InMemoryEventStore();
+    EventBus eventBus = new SimpleEventBus();
+    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
     CreateProjectHandler handler = new CreateProjectHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

@@ -1,5 +1,7 @@
 package io.joffrey.ccpp.projectplanning.application.command.handler;
 
+import com.ccpp.shared.eventbus.EventBus;
+import com.ccpp.shared.eventbus.SimpleEventBus;
 import com.ccpp.shared.eventstore.InMemoryEventStore;
 import com.ccpp.shared.exception.CurrencyException;
 import com.ccpp.shared.identities.ProjectId;
@@ -28,7 +30,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AddBudgetItemHandlerTest {
 
-    InMemoryEventStore eventStore = new InMemoryEventStore();
+    EventBus eventBus = new SimpleEventBus();
+    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
     AddBudgetItemHandler handler = new AddBudgetItemHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

@@ -4,10 +4,11 @@ import com.ccpp.shared.event.DomainEvent;
 import com.ccpp.shared.exception.OptimisticLockException;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEventStore implements EventStore {
 
-    private final Map<UUID, List<EventEnvelope>> events = new HashMap<>();
+    private final Map<UUID, List<EventEnvelope>> events = new ConcurrentHashMap<>();
 
     @Override
     public void saveEvents(UUID aggregateId, List<DomainEvent> domainEvents, int expectedVersion, UUID correlationId, UUID causationId) {

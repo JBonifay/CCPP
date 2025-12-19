@@ -1,6 +1,6 @@
 package io.joffrey.ccpp.projectplanning.infrastructure.rest.dto;
 
-public record ChangeProjectDetailsRequest(
+public record UpdateProjectDetailsRequest(
         String title,
         String description
 ) {

@@ -23,7 +23,7 @@ class CancelProjectCreationCommandHandlerTest {
 
     EventBus eventBus = new SimpleEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
-    CancelProjectCreationCommandHandler handler = new CancelProjectCreationCommandHandler(eventStore);
+    CancelProjectCreationHandler handler = new CancelProjectCreationHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());

@@ -40,7 +40,7 @@ public class ProjectCommandController {
             @RequestBody CreateProjectRequest createProjectRequest
     ) {
         ProjectId projectId = projectIdGenerator.generate();
-        CreateProjectCommand command = new CreateProjectCommand(
+        RequestProjectCreationCommand command = new RequestProjectCreationCommand(
                 newCommandId(),
                 RequestContext.getWorkspaceId(),
                 RequestContext.getUserId(),
@@ -58,32 +58,32 @@ public class ProjectCommandController {
     }
 
     @PatchMapping("/{projectId}/details")
-    private ResponseEntity<Void> changeProjectDetails(
+    private ResponseEntity<Void> updateProjectDetails(
             @PathVariable String projectId,
-            @RequestBody ChangeProjectDetailsRequest changeProjectDetailsRequest
+            @RequestBody UpdateProjectDetailsRequest updateProjectDetailsRequest
     ) {
-        commandBus.execute(new UpdateProjectDetailsCommand(
+        commandBus.execute(new UpdateDetailsCommand(
                 newCommandId(),
                 new ProjectId(projectId),
-                changeProjectDetailsRequest.title(),
-                changeProjectDetailsRequest.description(),
+                updateProjectDetailsRequest.title(),
+                updateProjectDetailsRequest.description(),
                 newCorrelationId()
         ));
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{projectId}/timeline")
-    public ResponseEntity<Void> changeProjectTimeline(
+    public ResponseEntity<Void> updateProjectTimeline(
             @PathVariable String projectId,
-            @RequestBody ChangeProjectTimelineRequest changeProjectTimelineRequest
+            @RequestBody UpdateProjectTimelineRequest updateProjectTimelineRequest
     ) {
 
-        commandBus.execute(new ChangeProjectTimelineCommand(
+        commandBus.execute(new ChangeTimelineCommand(
                 newCommandId(),
                 new ProjectId(projectId),
                 new DateRange(
-                        changeProjectTimelineRequest.startDate(),
-                        changeProjectTimelineRequest.endDate()),
+                        updateProjectTimelineRequest.startDate(),
+                        updateProjectTimelineRequest.endDate()),
                 newCorrelationId()));
 
         return ResponseEntity.noContent().build();
@@ -168,7 +168,7 @@ public class ProjectCommandController {
             @PathVariable String projectId,
             @PathVariable String participantId
     ) {
-        AcceptParticipantInvitationCommand command = new AcceptParticipantInvitationCommand(
+        AcceptInvitationCommand command = new AcceptInvitationCommand(
                 newCommandId(),
                 new ProjectId(projectId),
                 new ParticipantId(UUID.fromString(participantId)),
@@ -185,7 +185,7 @@ public class ProjectCommandController {
             @PathVariable String projectId,
             @PathVariable String participantId
     ) {
-        DeclineParticipantInvitationCommand command = new DeclineParticipantInvitationCommand(
+        RejectInvitationCommand command = new RejectInvitationCommand(
                 newCommandId(),
                 new ProjectId(projectId),
                 new ParticipantId(UUID.fromString(participantId)),
@@ -219,7 +219,7 @@ public class ProjectCommandController {
     public ResponseEntity<Void> markProjectAsReady(
             @PathVariable String projectId
     ) {
-        MarkProjectAsReadyCommand command = new MarkProjectAsReadyCommand(
+        MarkProjectReadyCommand command = new MarkProjectReadyCommand(
                 newCommandId(),
                 new ProjectId(projectId),
                 RequestContext.getUserId(),

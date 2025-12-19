@@ -9,7 +9,7 @@ import com.ccpp.shared.valueobjects.DateRange;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record CreateProjectCommand(
+public record RequestProjectCreationCommand(
         UUID commandId,
         WorkspaceId workspaceId,
         UserId userId,
@@ -21,7 +21,7 @@ public record CreateProjectCommand(
         UUID correlationId
 ) implements Command {
 
-    public CreateProjectCommand(
+    public RequestProjectCreationCommand(
             WorkspaceId workspaceId,
             UserId userId,
             ProjectId projectId,

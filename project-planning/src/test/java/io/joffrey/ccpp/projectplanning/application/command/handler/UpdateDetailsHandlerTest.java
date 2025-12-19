@@ -7,7 +7,7 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
-import io.joffrey.ccpp.projectplanning.application.command.command.UpdateProjectDetailsCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.UpdateDetailsCommand;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectDetailsUpdated;
 import io.joffrey.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
@@ -21,11 +21,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class UpdateProjectDetailsHandlerTest {
+class UpdateDetailsHandlerTest {
 
     EventBus eventBus = new SimpleEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
-    UpdateProjectDetailsHandler handler = new UpdateProjectDetailsHandler(eventStore);
+    UpdateDetailsHandler handler = new UpdateDetailsHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());
@@ -42,7 +42,7 @@ class UpdateProjectDetailsHandlerTest {
     void should_update_project_details() {
         eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
-        handler.handle(new UpdateProjectDetailsCommand(
+        handler.handle(new UpdateDetailsCommand(
                 commandId,
                 projectId,
                 "Q2 Video Series",
@@ -60,7 +60,7 @@ class UpdateProjectDetailsHandlerTest {
         eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
-                new UpdateProjectDetailsCommand(
+                new UpdateDetailsCommand(
                         commandId,
                         projectId,
                         "",  // empty title
@@ -75,7 +75,7 @@ class UpdateProjectDetailsHandlerTest {
     void should_reject_empty_description_on_update() {
         eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
-        assertThatThrownBy(() -> handler.handle(new UpdateProjectDetailsCommand(
+        assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,
                 projectId,
                 "Valid title",
@@ -91,7 +91,7 @@ class UpdateProjectDetailsHandlerTest {
         ProjectCreated projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null, null);
 
-        assertThatThrownBy(() -> handler.handle(new UpdateProjectDetailsCommand(
+        assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,
                 projectId,
                 null,  // null title
@@ -107,7 +107,7 @@ class UpdateProjectDetailsHandlerTest {
         ProjectCreated projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null, null);
 
-        assertThatThrownBy(() -> handler.handle(new UpdateProjectDetailsCommand(
+        assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,
                 projectId,
                 "Valid title",

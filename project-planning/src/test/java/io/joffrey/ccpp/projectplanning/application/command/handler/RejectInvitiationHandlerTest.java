@@ -7,8 +7,8 @@ import com.ccpp.shared.identities.ProjectId;
 import com.ccpp.shared.identities.UserId;
 import com.ccpp.shared.identities.WorkspaceId;
 import com.ccpp.shared.valueobjects.DateRange;
-import io.joffrey.ccpp.projectplanning.application.command.command.AcceptParticipantInvitationCommand;
-import io.joffrey.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
+import io.joffrey.ccpp.projectplanning.application.command.command.RejectInvitationCommand;
+import io.joffrey.ccpp.projectplanning.domain.event.ParticipantDeclinedInvitation;
 import io.joffrey.ccpp.projectplanning.domain.event.ParticipantInvited;
 import io.joffrey.ccpp.projectplanning.domain.event.ProjectCreated;
 import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
@@ -21,11 +21,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AcceptParticipantInvitationHandlerTest {
+class RejectInvitiationHandlerTest {
 
     EventBus eventBus = new SimpleEventBus();
     InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
-    AcceptParticipantInvitationHandler handler = new AcceptParticipantInvitationHandler(eventStore);
+    RejectInvitiationHandler handler = new RejectInvitiationHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());
@@ -34,24 +34,27 @@ class AcceptParticipantInvitationHandlerTest {
     String title = "Q1 Video Series";
     String description = "Educational content";
     BigDecimal projectBudgetLimit = BigDecimal.valueOf(1000);
+    ParticipantId participantId = new ParticipantId(UUID.randomUUID());
 
     UUID commandId = UUID.randomUUID();
     UUID correlationId = UUID.randomUUID();
 
     @Test
-    void should_accept_participant_invitation() {
-        ParticipantId participantId = new ParticipantId(UUID.randomUUID());
+    void should_decline_participant_invitation() {
         eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
-        ), -1, correlationId, commandId);
+                        new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                        new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
+                -1, null, null);
 
-        handler.handle(new AcceptParticipantInvitationCommand(commandId, projectId, participantId, correlationId));
+        handler.handle(new RejectInvitationCommand(
+                commandId,
+                projectId,
+                participantId,
+                correlationId
+        ));
 
         assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
-                .isEqualTo(new ParticipantAcceptedInvitation(projectId, participantId));
-
+                .isEqualTo(new ParticipantDeclinedInvitation(projectId, participantId));
     }
-
 }

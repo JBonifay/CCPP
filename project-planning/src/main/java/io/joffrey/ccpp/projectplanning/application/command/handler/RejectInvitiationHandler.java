@@ -3,28 +3,28 @@ package io.joffrey.ccpp.projectplanning.application.command.handler;
 import com.ccpp.shared.command.CommandHandler;
 import com.ccpp.shared.event.DomainEvent;
 import com.ccpp.shared.eventstore.EventStore;
-import io.joffrey.ccpp.projectplanning.application.command.command.AcceptParticipantInvitationCommand;
+import io.joffrey.ccpp.projectplanning.application.command.command.RejectInvitationCommand;
 import io.joffrey.ccpp.projectplanning.domain.Project;
 
 import java.util.List;
 
-public class AcceptParticipantInvitationHandler implements CommandHandler<AcceptParticipantInvitationCommand> {
+public class RejectInvitiationHandler implements CommandHandler<RejectInvitationCommand> {
 
     private final EventStore eventStore;
 
-    public AcceptParticipantInvitationHandler(EventStore eventStore) {
+    public RejectInvitiationHandler(EventStore eventStore) {
         this.eventStore = eventStore;
     }
 
     @Override
-    public void handle(AcceptParticipantInvitationCommand command) {
+    public void handle(RejectInvitationCommand command) {
         List<DomainEvent> projectEvents = eventStore.loadEvents(command.projectId().value());
         Project project = Project.fromHistory(projectEvents);
         int initialVersion = project.version();
 
-        project.participantAcceptedInvitation(command.participantId());
+        project.participantDeclinedInvitation(command.participantId());
 
-        eventStore.saveEvents(project.aggregateId(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        project.markEventsAsCommitted();
     }
-
 }

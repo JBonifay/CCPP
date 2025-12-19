@@ -6,14 +6,14 @@ import io.joffrey.ccpp.projectplanning.domain.valueobject.ParticipantId;
 
 import java.util.UUID;
 
-public record DeclineParticipantInvitationCommand(
+public record RejectInvitationCommand(
         UUID commandId,
         ProjectId projectId,
         ParticipantId participantId,
         UUID correlationId
 )  implements Command {
 
-    public DeclineParticipantInvitationCommand(ProjectId projectId, ParticipantId participantId, UUID correlationId) {
+    public RejectInvitationCommand(ProjectId projectId, ParticipantId participantId, UUID correlationId) {
         this(UUID.randomUUID(), projectId, participantId, correlationId);
     }
 

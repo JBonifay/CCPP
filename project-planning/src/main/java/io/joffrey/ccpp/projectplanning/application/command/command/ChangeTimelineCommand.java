@@ -2,19 +2,19 @@ package io.joffrey.ccpp.projectplanning.application.command.command;
 
 import com.ccpp.shared.command.Command;
 import com.ccpp.shared.identities.ProjectId;
+import com.ccpp.shared.valueobjects.DateRange;
 
 import java.util.UUID;
 
-public record UpdateProjectDetailsCommand(
+public record ChangeTimelineCommand(
         UUID commandId,
         ProjectId projectId,
-        String title,
-        String description,
+        DateRange newTimeline,
         UUID correlationId
 )  implements Command {
 
-    public UpdateProjectDetailsCommand( ProjectId projectId, String title, String description, UUID correlationId) {
-        this(UUID.randomUUID(), projectId, title, description, correlationId);
+    public ChangeTimelineCommand(ProjectId projectId, DateRange newTimeline, UUID correlationId) {
+        this(UUID.randomUUID(), projectId, newTimeline, correlationId);
     }
 
     @Override

@@ -37,7 +37,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .header("X-Workspace-Id", UUID.randomUUID().toString())
                 .header("X-User-Id", UUID.randomUUID().toString())
                 .contentType(ContentType.JSON)
-                .body(new CreateProjectRequest(
+                .body(new RequestProjectCreationRequest(
                         "Q1 2025 Video Series",
                         "Educational content",
                         LocalDate.of(2025, 1, 1),

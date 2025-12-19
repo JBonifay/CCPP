@@ -36,8 +36,8 @@ public class ProjectCommandController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateProjectResponse> createProject(
-            @RequestBody CreateProjectRequest createProjectRequest
+    public ResponseEntity<RequestProjectCreationResponse> requestProjectCreation(
+            @RequestBody RequestProjectCreationRequest requestProjectCreationRequest
     ) {
         ProjectId projectId = projectIdGenerator.generate();
         RequestProjectCreationCommand command = new RequestProjectCreationCommand(
@@ -45,16 +45,16 @@ public class ProjectCommandController {
                 RequestContext.getWorkspaceId(),
                 RequestContext.getUserId(),
                 projectId,
-                createProjectRequest.title(),
-                createProjectRequest.description(),
-                new DateRange(createProjectRequest.startDate(), createProjectRequest.endDate()),
-                createProjectRequest.budgetLimit(),
+                requestProjectCreationRequest.title(),
+                requestProjectCreationRequest.description(),
+                new DateRange(requestProjectCreationRequest.startDate(), requestProjectCreationRequest.endDate()),
+                requestProjectCreationRequest.budgetLimit(),
                 newCorrelationId()
         );
 
         commandBus.execute(command);
 
-        return new ResponseEntity<>(new CreateProjectResponse(projectId.value()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new RequestProjectCreationResponse(projectId.value()), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{projectId}/details")

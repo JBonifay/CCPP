@@ -27,7 +27,7 @@ public class CreateProjectHandler implements CommandHandler<CreateProjectCommand
 
         eventStore.saveEvents(
                 project.aggregateId(),
-                project.uncommittedEvents(),
+                project.uncommittedCHanges(),
                 project.version(),
                 command.correlationId(),
                 command.commandId()

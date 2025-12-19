@@ -22,7 +22,7 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
 
         eventStore.saveEvents(
                 createWorkspaceCommand.workspaceId().value(),
-                workspace.uncommittedEvents(),
+                workspace.uncommittedCHanges(),
                 workspace.version(),
                 createWorkspaceCommand.correlationId(),
                 createWorkspaceCommand.causationId()

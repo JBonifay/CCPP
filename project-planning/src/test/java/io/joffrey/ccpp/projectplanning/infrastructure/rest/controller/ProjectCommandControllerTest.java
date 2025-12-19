@@ -123,7 +123,26 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
 
     @Test
     void should_update_project_details() {
-        fail();
+        var workspaceId = new WorkspaceId(UUID.randomUUID());
+        var userId = new UserId(UUID.randomUUID());
+        var projectId = new ProjectId(UUID.randomUUID());
+        aProjectExist(workspaceId, userId, projectId);
+
+        given()
+                .header("X-Workspace-Id", workspaceId.value().toString())
+                .header("X-User-Id", userId.value().toString())
+                .contentType(ContentType.JSON)
+                .body(new ChangeProjectDetailsRequest(
+                        "New title",
+                        "New description"
+                ))
+                .when()
+                .patch("/api/projects/" + projectId.value() + "/details")
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        assertThat(projectDetailRepository.findById(projectId).get().title()).isEqualTo("New title");
+        assertThat(projectDetailRepository.findById(projectId).get().description()).isEqualTo("New description");
     }
 
     @Nested

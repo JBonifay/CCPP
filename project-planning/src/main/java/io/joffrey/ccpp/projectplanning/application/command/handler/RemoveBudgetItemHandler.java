@@ -24,7 +24,7 @@ public class RemoveBudgetItemHandler implements CommandHandler<RemoveBudgetItemC
 
         project.removeBudgetItem(command.budgetItemId());
 
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
         project.markEventsAsCommitted();
     }
 }

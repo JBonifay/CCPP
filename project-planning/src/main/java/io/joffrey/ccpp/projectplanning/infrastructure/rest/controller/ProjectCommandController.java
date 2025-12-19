@@ -57,6 +57,21 @@ public class ProjectCommandController {
         return new ResponseEntity<>(new CreateProjectResponse(projectId.value()), HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{projectId}/details")
+    private ResponseEntity<Void> changeProjectDetails(
+            @PathVariable String projectId,
+            @RequestBody ChangeProjectDetailsRequest changeProjectDetailsRequest
+    ) {
+        commandBus.execute(new UpdateProjectDetailsCommand(
+                newCommandId(),
+                new ProjectId(projectId),
+                changeProjectDetailsRequest.title(),
+                changeProjectDetailsRequest.description(),
+                newCorrelationId()
+        ));
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("/{projectId}/timeline")
     public ResponseEntity<Void> changeProjectTimeline(
             @PathVariable String projectId,

@@ -23,7 +23,7 @@ public class MarkProjectAsReadyHandler implements CommandHandler<MarkProjectAsRe
         int initialVersion = project.version();
 
         project.markAsReady(command.userId());
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
         project.markEventsAsCommitted();
     }
 }

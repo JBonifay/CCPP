@@ -24,7 +24,7 @@ public class CancelProjectCreationCommandHandler implements CommandHandler<Cance
 
         project.cancel(command.reason());
 
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
         project.markEventsAsCommitted();
     }
 

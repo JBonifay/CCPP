@@ -1,16 +1,9 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.configuration;
 
-import fr.joffreybonifay.ccpp.projectplanning.application.command.command.*;
-import fr.joffreybonifay.ccpp.projectplanning.application.command.handler.*;
-import fr.joffreybonifay.ccpp.shared.command.CommandBus;
-import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.query.QueryBus;
-import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.joffrey.ccpp.projectplanning.application.command.command.*;
-import io.joffrey.ccpp.projectplanning.application.command.handler.*;
+import fr.joffreybonifay.ccpp.projectplanning.application.command.command.*;
+import fr.joffreybonifay.ccpp.projectplanning.application.command.handler.*;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectListQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.handler.GetProjectDetailQueryHandler;
@@ -27,6 +20,11 @@ import fr.joffreybonifay.ccpp.projectplanning.infrastructure.query.InMemoryProje
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidBudgetItemIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidParticipantIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidProjectIdGenerator;
+import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
+import fr.joffreybonifay.ccpp.shared.query.QueryBus;
+import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

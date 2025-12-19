@@ -1,11 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.controller;
 
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.*;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
+import fr.joffreybonifay.ccpp.projectplanning.AbstractE2eTest;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.NoteDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ParticipantDTO;
@@ -13,8 +8,12 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import fr.joffreybonifay.ccpp.projectplanning.AbstractE2eTest;
-import io.joffrey.ccpp.projectplanning.infrastructure.rest.dto.*;
+import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.*;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,6 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import static org.hamcrest.Matchers.equalTo;
 
 class ProjectCommandControllerTest extends AbstractE2eTest {

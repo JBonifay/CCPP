@@ -1,17 +1,16 @@
 
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection;
 
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.NoteDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ParticipantDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
-import io.joffrey.ccpp.projectplanning.domain.event.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
+import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 
 import java.util.ArrayList;
 

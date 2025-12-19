@@ -29,7 +29,7 @@ public class CreateProjectHandler implements CommandHandler<CreateProjectCommand
                 project.aggregateId(),
                 project.uncommittedEvents(),
                 project.version(),
-                command.correlationId() != null ? command.correlationId() : command.commandId(),
+                command.correlationId(),
                 command.commandId()
         );
 

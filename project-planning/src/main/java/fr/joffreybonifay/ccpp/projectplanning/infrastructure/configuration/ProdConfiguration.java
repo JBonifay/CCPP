@@ -15,8 +15,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@EnableJpaRepositories(basePackages = {"com.ccpp.shared"})
-@EntityScan(basePackages = {"com.ccpp.shared"})
+@EnableJpaRepositories(basePackages = {"fr.joffreybonifay.ccpp.shared"})
+@EntityScan(basePackages = {"fr.joffreybonifay.ccpp.shared"})
 @EnableScheduling
 @Configuration
 @Profile("default")

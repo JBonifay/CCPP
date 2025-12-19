@@ -1,18 +1,17 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.controller;
 
 
+import fr.joffreybonifay.ccpp.projectplanning.AbstractE2eTest;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
+import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.application.query.model.*;
-import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
-import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
-import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
-import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import fr.joffreybonifay.ccpp.projectplanning.AbstractE2eTest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

@@ -1,15 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.domain;
 
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
-import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
-import io.joffrey.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
@@ -18,6 +9,14 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
+import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
+import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 
 import java.math.BigDecimal;
 import java.util.Currency;

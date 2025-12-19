@@ -1,15 +1,14 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
+import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
+import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
-import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
-import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
-import io.joffrey.ccpp.projectplanning.domain.event.*;
-import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
-import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 
 import java.math.BigDecimal;
 import java.util.Map;

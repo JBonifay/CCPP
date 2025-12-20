@@ -10,6 +10,8 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
             case ParticipantAcceptedInvitation e -> handleParticipantAccepted(e);
             case ParticipantDeclinedInvitation e -> handleParticipantDeclined(e);
             case NoteAdded e -> handleNoteAdded(e);
+            case ProjectActivated e -> handleProjectActivated(e);
+            case ProjectCreationFailed e -> handleProjectCreationFailed(e);
             default -> {}
         }
     }
@@ -259,6 +263,40 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
                     current.title(),
                     current.description(),
                     ProjectStatus.READY,
+                    current.budgetItems(),
+                    current.participants(),
+                    current.notes(),
+                    current.timeline()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleProjectActivated(ProjectActivated event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectDetailDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    current.description(),
+                    ProjectStatus.ACTIVE,
+                    current.budgetItems(),
+                    current.participants(),
+                    current.notes(),
+                    current.timeline()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleProjectCreationFailed(ProjectCreationFailed event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectDetailDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    current.description(),
+                    ProjectStatus.FAILED,
                     current.budgetItems(),
                     current.participants(),
                     current.notes(),

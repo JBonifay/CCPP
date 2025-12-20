@@ -6,6 +6,8 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
@@ -34,6 +36,8 @@ public class ProjectListProjectionUpdater implements EventHandler {
             case BudgetItemUpdated e -> handleBudgetItemUpdated(e);
             case BudgetItemRemoved e -> handleBudgetItemRemoved(e);
             case ParticipantInvited e -> handleParticipantInvited(e);
+            case ProjectActivated e -> handleProjectActivated(e);
+            case ProjectCreationFailed e -> handleProjectCreationFailed(e);
             default -> {} // Ignore other events
         }
     }
@@ -151,6 +155,34 @@ public class ProjectListProjectionUpdater implements EventHandler {
                     current.title(),
                     current.status(),
                     newTotal,
+                    current.participantCount()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleProjectActivated(ProjectActivated event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    ProjectStatus.ACTIVE,
+                    current.totalBudget(),
+                    current.participantCount()
+            );
+            repository.update(updated);
+        });
+    }
+
+    private void handleProjectCreationFailed(ProjectCreationFailed event) {
+        repository.findById(event.projectId()).ifPresent(current -> {
+            var updated = new ProjectListDTO(
+                    current.projectId(),
+                    current.workspaceId(),
+                    current.title(),
+                    ProjectStatus.FAILED,
+                    current.totalBudget(),
                     current.participantCount()
             );
             repository.update(updated);

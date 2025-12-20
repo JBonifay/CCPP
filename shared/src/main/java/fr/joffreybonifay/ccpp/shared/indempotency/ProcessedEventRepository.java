@@ -1,0 +1,9 @@
+package fr.joffreybonifay.ccpp.shared.indempotency;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.UUID;
+
+public interface ProcessedEventRepository extends JpaRepository<ProcessedEventEntity, UUID> {
+}

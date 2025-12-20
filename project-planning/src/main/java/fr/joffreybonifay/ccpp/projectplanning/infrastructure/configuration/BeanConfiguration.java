@@ -88,6 +88,8 @@ public class BeanConfiguration {
         simpleCommandBus.register(RemoveBudgetItemCommand.class, new RemoveBudgetItemHandler(eventStore));
         simpleCommandBus.register(UpdateBudgetItemCommand.class, new UpdateBudgetItemHandler(eventStore));
         simpleCommandBus.register(UpdateDetailsCommand.class, new UpdateDetailsHandler(eventStore));
+        simpleCommandBus.register(ActivateProjectCommand.class, new ActivateProjectHandler(eventStore));
+        simpleCommandBus.register(FailProjectCreationCommand.class, new FailProjectCreationHandler(eventStore));
         return simpleCommandBus;
     }
 
@@ -98,6 +100,4 @@ public class BeanConfiguration {
         simpleQueryBus.subscribe(GetProjectDetailQuery.class, new GetProjectDetailQueryHandler(projectDetailReadRepository));
         return simpleQueryBus;
     }
-
-
 }

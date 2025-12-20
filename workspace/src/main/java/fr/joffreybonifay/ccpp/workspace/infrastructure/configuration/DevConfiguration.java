@@ -9,9 +9,11 @@ import fr.joffreybonifay.ccpp.workspace.infrastructure.projection.WorkspaceProje
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
+@Profile("in-memory")
 @Configuration
-public class EventConfiguration {
+public class DevConfiguration {
 
     @Bean
     WorkspaceProjectCountReadRepository workspaceProjectCountReadRepository() {

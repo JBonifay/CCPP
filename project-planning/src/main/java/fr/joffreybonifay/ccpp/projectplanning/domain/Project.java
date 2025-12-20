@@ -1,16 +1,15 @@
 package fr.joffreybonifay.ccpp.projectplanning.domain;
 
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
-import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
-import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
-import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
-import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
+import fr.joffreybonifay.ccpp.projectplanning.domain.exception.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
@@ -175,11 +174,17 @@ public class Project extends AggregateRoot {
     }
 
     public void activate() {
-
+        if (projectStatus != ProjectStatus.READY) {
+            throw new InvalidProjectStateException("Can only activate projects in READY status");
+        }
+        raiseEvent(new ProjectActivated(new ProjectId(aggregateId), workspaceId));
     }
 
     public void failCreation(String reason) {
-
+        if (reason == null || reason.isBlank()) {
+            throw new InvalidProjectDataException("Failure reason cannot be empty");
+        }
+        raiseEvent(new ProjectCreationFailed(new ProjectId(aggregateId), workspaceId, reason));
     }
 
     private void verifyProjectIsModifiable() {
@@ -209,6 +214,8 @@ public class Project extends AggregateRoot {
             case ParticipantInvited participantInvited -> apply(participantInvited);
             case ParticipantAcceptedInvitation participantAcceptedInvitation -> apply(participantAcceptedInvitation);
             case ParticipantDeclinedInvitation participantDeclinedInvitation -> apply(participantDeclinedInvitation);
+            case ProjectActivated projectActivated -> apply(projectActivated);
+            case ProjectCreationFailed projectCreationFailed -> apply(projectCreationFailed);
             default -> throw new IllegalStateException("Unexpected value: " + event);
         }
     }
@@ -266,4 +273,12 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(ParticipantDeclinedInvitation participantDeclinedInvitation) {}
+
+    private void apply(ProjectActivated projectActivated) {
+        projectStatus = ProjectStatus.ACTIVE;
+    }
+
+    private void apply(ProjectCreationFailed projectCreationFailed) {
+        projectStatus = ProjectStatus.FAILED;
+    }
 }

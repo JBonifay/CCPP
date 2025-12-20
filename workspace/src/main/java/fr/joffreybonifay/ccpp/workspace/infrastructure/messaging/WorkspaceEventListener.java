@@ -37,7 +37,7 @@ public class WorkspaceEventListener {
     public void listen(String message) {
         try {
             EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);
-            log.info("Received project-planning event: {} (correlationId: {}, aggregateType: {})", envelope.eventType(), envelope.correlationId(), envelope.aggregateType());
+            log.info("Received event: {} (correlationId: {}, aggregateType: {})", envelope.eventType(), envelope.correlationId(), envelope.aggregateType());
 
             if (processedEventRepository.existsById(envelope.eventId())) {
                 log.info("Event {} already processed, skipping", envelope.eventId());
@@ -68,8 +68,6 @@ public class WorkspaceEventListener {
     }
 
     private void handle(ProjectCreationRequested event, EventEnvelope envelope) {
-        log.info("Workspace approved project creation: projectId={}, workspaceId={}", event.projectId(), event.workspaceId());
-
         commandBus.execute(new ApproveProjectCreationCommand(
                 event.workspaceId(),
                 envelope.correlationId()

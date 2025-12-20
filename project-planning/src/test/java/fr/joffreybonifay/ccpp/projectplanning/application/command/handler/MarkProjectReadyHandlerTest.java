@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -8,7 +9,6 @@ import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.MarkProjectReadyCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ class MarkProjectReadyHandlerTest {
 
     @Test
     void should_mark_project_as_ready() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         handler.handle(new MarkProjectReadyCommand(
                 commandId,
@@ -54,7 +54,7 @@ class MarkProjectReadyHandlerTest {
 
     @Test
     void should_be_idempotent_when_marking_ready_project_as_ready() {
-        var projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
+        var projectCreatedEvent = new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
         eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent, projectMarkedAsReadyEvent), -1, null, null);
 

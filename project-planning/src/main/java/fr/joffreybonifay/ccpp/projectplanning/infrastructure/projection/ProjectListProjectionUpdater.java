@@ -8,6 +8,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
@@ -29,7 +30,7 @@ public class ProjectListProjectionUpdater implements EventHandler {
     @Override
     public void handle(DomainEvent event) {
         switch (event) {
-            case ProjectCreated e -> handleProjectCreated(e);
+            case ProjectCreationRequested e -> handleProjectCreated(e);
             case ProjectDetailsUpdated e -> handleDetailsUpdated(e);
             case ProjectMarkedAsReady e -> handleMarkedAsReady(e);
             case BudgetItemAdded e -> handleBudgetItemAdded(e);
@@ -42,7 +43,7 @@ public class ProjectListProjectionUpdater implements EventHandler {
         }
     }
 
-    private void handleProjectCreated(ProjectCreated event) {
+    private void handleProjectCreated(ProjectCreationRequested event) {
         projectBudgetItems.put(event.projectId(), new ConcurrentHashMap<>());
 
         var dto = new ProjectListDTO(

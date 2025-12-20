@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -8,7 +9,6 @@ import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.UpdateDetailsCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectDetailsUpdated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class UpdateDetailsHandlerTest {
 
     @Test
     void should_update_project_details() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         handler.handle(new UpdateDetailsCommand(
                 commandId,
@@ -57,7 +57,7 @@ class UpdateDetailsHandlerTest {
 
     @Test
     void should_reject_empty_title_on_update() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new UpdateDetailsCommand(
@@ -73,7 +73,7 @@ class UpdateDetailsHandlerTest {
 
     @Test
     void should_reject_empty_description_on_update() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,
@@ -88,8 +88,8 @@ class UpdateDetailsHandlerTest {
 
     @Test
     void should_reject_null_title_on_update() {
-        ProjectCreated projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
-        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null, null);
+        ProjectCreationRequested projectCreationRequestedEvent = new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreationRequestedEvent), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,
@@ -104,8 +104,8 @@ class UpdateDetailsHandlerTest {
 
     @Test
     void should_reject_null_description_on_update() {
-        ProjectCreated projectCreatedEvent = new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
-        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent), -1, null, null);
+        ProjectCreationRequested projectCreationRequestedEvent = new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
+        eventStore.saveEvents(projectId.value(), List.of(projectCreationRequestedEvent), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(new UpdateDetailsCommand(
                 commandId,

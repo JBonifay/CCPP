@@ -10,6 +10,7 @@ import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
@@ -42,7 +43,7 @@ public class Project extends AggregateRoot {
         validateTitle(title);
         validateDescription(description);
 
-        ProjectCreated projectCreated = new ProjectCreated(
+        ProjectCreationRequested projectCreationRequested = new ProjectCreationRequested(
                 projectId,
                 workspaceId,
                 userId,
@@ -51,7 +52,7 @@ public class Project extends AggregateRoot {
                 timeline,
                 projectBudgetLimit
         );
-        raiseEvent(projectCreated);
+        raiseEvent(projectCreationRequested);
     }
 
     public Project(List<DomainEvent> events) {
@@ -201,7 +202,7 @@ public class Project extends AggregateRoot {
     @Override
     protected void apply(DomainEvent event) {
         switch (event) {
-            case ProjectCreated projectCreated -> apply(projectCreated);
+            case ProjectCreationRequested projectCreationRequested -> apply(projectCreationRequested);
             case ProjectCreationCancelled projectCreationCancelled -> apply(projectCreationCancelled);
             case ProjectDetailsUpdated projectDetailsUpdated -> apply(projectDetailsUpdated);
             case ProjectMarkedAsReady projectMarkedAsReady -> apply(projectMarkedAsReady);
@@ -220,12 +221,12 @@ public class Project extends AggregateRoot {
         }
     }
 
-    private void apply(ProjectCreated projectCreated) {
-        aggregateId = projectCreated.projectId().value();
-        workspaceId = projectCreated.workspaceId();
+    private void apply(ProjectCreationRequested projectCreationRequested) {
+        aggregateId = projectCreationRequested.projectId().value();
+        workspaceId = projectCreationRequested.workspaceId();
         projectStatus = ProjectStatus.PLANNING;
         budgetItems = new HashMap<>();
-        budgetLimit = projectCreated.projectBudgetLimit();
+        budgetLimit = projectCreationRequested.projectBudgetLimit();
     }
 
     private void apply(ProjectCreationCancelled projectCreationCancelled) {}

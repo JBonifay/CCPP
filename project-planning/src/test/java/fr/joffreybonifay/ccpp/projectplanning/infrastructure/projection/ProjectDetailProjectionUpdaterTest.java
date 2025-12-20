@@ -11,6 +11,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
@@ -36,7 +37,7 @@ class ProjectDetailProjectionUpdaterTest {
 
     @Test
     void should_create_detail_projection_on_project_created() {
-        var event = new ProjectCreated(
+        var event = new ProjectCreationRequested(
                 projectId,
                 workspaceId,
                 userId,
@@ -298,7 +299,7 @@ class ProjectDetailProjectionUpdaterTest {
     }
 
     private void givenProjectCreated() {
-        updater.handle(new ProjectCreated(
+        updater.handle(new ProjectCreationRequested(
                 projectId,
                 workspaceId,
                 userId,

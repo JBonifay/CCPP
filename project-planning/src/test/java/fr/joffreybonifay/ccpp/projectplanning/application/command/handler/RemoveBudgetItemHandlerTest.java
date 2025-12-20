@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -11,7 +12,6 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.RemoveBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemRemoved;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
@@ -48,7 +48,7 @@ class RemoveBudgetItemHandlerTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
 
         eventStore.saveEvents(projectId.value(),
-                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))), -1, null, null);
 
         handler.handle(new RemoveBudgetItemCommand(
@@ -68,7 +68,7 @@ class RemoveBudgetItemHandlerTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
 
         eventStore.saveEvents(projectId.value(),
-                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))),
                         new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
 

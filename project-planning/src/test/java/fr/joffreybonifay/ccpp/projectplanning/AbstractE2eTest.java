@@ -1,6 +1,7 @@
 package fr.joffreybonifay.ccpp.projectplanning;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
@@ -12,7 +13,6 @@ import fr.joffreybonifay.ccpp.projectplanning.application.command.command.Invite
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
@@ -72,7 +72,7 @@ public class AbstractE2eTest {
 
     public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
         eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreated(projectId,
+                new ProjectCreationRequested(projectId,
                         workspaceId,
                         userId,
                         "Title",

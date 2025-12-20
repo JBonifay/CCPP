@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -8,7 +9,6 @@ import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.ChangeTimelineCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectTimelineChanged;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
@@ -41,7 +41,7 @@ class ChangeTimelineHandlerTest {
 
     @Test
     void should_change_timeline_when_planning() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
 
@@ -60,7 +60,7 @@ class ChangeTimelineHandlerTest {
     @Test
     void should_prevent_changing_timeline_when_ready() {
         eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                 new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(

@@ -2,7 +2,7 @@ package fr.joffreybonifay.ccpp.workspace;
 
 import org.junit.jupiter.api.Test;
 
-class WorkplaceApplicationTests extends AbstractE2eTest {
+class WorkspaceApplicationTests extends AbstractE2eTest {
 
     @Test
     void contextLoads() {

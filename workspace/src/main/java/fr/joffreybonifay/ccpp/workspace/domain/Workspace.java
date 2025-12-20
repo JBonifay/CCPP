@@ -2,13 +2,14 @@ package fr.joffreybonifay.ccpp.workspace.domain;
 
 import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceCreated;
-import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
-import fr.joffreybonifay.ccpp.workspace.domain.exception.SubscriptionTierException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.ProjectLimitReachedException;
+import fr.joffreybonifay.ccpp.workspace.domain.exception.SubscriptionTierException;
 import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
 
 import java.util.List;
@@ -52,10 +53,10 @@ public class Workspace extends AggregateRoot {
         raiseEvent(new WorkspaceSubscriptionUpgraded(new WorkspaceId(aggregateId), SubscriptionTier.PREMIUM));
     }
 
-    public void approveProjectCreation() {
+    public void approveProjectCreation(ProjectId projectId) {
         if (currentSubscriptionTier == SubscriptionTier.FREEMIUM && actualProjectCount >= 2)
             throw new ProjectLimitReachedException("Workspace has already reached max projects limit for subscription tier.");
-        raiseEvent(new WorkspaceProjectCreationApproved(new WorkspaceId(aggregateId)));
+        raiseEvent(new WorkspaceProjectCreationApproved(new WorkspaceId(aggregateId), projectId));
     }
 
     @Override

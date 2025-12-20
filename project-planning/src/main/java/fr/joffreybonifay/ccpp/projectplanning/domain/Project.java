@@ -175,9 +175,6 @@ public class Project extends AggregateRoot {
     }
 
     public void activate() {
-        if (projectStatus != ProjectStatus.READY) {
-            throw new InvalidProjectStateException("Can only activate projects in READY status");
-        }
         raiseEvent(new ProjectActivated(new ProjectId(aggregateId), workspaceId));
     }
 

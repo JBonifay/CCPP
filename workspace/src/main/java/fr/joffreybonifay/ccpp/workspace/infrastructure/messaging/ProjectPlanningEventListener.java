@@ -17,13 +17,13 @@ import java.time.Instant;
 
 @Component
 @Slf4j
-public class WorkspaceEventListener {
+public class ProjectPlanningEventListener {
 
     private final ObjectMapper objectMapper;
     private final CommandBus commandBus;
     private final ProcessedEventRepository processedEventRepository;
 
-    public WorkspaceEventListener(
+    public ProjectPlanningEventListener(
             ObjectMapper objectMapper,
             CommandBus commandBus,
             ProcessedEventRepository processedEventRepository
@@ -70,6 +70,7 @@ public class WorkspaceEventListener {
     private void handle(ProjectCreationRequested event, EventEnvelope envelope) {
         commandBus.execute(new ApproveProjectCreationCommand(
                 event.workspaceId(),
+                event.projectId(),
                 envelope.correlationId()
         ));
     }

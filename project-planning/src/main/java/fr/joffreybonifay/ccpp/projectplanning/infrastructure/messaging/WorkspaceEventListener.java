@@ -13,11 +13,9 @@ import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.messaging.EventProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-@Component
 @Slf4j
 public class WorkspaceEventListener {
 

@@ -5,9 +5,11 @@ import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import fr.joffreybonifay.ccpp.workspace.domain.Workspace;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 public class ApproveProjectCreationCommandHandler implements CommandHandler<ApproveProjectCreationCommand> {
 
     private final EventStore eventStore;
@@ -18,6 +20,8 @@ public class ApproveProjectCreationCommandHandler implements CommandHandler<Appr
 
     @Override
     public void handle(ApproveProjectCreationCommand command) {
+        log.info("Approve project creation - correlationId: {}", command.correlationId());
+
         List<DomainEvent> workspaceEvents = eventStore.loadEvents(command.workspaceId().value());
         Workspace workspace = Workspace.fromHistory(workspaceEvents);
         int initialVersion = workspace.version();

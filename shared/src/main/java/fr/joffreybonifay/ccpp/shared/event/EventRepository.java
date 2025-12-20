@@ -14,5 +14,4 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
     @Query("SELECT MAX(e.version) FROM EventEntity e WHERE e.aggregateId = :aggregateId")
     Optional<Long> findMaxVersionByAggregateId(@Param("aggregateId") UUID aggregateId);
 
-    List<EventEntity> findByAggregateId(UUID aggregateId);
 }

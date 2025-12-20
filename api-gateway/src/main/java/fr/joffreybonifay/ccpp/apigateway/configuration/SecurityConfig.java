@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.apigateway;
+package fr.joffreybonifay.ccpp.apigateway.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

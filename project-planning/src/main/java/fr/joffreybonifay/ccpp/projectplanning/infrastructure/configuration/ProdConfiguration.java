@@ -1,9 +1,12 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.joffreybonifay.ccpp.projectplanning.infrastructure.messaging.WorkspaceEventListener;
+import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.event.EventRepository;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.JpaEventStore;
+import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxProcessor;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxRepository;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxWorker;
@@ -31,6 +34,15 @@ public class ProdConfiguration {
             ObjectMapper objectMapper
     ) {
         return new JpaEventStore(eventRepository, outboxRepository, objectMapper);
+    }
+
+    @Bean
+    WorkspaceEventListener workspaceEventListener(
+            ProcessedEventRepository processedEventRepository,
+            ObjectMapper objectMapper,
+            CommandBus commandBus
+    ) {
+        return new WorkspaceEventListener(objectMapper, commandBus, processedEventRepository);
     }
 
     @Bean

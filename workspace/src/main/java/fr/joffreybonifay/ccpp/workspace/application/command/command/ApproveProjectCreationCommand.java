@@ -7,25 +7,28 @@ import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import java.util.UUID;
 
 public record ApproveProjectCreationCommand(
-        WorkspaceId workspaceId
+        UUID commandId,
+        WorkspaceId workspaceId,
+        UUID correlationId
 ) implements Command {
-    @Override
-    public UUID commandId() {
-        return null;
+
+    public ApproveProjectCreationCommand( WorkspaceId workspaceId, UUID correlationId) {
+        this(UUID.randomUUID(), workspaceId, correlationId);
     }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return workspaceId.value();
     }
 
     @Override
     public UUID correlationId() {
-        return null;
+        return correlationId != null ? correlationId : commandId;
     }
 
     @Override
     public UUID causationId() {
-        return null;
+        return commandId;
     }
+
 }

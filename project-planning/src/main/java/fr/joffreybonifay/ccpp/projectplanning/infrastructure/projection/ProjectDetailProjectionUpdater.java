@@ -12,6 +12,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
     @Override
     public void handle(DomainEvent event) {
         switch (event) {
-            case ProjectCreated e -> handleProjectCreated(e);
+            case ProjectCreationRequested e -> handleProjectCreated(e);
             case ProjectDetailsUpdated e -> handleDetailsUpdated(e);
             case ProjectTimelineChanged e -> handleTimelineChanged(e);
             case ProjectMarkedAsReady e -> handleMarkedAsReady(e);
@@ -44,7 +45,7 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         }
     }
 
-    private void handleProjectCreated(ProjectCreated event) {
+    private void handleProjectCreated(ProjectCreationRequested event) {
         var dto = new ProjectDetailDTO(
                 event.projectId(),
                 event.workspaceId(),

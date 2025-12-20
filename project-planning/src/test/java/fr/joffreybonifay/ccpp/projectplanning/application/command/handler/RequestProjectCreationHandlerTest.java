@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -9,7 +10,6 @@ import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.RequestProjectCreationCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +52,7 @@ class RequestProjectCreationHandlerTest {
         ));
 
         assertThat(eventStore.loadEvents(projectId.value())).containsExactly(
-                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)
+                new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)
         );
     }
 

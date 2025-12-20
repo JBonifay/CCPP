@@ -80,6 +80,18 @@ public class JpaEventStore implements EventStore {
 
     @Override
     public List<DomainEvent> loadEvents(UUID aggregateId) {
-        return null;
+        // Fetch events from DB ordered by version
+        List<EventEntity> eventEntities = eventRepository.findByAggregateIdOrderByVersionAsc(aggregateId);
+
+        return eventEntities.stream().map(eventEntity -> {
+            try {
+                Class<?> eventClass = Class.forName(eventEntity.getEventType());
+                return (DomainEvent) objectMapper.readValue(eventEntity.getPayload(), eventClass);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Unknown event type: " + eventEntity.getEventType(), e);
+            } catch (Exception e) {
+                throw new RuntimeException("Error deserializing event " + eventEntity.getEventId(), e);
+            }
+        }).toList();
     }
 }

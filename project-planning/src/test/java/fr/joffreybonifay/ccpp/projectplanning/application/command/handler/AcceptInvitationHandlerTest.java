@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -10,7 +11,6 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AcceptInvitationCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantInvited;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class AcceptInvitationHandlerTest {
     void should_accept_participant_invitation() {
         ParticipantId participantId = new ParticipantId(UUID.randomUUID());
         eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                 new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
         ), -1, correlationId, commandId);
 

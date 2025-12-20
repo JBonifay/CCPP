@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -9,7 +10,6 @@ import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantInvited;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_invite_participant_to_project() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         handler.handle(new InviteParticipantCommand(
                 commandId,
@@ -60,7 +60,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_empty_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new InviteParticipantCommand(
@@ -75,7 +75,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_empty_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new InviteParticipantCommand(
@@ -92,7 +92,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_null_participant_email() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new InviteParticipantCommand(
@@ -109,7 +109,7 @@ class InviteParticipantHandlerTest {
 
     @Test
     void should_reject_null_participant_name() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new InviteParticipantCommand(

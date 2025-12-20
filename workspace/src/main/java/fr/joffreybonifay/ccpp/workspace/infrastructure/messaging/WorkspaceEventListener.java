@@ -3,10 +3,12 @@ package fr.joffreybonifay.ccpp.workspace.infrastructure.messaging;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventEntity;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.messaging.EventProcessingException;
+import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -31,11 +33,11 @@ public class WorkspaceEventListener {
         this.processedEventRepository = processedEventRepository;
     }
 
-    @KafkaListener(topics = "workspace-events")
+    @KafkaListener(topics = "project-planning-events")
     public void listen(String message) {
         try {
             EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);
-            log.info("Received workspace event: {} (eventId: {}, aggregateType: {})", envelope.eventType(), envelope.eventId(), envelope.aggregateType());
+            log.info("Received project-planning event: {} (correlationId: {}, aggregateType: {})", envelope.eventType(), envelope.correlationId(), envelope.aggregateType());
 
             if (processedEventRepository.existsById(envelope.eventId())) {
                 log.info("Event {} already processed, skipping", envelope.eventId());
@@ -47,6 +49,7 @@ public class WorkspaceEventListener {
 
             // React to workspace events by dispatching commands (choreography)
             switch (event) {
+                case ProjectCreationRequested e -> handle(e, envelope);
                 default -> log.debug("Ignoring non-saga event: {}", event.getClass().getSimpleName());
             }
 
@@ -62,6 +65,15 @@ public class WorkspaceEventListener {
             log.error("Failed to process workspace event", e);
             throw new EventProcessingException("Failed to process workspace event", e);
         }
+    }
+
+    private void handle(ProjectCreationRequested event, EventEnvelope envelope) {
+        log.info("Workspace approved project creation: projectId={}, workspaceId={}", event.projectId(), event.workspaceId());
+
+        commandBus.execute(new ApproveProjectCreationCommand(
+                event.workspaceId(),
+                envelope.correlationId()
+        ));
     }
 
 }

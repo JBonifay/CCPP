@@ -3,8 +3,10 @@ package fr.joffreybonifay.ccpp.shared.outbox;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 
+@Slf4j
 public class OutboxWorker {
 
     private final OutboxRepository outboxRepository;
@@ -41,6 +43,7 @@ public class OutboxWorker {
 
             String message = objectMapper.writeValueAsString(envelope);
 
+            log.info("Publishing outbox event with ID: {}, correlationId {}, topic {}", entity.getEventId(), entity.getCorrelationId(), topic);
             kafkaTemplate
                     .send(
                             topic,

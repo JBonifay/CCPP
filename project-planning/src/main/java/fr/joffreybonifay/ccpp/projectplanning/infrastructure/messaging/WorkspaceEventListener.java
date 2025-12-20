@@ -39,7 +39,7 @@ public class WorkspaceEventListener {
     public void listen(String message) {
         try {
             EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);
-            log.info("Received workspace event: {} (eventId: {}, aggregateType: {})", envelope.eventType(), envelope.eventId(), envelope.aggregateType());
+            log.info("Received workspace event: {} (correlationId: {}, aggregateType: {})", envelope.eventType(), envelope.correlationId(), envelope.aggregateType());
 
             if (processedEventRepository.existsById(envelope.eventId())) {
                 log.info("Event {} already processed, skipping", envelope.eventId());

@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
@@ -12,7 +13,6 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectBudgetCapExceeded;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreated;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
@@ -48,7 +48,7 @@ class AddBudgetItemHandlerTest {
     @Test
     void should_add_budget_item_to_project() {
         UUID budgetItemId = UUID.randomUUID();
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         handler.handle(new AddBudgetItemCommand(
                 commandId,
@@ -73,7 +73,7 @@ class AddBudgetItemHandlerTest {
         eventStore.saveEvents(
                 projectId.value(),
                 List.of(
-                        new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, new BigDecimal(100)),
+                        new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, new BigDecimal(100)),
                         new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD")))
                 ), -1, null, null);
 
@@ -95,7 +95,7 @@ class AddBudgetItemHandlerTest {
     void should_prevent_adding_budget_item_when_ready() {
         eventStore.saveEvents(
                 projectId.value(),
-                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
@@ -113,7 +113,7 @@ class AddBudgetItemHandlerTest {
 
     @Test
     void should_reject_empty_budget_item_description() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(
                 new AddBudgetItemCommand(
@@ -132,7 +132,7 @@ class AddBudgetItemHandlerTest {
     void should_fail_to_add_budgetItem_in_different_currency() {
         eventStore.saveEvents(
                 projectId.value(),
-                List.of(new ProjectCreated(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
+                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
                         new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item in USD", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD")))), -1, null, null);
 
         assertThatThrownBy(() -> handler.handle(

@@ -7,7 +7,9 @@ import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
+import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
+import fr.joffreybonifay.ccpp.workspace.application.command.handler.ApproveProjectCreationCommandHandler;
 import fr.joffreybonifay.ccpp.workspace.application.command.handler.CreateWorkspaceCommandHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +28,7 @@ public class BeanConfiguration {
     CommandBus commandBus(EventStore eventStore) {
         SimpleCommandBus simpleCommandBus = new SimpleCommandBus();
         simpleCommandBus.register(CreateWorkspaceCommand.class, new CreateWorkspaceCommandHandler(eventStore));
+        simpleCommandBus.register(ApproveProjectCreationCommand.class, new ApproveProjectCreationCommandHandler(eventStore));
         return simpleCommandBus;
     }
 

@@ -1,10 +1,11 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceCreated;
-import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
@@ -40,7 +41,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_increment_project_count_on_approval() {
         repository.save(new WorkspaceProjectCountDTO(workspaceId, 0, SubscriptionTier.FREEMIUM));
 
-        updater.handle(new WorkspaceProjectCreationApproved(workspaceId));
+        updater.handle(new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID())));
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(

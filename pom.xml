@@ -22,12 +22,13 @@
     </properties>
 
     <modules>
-        <module>shared</module>
         <module>api-gateway</module>
-        <module>project-planning</module>
-        <module>workspace</module>
-        <module>Ideation</module>
+        <module>discovery</module>
         <module>notification</module>
+        <module>project-planning</module>
+        <module>shared</module>
+        <module>workspace</module>
+        <module>ideation</module>
     </modules>
 
     <dependencyManagement>

@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.apigateway.filter;
 
-import fr.joffreybonifay.ccpp.apigateway.AuthContext;
-import fr.joffreybonifay.ccpp.apigateway.InvalidTokenException;
+import fr.joffreybonifay.ccpp.apigateway.model.AuthContext;
+import fr.joffreybonifay.ccpp.apigateway.exception.InvalidTokenException;
 import fr.joffreybonifay.ccpp.apigateway.service.JwtTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

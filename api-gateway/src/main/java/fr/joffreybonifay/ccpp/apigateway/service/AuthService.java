@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.apigateway.service;
 
-import fr.joffreybonifay.ccpp.apigateway.AuthContext;
-import fr.joffreybonifay.ccpp.apigateway.InvalidTokenException;
+import fr.joffreybonifay.ccpp.apigateway.model.AuthContext;
+import fr.joffreybonifay.ccpp.apigateway.exception.InvalidTokenException;
 import fr.joffreybonifay.ccpp.apigateway.repository.RefreshToken;
 import fr.joffreybonifay.ccpp.apigateway.repository.RefreshTokenRepository;
 import fr.joffreybonifay.ccpp.apigateway.repository.User;

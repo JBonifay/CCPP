@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.apigateway;
+package fr.joffreybonifay.ccpp.apigateway.model;
 
 import java.util.UUID;
 

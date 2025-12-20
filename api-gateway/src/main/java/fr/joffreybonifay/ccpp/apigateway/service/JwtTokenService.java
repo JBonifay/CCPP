@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.apigateway.service;
 
-import fr.joffreybonifay.ccpp.apigateway.AuthContext;
-import fr.joffreybonifay.ccpp.apigateway.InvalidTokenException;
+import fr.joffreybonifay.ccpp.apigateway.model.AuthContext;
+import fr.joffreybonifay.ccpp.apigateway.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

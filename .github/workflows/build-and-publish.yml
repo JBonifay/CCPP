@@ -53,7 +53,7 @@ jobs:
       - name: Determine changed modules
         id: set-modules
         run: |
-          ALL_MODULES=$(grep -oP '(?<=<module>)[^<]+' pom.xml | grep -v "shared")
+          ALL_MODULES=$(grep -oP '(?<=<module>).*?(?=</module>)' pom.xml | sed 's/[[:space:]]//g' | grep -v "shared")
           CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
           
           # Check for global changes

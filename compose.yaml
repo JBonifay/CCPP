@@ -130,10 +130,9 @@ services:
 
       # TODO: verify why
       # Listeners: one for Docker network, one for host
-      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
-      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,EXTERNAL://localhost:9092,CONTROLLER://kafka:9093'
-
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT'
+      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:9092,CONTROLLER://kafka:9093'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
 
       # Cluster settings
@@ -145,8 +144,6 @@ services:
 
       # Log settings
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
-    ports:
-      - "9092:9092"
     networks:
       - ccpp-network
 

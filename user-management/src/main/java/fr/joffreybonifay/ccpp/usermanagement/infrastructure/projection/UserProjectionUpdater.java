@@ -6,18 +6,19 @@ import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 @Slf4j
 public class UserProjectionUpdater {
 
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+
+    public UserProjectionUpdater(UserRepository userRepository, ObjectMapper objectMapper) {
+        this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
+    }
 
     @KafkaListener(topics = "user-management-events", groupId = "user-projection-group")
     public void onMessage(String message) {

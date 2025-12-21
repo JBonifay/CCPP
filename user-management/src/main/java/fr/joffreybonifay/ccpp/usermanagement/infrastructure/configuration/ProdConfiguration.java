@@ -18,8 +18,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableJpaRepositories(basePackages = {"fr.joffreybonifay.ccpp.shared"})
-@EntityScan(basePackages = {"fr.joffreybonifay.ccpp.shared"})
+@EnableJpaRepositories(basePackages = {
+        "fr.joffreybonifay.ccpp.shared",
+        "fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository"
+})
+@EntityScan(basePackages = {
+        "fr.joffreybonifay.ccpp.shared",
+        "fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository"
+})
 @EnableScheduling
 @Configuration
 @Profile("default")

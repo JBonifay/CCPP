@@ -34,7 +34,7 @@ public abstract class AggregateRoot {
         return version;
     }
 
-    public List<DomainEvent> uncommittedCHanges() {
+    public List<DomainEvent> uncommittedEvents() {
         return List.copyOf(uncommittedEvents);
     }
 

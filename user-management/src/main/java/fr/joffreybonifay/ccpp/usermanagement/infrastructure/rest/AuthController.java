@@ -1,12 +1,12 @@
-package fr.joffreybonifay.ccpp.usermanagement.rest;
+package fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest;
 
-import fr.joffreybonifay.ccpp.usermanagement.jwt.AuthTokens;
-import fr.joffreybonifay.ccpp.usermanagement.jwt.TokenService;
-import fr.joffreybonifay.ccpp.usermanagement.repository.User;
-import fr.joffreybonifay.ccpp.usermanagement.repository.UserRepository;
-import fr.joffreybonifay.ccpp.usermanagement.rest.dto.LoginRequest;
-import fr.joffreybonifay.ccpp.usermanagement.rest.dto.RegisterRequest;
-import fr.joffreybonifay.ccpp.usermanagement.rest.dto.SelectWorkspaceRequest;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserRepository;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.LoginRequest;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.RegisterRequest;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.SelectWorkspaceRequest;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,14 +38,14 @@ public class AuthController {
             return ResponseEntity.badRequest().build();
         }
 
-        User user = new User(
+        UserJpaEntity userJpaEntity = new UserJpaEntity(
                 request.email(),
                 passwordEncoder.encode(request.password()),
                 request.fullName()
         );
-        userRepository.save(user);
+        userRepository.save(userJpaEntity);
 
-        AuthTokens tokens = tokenService.issue(user.getId(), user.getEmail());
+        AuthTokens tokens = tokenService.issue(userJpaEntity.getId(), userJpaEntity.getEmail());
         return ResponseEntity.ok(tokens);
     }
 
@@ -69,16 +69,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthTokens> login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        UserJpaEntity userJpaEntity = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), userJpaEntity.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
         // Conventional: Always start with a "Neutral" token on login
         // unless you want to implement "Remember Last Workspace" logic.
-        AuthTokens tokens = tokenService.issue(user.getId(), user.getEmail());
+        AuthTokens tokens = tokenService.issue(userJpaEntity.getId(), userJpaEntity.getEmail());
 
         return ResponseEntity.ok(tokens);
     }

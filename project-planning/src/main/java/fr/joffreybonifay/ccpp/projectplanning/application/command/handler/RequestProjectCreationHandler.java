@@ -30,7 +30,7 @@ public class RequestProjectCreationHandler implements CommandHandler<RequestProj
 
         eventStore.saveEvents(
                 project.aggregateId(),
-                project.uncommittedCHanges(),
+                project.uncommittedEvents(),
                 project.version(),
                 command.correlationId(),
                 command.commandId()

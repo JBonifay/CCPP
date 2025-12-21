@@ -26,7 +26,7 @@ public class FailProjectCreationHandler implements CommandHandler<FailProjectCre
 
         eventStore.saveEvents(
             command.projectId().value(),
-            project.uncommittedCHanges(),
+            project.uncommittedEvents(),
             initialVersion,
             command.correlationId(),
             command.causationId()

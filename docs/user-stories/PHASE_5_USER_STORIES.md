@@ -265,7 +265,7 @@ Phase 5 implements the Ideation bounded context for workspace-level brainstormin
 ## Phase 5 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (5.1 - 5.12)
+- [ ] All userJpaEntity stories implemented (5.1 - 5.12)
 - [ ] All acceptance criteria met
 - [ ] Brainstorms can be created at workspace level
 - [ ] Ideas can be added and updated

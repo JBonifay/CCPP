@@ -218,7 +218,7 @@ Phase 3 implements the Workspace bounded context with subscription-based busines
 #### Acceptance Criteria
 
 - [ ] **Given** Workspace A has 3 projects and Workspace B has 2 projects
-  - **When** a user from Workspace A queries for project list
+  - **When** a userJpaEntity from Workspace A queries for project list
   - **Then** only the 3 projects from Workspace A are returned
   - **And** Workspace B's projects are not visible
 
@@ -254,19 +254,19 @@ Phase 3 implements the Workspace bounded context with subscription-based busines
 
 #### Technical Notes
 - WorkspaceId validation in all command handlers
-- Compare project.workspaceId with authenticated user's workspaceId
+- Compare project.workspaceId with authenticated userJpaEntity's workspaceId
 
 ---
 
 ### User Story 3.10: Security Context with WorkspaceId
 
 **As a** developer
-**I want** authenticated user's workspaceId available in security context
+**I want** authenticated userJpaEntity's workspaceId available in security context
 **So that** commands and queries can enforce tenant isolation
 
 #### Acceptance Criteria
 
-- [ ] **Given** a user authenticates (simulated for Phase 3)
+- [ ] **Given** a userJpaEntity authenticates (simulated for Phase 3)
   - **When** the security context is set
   - **Then** SecurityContext contains UserId and WorkspaceId
   - **And** command handlers can access SecurityContext.getContext()
@@ -328,7 +328,7 @@ Phase 3 implements the Workspace bounded context with subscription-based busines
 ## Phase 3 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (3.1 - 3.12)
+- [ ] All userJpaEntity stories implemented (3.1 - 3.12)
 - [ ] All acceptance criteria met
 - [ ] Workspaces can be created
 - [ ] Subscription tiers enforced (freemium: 2, premium: unlimited)

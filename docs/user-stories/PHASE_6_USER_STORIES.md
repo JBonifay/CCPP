@@ -149,7 +149,7 @@ Phase 6 replaces in-memory implementations with production-ready infrastructure:
 
 ### User Story 6.7: JWT Token Generation
 
-**As a** user
+**As a** userJpaEntity
 **I want** to authenticate and receive a JWT token
 **So that** I can make authenticated API requests
 
@@ -301,7 +301,7 @@ Phase 6 replaces in-memory implementations with production-ready infrastructure:
 ## Phase 6 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (6.1 - 6.12)
+- [ ] All userJpaEntity stories implemented (6.1 - 6.12)
 - [ ] All acceptance criteria met
 - [ ] PostgreSQL integrated for read models
 - [ ] EventStoreDB integrated for event sourcing

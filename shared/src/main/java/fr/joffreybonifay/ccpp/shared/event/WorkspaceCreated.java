@@ -1,11 +1,12 @@
-package fr.joffreybonifay.ccpp.workspace.domain.event;
+package fr.joffreybonifay.ccpp.shared.event;
 
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 
 public record WorkspaceCreated(
         WorkspaceId workspaceId,
+        UserId userId,
         String workspaceName,
         SubscriptionTier subscriptionTier
 ) implements DomainEvent {

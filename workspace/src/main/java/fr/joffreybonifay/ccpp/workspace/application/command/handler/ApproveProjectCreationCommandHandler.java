@@ -28,7 +28,7 @@ public class ApproveProjectCreationCommandHandler implements CommandHandler<Appr
 
         workspace.approveProjectCreation(command.projectId());
 
-        eventStore.saveEvents(command.aggregateId(), workspace.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.aggregateId(), workspace.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
         workspace.markEventsAsCommitted();
     }
 

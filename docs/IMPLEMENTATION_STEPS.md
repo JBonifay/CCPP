@@ -864,7 +864,7 @@ public class SecurityContext {
 ```
 
 - [ ] Update command handlers to use `SecurityContext` for userId and workspaceId
-- [ ] Add validation: ensure command's workspaceId matches authenticated user's workspace
+- [ ] Add validation: ensure command's workspaceId matches authenticated userJpaEntity's workspace
 
 ### Step 3.6: Phase 3 Completion Checklist
 
@@ -2152,7 +2152,7 @@ class CCPPSimulation extends Simulation {
 
 - [ ] Add OpenAPI annotations to controllers
 ```java
-@Operation(summary = "Create a new project", description = "Creates a project within the authenticated user's workspace")
+@Operation(summary = "Create a new project", description = "Creates a project within the authenticated userJpaEntity's workspace")
 @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Project created successfully"),
     @ApiResponse(responseCode = "403", description = "Project limit reached for freemium workspace"),

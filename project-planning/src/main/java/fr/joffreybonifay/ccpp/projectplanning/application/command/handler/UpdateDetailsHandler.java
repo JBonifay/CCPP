@@ -24,7 +24,7 @@ public class UpdateDetailsHandler implements CommandHandler<UpdateDetailsCommand
 
         project.updateDetails(command.title(), command.description());
 
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
         project.markEventsAsCommitted();
     }
 }

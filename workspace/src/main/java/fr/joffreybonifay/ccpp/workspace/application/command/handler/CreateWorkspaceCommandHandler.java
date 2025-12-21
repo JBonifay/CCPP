@@ -17,12 +17,13 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
     public void handle(CreateWorkspaceCommand createWorkspaceCommand) {
         Workspace workspace = Workspace.create(
                 createWorkspaceCommand.workspaceId(),
+                createWorkspaceCommand.userId(),
                 createWorkspaceCommand.workspaceName()
         );
 
         eventStore.saveEvents(
                 createWorkspaceCommand.workspaceId().value(),
-                workspace.uncommittedCHanges(),
+                workspace.uncommittedEvents(),
                 workspace.version(),
                 createWorkspaceCommand.correlationId(),
                 createWorkspaceCommand.causationId()

@@ -2,7 +2,7 @@ package fr.joffreybonifay.ccpp.workspace.domain.event;
 
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 
 public record WorkspaceSubscriptionUpgraded(
         WorkspaceId workspaceId,

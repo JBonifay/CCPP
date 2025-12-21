@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.workspace.domain.model;
+package fr.joffreybonifay.ccpp.shared.model;
 
 public enum SubscriptionTier {
     FREEMIUM,

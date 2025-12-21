@@ -44,7 +44,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                         BigDecimal.valueOf(5000)
                 ))
                 .when()
-                .post("/api/projects")
+                .post("/projects")
                 .then()
                 .log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -66,7 +66,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                         "Remember to book equipment"
                 ))
                 .when()
-                .post("/api/projects/" + projectId.value() + "/notes")
+                .post("/projects/" + projectId.value() + "/notes")
                 .then()
                 .statusCode(HttpStatus.CREATED.value());
 
@@ -88,7 +88,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                 .header("X-Workspace-Id", workspaceId.value().toString())
                 .header("X-User-Id", userId.value().toString())
                 .when()
-                .post("/api/projects/" + projectId.value() + "/ready")
+                .post("/projects/" + projectId.value() + "/ready")
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
@@ -112,7 +112,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                         LocalDate.of(2025, 1, 25)
                 ))
                 .when()
-                .patch("/api/projects/" + projectId.value() + "/timeline")
+                .patch("/projects/" + projectId.value() + "/timeline")
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
@@ -136,7 +136,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                         "New description"
                 ))
                 .when()
-                .patch("/api/projects/" + projectId.value() + "/details")
+                .patch("/projects/" + projectId.value() + "/details")
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
@@ -163,7 +163,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             "USD"
                     ))
                     .when()
-                    .post("/api/projects/" + projectId.value() + "/budget-items")
+                    .post("/projects/" + projectId.value() + "/budget-items")
                     .then()
                     .log().all()
                     .statusCode(201);
@@ -190,7 +190,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                     .header("X-User-Id", userId.value().toString())
                     .contentType(ContentType.JSON)
                     .when()
-                    .delete("/api/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
+                    .delete("/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
                     .then()
                     .log().all()
                     .statusCode(HttpStatus.NO_CONTENT.value());
@@ -216,7 +216,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             new Money(new BigDecimal("9999"), Currency.getInstance("USD"))
                     ))
                     .when()
-                    .patch("/api/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
+                    .patch("/projects/" + projectId.value() + "/budget-items/" + budgetItemId.value())
                     .then()
                     .log().all()
                     .statusCode(HttpStatus.NO_CONTENT.value());
@@ -250,7 +250,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                             "McFly"
                     ))
                     .when()
-                    .post("/api/projects/" + projectId.value() + "/participants")
+                    .post("/projects/" + projectId.value() + "/participants")
                     .then()
                     .log().all()
                     .statusCode(201);
@@ -278,7 +278,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                     .header("X-User-Id", userId.value().toString())
                     .contentType(ContentType.JSON)
                     .when()
-                    .post("/api/projects/" + projectId.value() + "/participants/" + participantId.value() + "/accept")
+                    .post("/projects/" + projectId.value() + "/participants/" + participantId.value() + "/accept")
                     .then()
                     .log().all()
                     .statusCode(HttpStatus.NO_CONTENT.value());
@@ -306,7 +306,7 @@ class ProjectCommandControllerTest extends AbstractE2eTest {
                     .header("X-User-Id", userId.value().toString())
                     .contentType(ContentType.JSON)
                     .when()
-                    .post("/api/projects/" + projectId.value() + "/participants/" + participantId.value() + "/decline")
+                    .post("/projects/" + projectId.value() + "/participants/" + participantId.value() + "/decline")
                     .then()
                     .log().all()
                     .statusCode(HttpStatus.NO_CONTENT.value());

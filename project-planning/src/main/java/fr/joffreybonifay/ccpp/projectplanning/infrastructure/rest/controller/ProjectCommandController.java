@@ -20,7 +20,7 @@ import java.util.Currency;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping("/projects")
 public class ProjectCommandController {
 
     private final CommandBus commandBus;

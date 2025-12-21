@@ -17,9 +17,9 @@ public class SecurityConfig {
             .authorizeExchange(exchanges -> exchanges
                 // Public endpoints
                 .pathMatchers(
-                    "/api/auth/login",
-                    "/api/auth/register",
-                    "/api/auth/refresh",
+                    "/auth/login",
+                    "/auth/register",
+                    "/auth/refresh",
                     "/actuator/health"
                 ).permitAll()
                 // All other endpoints require authentication

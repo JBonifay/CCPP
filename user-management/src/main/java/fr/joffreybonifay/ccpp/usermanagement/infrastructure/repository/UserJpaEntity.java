@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.usermanagement.repository;
+package fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "users")
-public class User {
+public class UserJpaEntity {
 
     @Id
     private UUID id;
@@ -22,18 +22,18 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    public User() {
+    public UserJpaEntity() {
 
     }
 
-    public User(String email, String password, String fullName) {
+    public UserJpaEntity(String email, String password, String fullName) {
         this.id = UUID.randomUUID();
         this.email = email;
         this.password = password;
         this.fullName = fullName;
     }
 
-    public User(UUID id, String email, String password, String fullName) {
+    public UserJpaEntity(UUID id, String email, String password, String fullName) {
         this.id = id;
         this.email = email;
         this.password = password;

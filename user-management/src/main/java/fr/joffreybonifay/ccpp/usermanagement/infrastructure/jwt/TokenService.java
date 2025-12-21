@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.usermanagement.jwt;
+package fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

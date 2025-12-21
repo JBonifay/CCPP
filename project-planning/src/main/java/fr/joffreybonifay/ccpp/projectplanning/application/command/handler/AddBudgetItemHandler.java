@@ -24,7 +24,7 @@ public class AddBudgetItemHandler implements CommandHandler<AddBudgetItemCommand
 
         project.addBudgetItem(command.budgetItemId(), command.description(), command.amount());
 
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
         project.markEventsAsCommitted();
     }
 }

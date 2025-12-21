@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.usermanagement.jwt;
+package fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt;
 
 public record AuthTokens(
         String accessToken,

@@ -4,15 +4,16 @@ import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectLimitReached;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.ProjectLimitReachedException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.SubscriptionTierException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.WorkspaceDoesNotExistException;
-import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 
 import java.util.List;
 
@@ -27,15 +28,16 @@ public class Workspace extends AggregateRoot {
         loadFromHistory(workspaceDomainEvents);
     }
 
-    private Workspace(WorkspaceId workspaceId, String workspaceName) {
+    private Workspace(WorkspaceId workspaceId, UserId userId, String workspaceName) {
         validateWorkspaceId(workspaceId);
+        validateUserId(userId);
         validateWorkspaceName(workspaceName);
 
-        raiseEvent(new WorkspaceCreated(workspaceId, workspaceName, SubscriptionTier.FREEMIUM));
+        raiseEvent(new WorkspaceCreated(workspaceId, userId, workspaceName, SubscriptionTier.FREEMIUM));
     }
 
-    public static Workspace create(WorkspaceId workspaceId, String workspaceName) {
-        return new Workspace(workspaceId, workspaceName);
+    public static Workspace create(WorkspaceId workspaceId, UserId userId, String workspaceName) {
+        return new Workspace(workspaceId, userId, workspaceName);
     }
 
     public static Workspace fromHistory(List<DomainEvent> workspaceEvents) {
@@ -45,6 +47,11 @@ public class Workspace extends AggregateRoot {
     private void validateWorkspaceId(WorkspaceId workspaceId) {
         if (workspaceId == null || workspaceId.value() == null)
             throw new InvalidWorkspaceDataException("Workspace id cannot be empty");
+    }
+
+    private void validateUserId(UserId userId) {
+        if (userId == null || userId.value() == null)
+            throw new InvalidWorkspaceDataException("User id cannot be empty");
     }
 
     private void validateWorkspaceName(String workspaceName) {

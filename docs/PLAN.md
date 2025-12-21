@@ -381,7 +381,7 @@ notification-{notificationId} ↓ All notification events
   "timestamp": "2025-12-09T10:30:00Z",
   "data": { /* event payload */ },
   "metadata": {
-    "userId": "user-789",
+    "userId": "userJpaEntity-789",
     "correlationId": "corr-abc",    // Track saga flows
     "causationId": "event-xyz"      // Event causation chain
   }

@@ -27,7 +27,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ProdConfiguration {
 
     @Bean
-    @Profile("default")
     EventStore jpaEventStore(
             EventRepository eventRepository,
             OutboxRepository outboxRepository,

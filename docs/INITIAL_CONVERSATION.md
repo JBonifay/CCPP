@@ -288,7 +288,7 @@ Client sends JWT
   "timestamp": "2025-12-09T10:30:00Z",
   "data": { ... },
   "metadata": {
-    "userId": "user-789",
+    "userId": "userJpaEntity-789",
     "correlationId": "corr-abc",  // Saga tracking
     "causationId": "event-xyz"     // Which event caused this
   }
@@ -475,7 +475,7 @@ This clarified:
 
 Instead of dumping a complete architecture, we:
 1. Asked clarifying questions
-2. Let user discover invariants
+2. Let userJpaEntity discover invariants
 3. Explained trade-offs
 4. Made decisions together
 5. Validated understanding
@@ -547,7 +547,7 @@ In-memory adapters → rapid TDD → production infrastructure later
 
 > "I think its linked because project can maybe have business rules depending on budget"
 
-This shows the user thinking about invariants - budget affects project state!
+This shows the userJpaEntity thinking about invariants - budget affects project state!
 
 > "Its critical, if participant decline we can invite another"
 

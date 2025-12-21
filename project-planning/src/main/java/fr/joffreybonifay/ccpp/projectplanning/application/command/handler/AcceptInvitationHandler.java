@@ -24,7 +24,7 @@ public class AcceptInvitationHandler implements CommandHandler<AcceptInvitationC
 
         project.participantAcceptedInvitation(command.participantId());
 
-        eventStore.saveEvents(project.aggregateId(), project.uncommittedCHanges(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(project.aggregateId(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
     }
 
 }

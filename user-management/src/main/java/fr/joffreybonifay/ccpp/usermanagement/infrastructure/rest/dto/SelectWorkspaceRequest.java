@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.usermanagement.rest.dto;
+package fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto;
 
 import java.util.UUID;
 

@@ -323,7 +323,7 @@ Phase 4 implements participant management, email invitation workflow, and the No
 ## Phase 4 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (4.1 - 4.12)
+- [ ] All userJpaEntity stories implemented (4.1 - 4.12)
 - [ ] All acceptance criteria met
 - [ ] Participants can be added to projects
 - [ ] Invitations sent when project marked READY

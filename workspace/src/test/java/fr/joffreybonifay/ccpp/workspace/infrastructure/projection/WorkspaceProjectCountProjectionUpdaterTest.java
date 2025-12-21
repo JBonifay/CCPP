@@ -1,13 +1,14 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
-import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceCreated;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
-import fr.joffreybonifay.ccpp.workspace.domain.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,11 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     WorkspaceProjectCountProjectionUpdater updater = new WorkspaceProjectCountProjectionUpdater(repository);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    UserId userId = new UserId(UUID.randomUUID());
 
     @Test
     void should_create_projection_on_workspace_created() {
-        var event = new WorkspaceCreated(workspaceId, "My Workspace", SubscriptionTier.FREEMIUM);
+        var event = new WorkspaceCreated(workspaceId, userId, "My Workspace", SubscriptionTier.FREEMIUM);
 
         updater.handle(event);
 

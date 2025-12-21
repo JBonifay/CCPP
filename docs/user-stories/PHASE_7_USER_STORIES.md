@@ -358,7 +358,7 @@ Phase 7 focuses on comprehensive testing (E2E, performance), complete documentat
 ## Phase 7 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (7.1 - 7.15)
+- [ ] All userJpaEntity stories implemented (7.1 - 7.15)
 - [ ] All acceptance criteria met
 - [ ] E2E tests cover main workflows
 - [ ] Performance tests meet targets

@@ -351,7 +351,7 @@ Phase 1 establishes the foundation of the CCPP platform with the core Project ag
 ## Phase 1 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (1.1 - 1.12)
+- [ ] All userJpaEntity stories implemented (1.1 - 1.12)
 - [ ] All acceptance criteria met
 - [ ] Can create, modify, and mark projects as READY
 - [ ] Budget items can be added, updated, removed

@@ -351,7 +351,7 @@ Phase 2 implements the CQRS (Command Query Responsibility Segregation) pattern, 
 ## Phase 2 Completion Criteria
 
 ### Functional
-- [ ] All user stories implemented (2.1 - 2.12)
+- [ ] All userJpaEntity stories implemented (2.1 - 2.12)
 - [ ] All acceptance criteria met
 - [ ] Commands execute domain operations
 - [ ] Queries return data from read models

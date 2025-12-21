@@ -42,10 +42,13 @@ public class AuthController {
     public ResponseEntity<AuthTokens> register(@RequestBody RegisterRequest request) {
         UUID userId = UUID.randomUUID();
         commandBus.execute(new RegisterNewUserCommand(
+                UUID.randomUUID(),
                 new UserId(userId),
                 new Email(request.email()),
                 request.password(),
-                request.fullName()
+                request.fullName(),
+                UUID.randomUUID(),
+                null
         ));
         AuthTokens tokens = tokenService.issue(userId, request.email());
         return ResponseEntity.ok(tokens);

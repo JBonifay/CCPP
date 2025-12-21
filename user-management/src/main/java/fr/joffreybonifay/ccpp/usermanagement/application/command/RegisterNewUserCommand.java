@@ -7,30 +7,37 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import java.util.UUID;
 
 public record RegisterNewUserCommand(
+        UUID commandId,
         UserId userId,
         Email email,
         String password,
-        String fullName
+        String fullName,
+        UUID correlationId,
+        UUID causationId
 ) implements Command {
+
+    public RegisterNewUserCommand(UserId userId, Email email, String password, String fullName, UUID correlationId, UUID causationId) {
+        this(UUID.randomUUID(), userId, email, password, fullName, correlationId, causationId);
+    }
 
     @Override
     public UUID commandId() {
-        return null;
+        return commandId;
     }
 
     @Override
     public UUID aggregateId() {
-        return null;
+        return userId.value();
     }
 
     @Override
     public UUID correlationId() {
-        return null;
+        return correlationId != null ? correlationId : commandId;
     }
 
     @Override
     public UUID causationId() {
-        return null;
+        return causationId != null ? causationId : commandId;
     }
 
 }

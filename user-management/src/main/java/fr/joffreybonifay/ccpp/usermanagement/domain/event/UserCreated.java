@@ -6,6 +6,8 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 
 public record UserCreated(
         UserId userId,
-        Email email
+        Email email,
+        String passwordHash,
+        String fullname
 ) implements DomainEvent {
 }

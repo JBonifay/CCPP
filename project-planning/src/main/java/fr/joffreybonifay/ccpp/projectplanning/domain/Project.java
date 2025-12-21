@@ -55,7 +55,7 @@ public class Project extends AggregateRoot {
         raiseEvent(projectCreationRequested);
     }
 
-    public Project(List<DomainEvent> events) {
+    private Project(List<DomainEvent> events) {
         loadFromHistory(events);
     }
 

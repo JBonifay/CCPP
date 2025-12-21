@@ -1,5 +1,9 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest;
 
+import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
+import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
@@ -22,11 +26,13 @@ import java.util.UUID;
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final CommandBus commandBus;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+    public AuthController(CommandBus commandBus, UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+        this.commandBus = commandBus;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
@@ -34,18 +40,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthTokens> register(@RequestBody RegisterRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        UserJpaEntity userJpaEntity = new UserJpaEntity(
-                request.email(),
-                passwordEncoder.encode(request.password()),
+        UUID userId = UUID.randomUUID();
+        commandBus.execute(new RegisterNewUserCommand(
+                new UserId(userId),
+                new Email(request.email()),
+                request.password(),
                 request.fullName()
-        );
-        userRepository.save(userJpaEntity);
-
-        AuthTokens tokens = tokenService.issue(userJpaEntity.getId(), userJpaEntity.getEmail());
+        ));
+        AuthTokens tokens = tokenService.issue(userId, request.email());
         return ResponseEntity.ok(tokens);
     }
 

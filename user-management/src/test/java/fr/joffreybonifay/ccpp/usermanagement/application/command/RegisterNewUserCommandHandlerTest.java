@@ -9,7 +9,9 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserCreationException;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.MockUserUniquenessChecker;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.security.MockPasswordEncoder;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
@@ -18,10 +20,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RegisterNewUserCommandHandlerTest {
 
+    PasswordEncoder passwordEncoder = new MockPasswordEncoder();
     MockUserUniquenessChecker uniquenessChecker = new MockUserUniquenessChecker();
     EventBus eventBus = new SimpleEventBus();
     EventStore eventStore = new InMemoryEventStore(eventBus);
-    RegisterNewUserCommandHandler handler = new RegisterNewUserCommandHandler(eventStore, uniquenessChecker);
+    RegisterNewUserCommandHandler handler = new RegisterNewUserCommandHandler(eventStore, passwordEncoder, uniquenessChecker);
 
     UserId userId = new UserId(UUID.randomUUID());
     Email email = new Email("test@test.com");

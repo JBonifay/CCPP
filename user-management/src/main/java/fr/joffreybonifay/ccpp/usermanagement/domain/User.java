@@ -8,6 +8,7 @@ import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserCreationException;
+import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
 import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class User extends AggregateRoot {
     }
 
     private User(List<DomainEvent> userEvents) {
+        if (userEvents.isEmpty()) throw new UserDoesNotExistException("User does not exist");
         loadFromHistory(userEvents);
     }
 

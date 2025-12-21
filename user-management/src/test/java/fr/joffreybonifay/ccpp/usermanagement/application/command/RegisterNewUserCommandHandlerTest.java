@@ -29,13 +29,19 @@ class RegisterNewUserCommandHandlerTest {
     UserId userId = new UserId(UUID.randomUUID());
     Email email = new Email("test@test.com");
 
+    UUID commandId = UUID.randomUUID();
+    UUID correlationId = UUID.randomUUID();
+
     @Test
     void should_register_new_user() {
         handler.handle(new RegisterNewUserCommand(
+                commandId,
                 userId,
                 email,
                 "password",
-                "fullname"
+                "fullname",
+                correlationId,
+                null
         ));
 
         assertThat(eventStore.loadEvents(userId.value()))
@@ -49,10 +55,13 @@ class RegisterNewUserCommandHandlerTest {
 
         assertThatThrownBy(() -> handler.handle(
                 new RegisterNewUserCommand(
+                        commandId,
                         userId,
                         email,
                         "password",
-                        "fullname"
+                        "fullname",
+                        correlationId,
+                        null
                 )))
                 .isInstanceOf(UserCreationException.class)
                 .hasMessage("Email already in use");

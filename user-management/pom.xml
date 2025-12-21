@@ -8,7 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>userJpaEntity-management</artifactId>
+    <artifactId>user-management</artifactId>
 
     <dependencies>
 

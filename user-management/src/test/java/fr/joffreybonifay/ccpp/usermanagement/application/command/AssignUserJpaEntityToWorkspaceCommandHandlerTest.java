@@ -6,6 +6,7 @@ import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
     @Test
     void should_assign_user_to_workspace() {
-        eventStore.saveEvents(userId.value(), List.of(new UserCreated(userId, null)), -1, null, null);
+        eventStore.saveEvents(userId.value(), List.of(new UserCreated(userId, new Email("test@test.com"), "", "")), -1, null, null);
 
         handler.handle(new AssignUserToWorkspaceCommand(
                 commandId,

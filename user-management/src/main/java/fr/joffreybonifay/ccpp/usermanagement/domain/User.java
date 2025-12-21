@@ -4,15 +4,28 @@ import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
+import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserCreationException;
+import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
 
 import java.util.List;
 
 public class User extends AggregateRoot {
 
+    public User() {
+    }
+
     private User(List<DomainEvent> userEvents) {
         loadFromHistory(userEvents);
+    }
+
+    public static User create(UserId userId, Email email, String passwordHash, String fullname, UserUniquenessChecker uniquenessChecker) {
+        if (uniquenessChecker.isEmailAlreadyInUse(email.value())) throw new UserCreationException("Email already in use");
+        User user = new User();
+        user.raiseEvent(new UserCreated(userId, email, passwordHash, fullname));
+        return user;
     }
 
     public static User fromHistory(List<DomainEvent> userEvents) {

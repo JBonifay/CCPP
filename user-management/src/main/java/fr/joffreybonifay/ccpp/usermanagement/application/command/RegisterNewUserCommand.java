@@ -9,7 +9,7 @@ import java.util.UUID;
 public record RegisterNewUserCommand(
         UserId userId,
         Email email,
-        String passwordHash,
+        String password,
         String fullName
 ) implements Command {
 

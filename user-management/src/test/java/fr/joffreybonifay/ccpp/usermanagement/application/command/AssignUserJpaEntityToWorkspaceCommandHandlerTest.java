@@ -9,12 +9,14 @@ import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
+import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
@@ -44,5 +46,18 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
                 .last()
                 .isEqualTo(new UserAssignedToWorkspace(userId, workspaceId));
 
+    }
+
+    @Test
+    void should_fail_if_user_does_not_exists() {
+        assertThatThrownBy(() -> handler.handle(new AssignUserToWorkspaceCommand(
+                commandId,
+                workspaceId,
+                new UserId(UUID.randomUUID()),
+                correlationId,
+                null
+        )))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessage("User does not exist");
     }
 }

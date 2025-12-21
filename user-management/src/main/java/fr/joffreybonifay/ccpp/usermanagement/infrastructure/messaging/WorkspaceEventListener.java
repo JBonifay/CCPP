@@ -33,7 +33,7 @@ public class WorkspaceEventListener {
         this.processedEventRepository = processedEventRepository;
     }
 
-    @KafkaListener(topics = "workspace")
+    @KafkaListener(topics = "workspace-events")
     public void listen(String message) {
         try {
             EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);

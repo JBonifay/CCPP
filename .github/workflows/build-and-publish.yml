@@ -37,13 +37,53 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Discover modules from pom.xml
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files_ignore: |
+            docs/**
+            *.md
+            LICENSE
+            .gitignore
+
+      - name: Determine changed modules
         id: set-modules
         run: |
-          MODULES=$(grep -oP '(?<=<module>)[^<]+' pom.xml | grep -v "shared" | jq -R -s -c 'split("\n")[:-1]')
-          echo "Discovered modules: $MODULES"
-          echo "modules=$MODULES" >> $GITHUB_OUTPUT
+          ALL_MODULES=$(grep -oP '(?<=<module>)[^<]+' pom.xml | grep -v "shared")
+          CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          # Check for global changes
+          GLOBAL_CHANGE=false
+          if echo "$CHANGED_FILES" | grep -qE "pom.xml|shared/|.github/workflows/build-and-publish.yml"; then
+            GLOBAL_CHANGE=true
+          fi
+          
+          TO_BUILD=()
+          if [ "$GLOBAL_CHANGE" = "true" ]; then
+            echo "Global change detected, building all modules."
+            for mod in $ALL_MODULES; do
+              TO_BUILD+=("$mod")
+            done
+          else
+            for mod in $ALL_MODULES; do
+              if echo "$CHANGED_FILES" | grep -q "^$mod/"; then
+                TO_BUILD+=("$mod")
+              fi
+            done
+          fi
+          
+          if [ ${#TO_BUILD[@]} -eq 0 ]; then
+            echo "No modules changed."
+            echo "modules=[]" >> $GITHUB_OUTPUT
+          else
+            JSON_MODULES=$(printf '%s\n' "${TO_BUILD[@]}" | jq -R . | jq -s -c .)
+            echo "Modules to build: $JSON_MODULES"
+            echo "modules=$JSON_MODULES" >> $GITHUB_OUTPUT
+          fi
 
   test:
     name: Run Tests
@@ -66,7 +106,7 @@ jobs:
     name: Build and Publish Images
     needs: [test, discover-modules]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && needs.discover-modules.outputs.modules != '[]'
     strategy:
       matrix:
         module: ${{ fromJson(needs.discover-modules.outputs.modules) }}

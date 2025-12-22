@@ -7,15 +7,28 @@ import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
+import fr.joffreybonifay.ccpp.shared.rest.context.TenantContextFilter;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import fr.joffreybonifay.ccpp.workspace.application.command.handler.ApproveProjectCreationCommandHandler;
 import fr.joffreybonifay.ccpp.workspace.application.command.handler.CreateWorkspaceCommandHandler;
+import fr.joffreybonifay.ccpp.workspace.domain.WorkspaceIdGenerator;
+import fr.joffreybonifay.ccpp.workspace.infrastructure.spi.UuidWorkspaceIdGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BeanConfiguration {
+
+    @Bean
+    TenantContextFilter tenantContextFilter() {
+        return new TenantContextFilter();
+    }
+
+    @Bean
+    WorkspaceIdGenerator workspaceIdGenerator() {
+        return new UuidWorkspaceIdGenerator();
+    }
 
     @Bean
     ObjectMapper objectMapper() {

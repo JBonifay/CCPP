@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.context;
+package fr.joffreybonifay.ccpp.shared.rest.context;
 
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
@@ -7,13 +7,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-@Component
 public class TenantContextFilter extends OncePerRequestFilter {
 
     @Override
@@ -26,9 +24,11 @@ public class TenantContextFilter extends OncePerRequestFilter {
             String workspaceId = request.getHeader("X-Workspace-Id");
             String userId = request.getHeader("X-User-Id");
 
-            if (workspaceId != null && userId != null) {
-                RequestContext.setWorkspaceId(new WorkspaceId(UUID.fromString(workspaceId)));
+            if (userId != null) {
                 RequestContext.setUserId(new UserId(UUID.fromString(userId)));
+            }
+            if (workspaceId != null) {
+                RequestContext.setWorkspaceId(new WorkspaceId(UUID.fromString(workspaceId)));
             }
 
             chain.doFilter(request, response);

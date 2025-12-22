@@ -6,7 +6,7 @@ import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectDetail
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectListQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.context.RequestContext;
+import fr.joffreybonifay.ccpp.shared.rest.context.RequestContext;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.ProjectDetailResponse;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.ProjectListResponse;
 import org.springframework.http.ResponseEntity;

@@ -1,12 +1,15 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.event.EventRepository;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.JpaEventStore;
+import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxProcessor;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxRepository;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxWorker;
+import fr.joffreybonifay.ccpp.workspace.infrastructure.messaging.ProjectPlanningEventListener;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,13 +27,21 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ProdConfiguration {
 
     @Bean
-    @Profile("default")
     EventStore jpaEventStore(
             EventRepository eventRepository,
             OutboxRepository outboxRepository,
             ObjectMapper objectMapper
     ) {
         return new JpaEventStore(eventRepository, outboxRepository, objectMapper);
+    }
+
+    @Bean
+    ProjectPlanningEventListener projectPlanningEventListener(
+            ProcessedEventRepository processedEventRepository,
+            ObjectMapper objectMapper,
+            CommandBus commandBus
+    ) {
+        return new ProjectPlanningEventListener(objectMapper, commandBus, processedEventRepository);
     }
 
     @Bean

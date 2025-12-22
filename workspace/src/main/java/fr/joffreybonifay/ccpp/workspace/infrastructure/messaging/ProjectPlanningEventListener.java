@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-@Component
 @Slf4j
 public class ProjectPlanningEventListener {
 

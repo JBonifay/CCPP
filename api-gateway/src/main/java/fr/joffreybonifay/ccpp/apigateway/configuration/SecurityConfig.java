@@ -1,32 +1,43 @@
 package fr.joffreybonifay.ccpp.apigateway.configuration;
 
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    SecurityWebFilterChain security(
+            ServerHttpSecurity http,
+            ReactiveJwtDecoder jwtDecoder
+    ) {
         return http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
-            .authorizeExchange(exchanges -> exchanges
-                // Public endpoints
-                .pathMatchers(
-                    "/auth/login",
-                    "/auth/register",
-                    "/auth/refresh",
-                    "/actuator/health"
-                ).permitAll()
-                // All other endpoints require authentication
-                .anyExchange().authenticated()
-            )
-            .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-            .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-            .build();
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(ex -> ex
+                        .pathMatchers("/auth/**").permitAll()
+                        .anyExchange().authenticated()
+                )
+                .oauth2ResourceServer(oauth ->
+                        oauth.jwt(jwt -> jwt.jwtDecoder(jwtDecoder))
+                )
+                .build();
     }
+
+    @Bean
+    public ReactiveJwtDecoder jwtDecoder(@Value("${jwt.secret}") String secretKey) {
+        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        return NimbusReactiveJwtDecoder.withSecretKey(key).build();
+    }
+
 }

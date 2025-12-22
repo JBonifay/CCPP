@@ -1,4 +1,4 @@
-package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.context;
+package fr.joffreybonifay.ccpp.shared.rest.context;
 
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;

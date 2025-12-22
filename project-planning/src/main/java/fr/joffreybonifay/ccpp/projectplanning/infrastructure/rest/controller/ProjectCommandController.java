@@ -11,7 +11,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.spi.ParticipantIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.domain.spi.ProjectIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.context.RequestContext;
+import fr.joffreybonifay.ccpp.shared.rest.context.RequestContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

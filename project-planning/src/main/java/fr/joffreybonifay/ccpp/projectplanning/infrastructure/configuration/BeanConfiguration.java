@@ -25,11 +25,17 @@ import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
+import fr.joffreybonifay.ccpp.shared.rest.context.TenantContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BeanConfiguration {
+
+    @Bean
+    TenantContextFilter tenantContextFilter() {
+        return new TenantContextFilter();
+    }
 
     @Bean
     ProjectListReadRepository projectListReadRepository() {

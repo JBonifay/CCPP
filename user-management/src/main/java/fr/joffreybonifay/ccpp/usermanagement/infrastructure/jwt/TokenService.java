@@ -54,6 +54,7 @@ public class TokenService {
 
         String refreshToken = jwt(Map.of(
                 "sub", userId.toString(),
+                "email", email,
                 "type", "refresh"
         ), REFRESH_TOKEN_EXPIRATION_MINUTES);
 

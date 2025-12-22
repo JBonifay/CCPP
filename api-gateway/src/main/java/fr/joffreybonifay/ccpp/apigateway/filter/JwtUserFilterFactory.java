@@ -15,11 +15,11 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class JwtWorkspaceUserFilterFactory extends AbstractGatewayFilterFactory<Object> {
+public class JwtUserFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
     private final SecretKey secretKey;
 
-    public JwtWorkspaceUserFilterFactory(@Value("${jwt.secret}") String jwtSecret) {
+    public JwtUserFilterFactory(@Value("${jwt.secret}") String jwtSecret) {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -44,16 +44,14 @@ public class JwtWorkspaceUserFilterFactory extends AbstractGatewayFilterFactory<
                 Claims claims = jws.getPayload();
 
                 String userId = claims.getSubject();
-                String workspaceId = claims.get("workspaceId", String.class);
 
-                if (userId == null || workspaceId == null) {
+                if (userId == null) {
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return exchange.getResponse().setComplete();
                 }
 
                 var mutatedRequest = exchange.getRequest().mutate()
                         .header("X-User-Id", userId)
-                        .header("X-Workspace-Id", workspaceId)
                         .build();
 
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());

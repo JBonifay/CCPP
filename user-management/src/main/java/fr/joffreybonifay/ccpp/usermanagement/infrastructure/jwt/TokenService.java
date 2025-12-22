@@ -2,6 +2,7 @@ package fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,10 @@ public class TokenService {
 
     private final SecretKey key;
 
-    public TokenService(@Value("${jwt.secret}") String secret) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    public TokenService(@Value("${jwt.secret}") String secretKey) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Issue both access and refresh tokens for a user
-     */
     public AuthTokens issue(UUID userId, String email, UUID workspaceId) {
         String workspaceIdStr = workspaceId != null ? workspaceId.toString() : null;
 
@@ -62,28 +60,22 @@ public class TokenService {
         return new AuthTokens(accessToken, refreshToken);
     }
 
-    /**
-     * Helper to build JWT
-     */
     private String jwt(Map<String, Object> claims, int expiresInMinutes) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plusSeconds(expiresInMinutes * 60L)))
-                .signWith(key) // HS256 by default
+                .claims(claims)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(expiresInMinutes * 60L)))
+                .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }
 
-    /**
-     * Parse a refresh token and return its claims
-     */
     public Claims parseRefreshToken(String refreshToken) {
         Claims claims = Jwts.parser()
-                .setSigningKey(key)
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(refreshToken)
-                .getBody();
+                .parseSignedClaims(refreshToken)
+                .getPayload();
 
         if (!"refresh".equals(claims.get("type", String.class))) {
             throw new RuntimeException("Not a refresh token");
@@ -92,20 +84,4 @@ public class TokenService {
         return claims;
     }
 
-    /**
-     * Optional: parse access token
-     */
-    public Claims parseAccessToken(String accessToken) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(accessToken)
-                .getBody();
-
-        if (!"access".equals(claims.get("type", String.class))) {
-            throw new RuntimeException("Not an access token");
-        }
-
-        return claims;
-    }
 }

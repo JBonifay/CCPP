@@ -7,7 +7,7 @@ import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUser
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserRepository;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.LoginRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.RegisterRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.SelectWorkspaceRequest;
@@ -27,13 +27,13 @@ import java.util.UUID;
 public class AuthController {
 
     private final CommandBus commandBus;
-    private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public AuthController(CommandBus commandBus, UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+    public AuthController(CommandBus commandBus, JpaUserRepository jpaUserRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
         this.commandBus = commandBus;
-        this.userRepository = userRepository;
+        this.jpaUserRepository = jpaUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
     }
@@ -74,7 +74,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthTokens> login(@RequestBody LoginRequest request) {
-        UserJpaEntity userJpaEntity = userRepository.findByEmail(request.email())
+        UserJpaEntity userJpaEntity = jpaUserRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.password(), userJpaEntity.getPassword())) {

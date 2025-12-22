@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class JpaUserUniquenessChecker implements UserUniquenessChecker {
-    private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
     @Override
     public boolean isEmailAlreadyInUse(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        return jpaUserRepository.findByEmail(email).isPresent();
     }
 
 }

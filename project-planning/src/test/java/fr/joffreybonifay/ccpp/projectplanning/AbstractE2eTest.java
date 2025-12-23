@@ -1,13 +1,5 @@
 package fr.joffreybonifay.ccpp.projectplanning;
 
-import fr.joffreybonifay.ccpp.shared.command.CommandBus;
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.InviteParticipantCommand;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
@@ -19,6 +11,16 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.MockBudgetItemIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.MockParticipantIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.MockProjectIdGenerator;
+import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,15 +73,18 @@ public class AbstractE2eTest {
     }
 
     public void aProjectExist(WorkspaceId workspaceId, UserId userId, ProjectId projectId) {
-        eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreationRequested(projectId,
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(
+                        projectId,
                         workspaceId,
                         userId,
                         "Title",
                         "Description",
                         new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
-                        BigDecimal.valueOf(1000))
-        ), -1, null, null);
+                        BigDecimal.valueOf(1000)
+                ), null, null, null)),
+                -1);
         projectDetailRepository.save(new ProjectDetailDTO(projectId,
                 workspaceId,
                 "Title",

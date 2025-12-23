@@ -3,7 +3,9 @@ package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
@@ -41,10 +43,12 @@ class RejectInvitiationHandlerTest {
 
     @Test
     void should_decline_participant_invitation() {
-        eventStore.saveEvents(projectId.value(), List.of(
-                        new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")),
-                -1, null, null);
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(
+                        new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly"), null, null, null)),
+                -1);
 
         handler.handle(new RejectInvitationCommand(
                 commandId,

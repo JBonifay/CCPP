@@ -11,16 +11,12 @@ public record ApproveProjectCreationCommand(
         UUID commandId,
         WorkspaceId workspaceId,
         ProjectId projectId,
-        UUID correlationId
+        UUID correlationId,
+        UUID causationId
 ) implements Command {
 
-    public ApproveProjectCreationCommand(WorkspaceId workspaceId, ProjectId projectId, UUID correlationId) {
-        this(UUID.randomUUID(), workspaceId, projectId, correlationId);
-    }
-
-    @Override
-    public UUID aggregateId() {
-        return workspaceId.value();
+    public ApproveProjectCreationCommand(WorkspaceId workspaceId, ProjectId projectId, UUID correlationId, UUID causationId) {
+        this(UUID.randomUUID(), workspaceId, projectId, correlationId, causationId);
     }
 
     @Override
@@ -30,7 +26,7 @@ public record ApproveProjectCreationCommand(
 
     @Override
     public UUID causationId() {
-        return commandId;
+        return causationId != null ? causationId : commandId;
     }
 
 }

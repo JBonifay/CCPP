@@ -1,10 +1,12 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
-import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.Project;
+import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
+import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 
 import java.util.List;
 
@@ -24,7 +26,18 @@ public class AddBudgetItemHandler implements CommandHandler<AddBudgetItemCommand
 
         project.addBudgetItem(command.budgetItemId(), command.description(), command.amount());
 
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(
+                command.projectId().value(),
+                AggregateType.PROJECT_PLANNING,
+                project.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        command.commandId(),
+                        command.correlationId(),
+                        command.causationId()
+                )).toList(),
+                initialVersion
+        );
+
         project.markEventsAsCommitted();
     }
 }

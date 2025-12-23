@@ -17,11 +17,6 @@ public record CancelProjectCreationCommand(
     }
 
     @Override
-    public UUID aggregateId() {
-        return projectId.value();
-    }
-
-    @Override
     public UUID correlationId() {
         return correlationId != null ? correlationId : commandId;
     }

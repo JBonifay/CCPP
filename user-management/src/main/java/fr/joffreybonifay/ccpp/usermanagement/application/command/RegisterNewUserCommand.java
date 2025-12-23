@@ -26,11 +26,6 @@ public record RegisterNewUserCommand(
     }
 
     @Override
-    public UUID aggregateId() {
-        return userId.value();
-    }
-
-    @Override
     public UUID correlationId() {
         return correlationId != null ? correlationId : commandId;
     }

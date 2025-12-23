@@ -1,6 +1,8 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.MarkProjectReadyCommand;
@@ -23,7 +25,18 @@ public class MarkProjectReadyHandler implements CommandHandler<MarkProjectReadyC
         int initialVersion = project.version();
 
         project.markAsReady(command.userId());
-        eventStore.saveEvents(command.projectId().value(), project.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(
+                command.projectId().value(),
+                AggregateType.PROJECT_PLANNING,
+                project.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        command.commandId(),
+                        command.correlationId(),
+                        command.causationId()
+                )).toList(),
+                initialVersion
+        );
+
         project.markEventsAsCommitted();
     }
 }

@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.workspace.infrastructure.configuration;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.projection.WorkspaceProjectCountProjectionUpdater;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;

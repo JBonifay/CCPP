@@ -1,5 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.outbox;
 
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,16 +9,16 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "outbox",
         indexes = {
-                @Index(name = "idx_outbox_status", columnList = "status"),
-                @Index(name = "idx_outbox_created_at", columnList = "created_at"),
-                @Index(name = "idx_outbox_aggregate_id", columnList = "aggregate_id")
+                @Index(name = "idx_outbox_processed", columnList = "processed"),
+                @Index(name = "idx_outbox_correlation", columnList = "correlation_id"),
+                @Index(name = "idx_outbox_command", columnList = "command_id")
         })
 public class OutboxEntry {
 
+    // Getters and setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,8 +29,9 @@ public class OutboxEntry {
     @Column(name = "aggregate_id", nullable = false)
     private UUID aggregateId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "aggregate_type", nullable = false)
-    private String aggregateType;
+    private AggregateType aggregateType;
 
     @Column(nullable = false)
     private Long version;
@@ -37,11 +39,15 @@ public class OutboxEntry {
     @Column(name = "event_type", nullable = false)
     private String eventType;
 
-    @Column(name = "correlation_id")
+    // Infrastructure metadata
+    @Column(name = "correlation_id", nullable = false)
     private UUID correlationId;
 
-    @Column(name = "causation_id")
+    @Column(name = "causation_id", nullable = false)
     private UUID causationId;
+
+    @Column(name = "command_id", nullable = false)
+    private UUID commandId;
 
     @Column(nullable = false)
     private Instant timestamp;
@@ -50,70 +56,61 @@ public class OutboxEntry {
     private String payload;
 
     @Column(nullable = false)
+    @Setter
     private boolean processed = false;
 
     @Column(name = "processed_at")
+    @Setter
     private Instant processedAt;
 
     @Column(nullable = false)
+    @Setter
     private boolean failed = false;
 
     @Column(name = "retry_count", nullable = false)
     private int retryCount = 0;
 
+    @Setter
     @Column(name = "last_error", columnDefinition = "TEXT")
     private String lastError;
 
-    @Column(name = "last_retry_at")
-    private Instant lastRetryAt;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
-
-    protected OutboxEntry() {
-    }
-
-    public OutboxEntry(
-            UUID eventId,
-            UUID aggregateId,
-            String aggregateType,
-            Long version,
-            String eventType,
-            String payload,
-            Instant timestamp,
-            UUID correlationId,
-            UUID causationId) {
-        this.eventId = eventId;
-        this.aggregateId = aggregateId;
-        this.aggregateType = aggregateType;
-        this.version = version;
-        this.eventType = eventType;
-        this.payload = payload;
-        this.timestamp = timestamp;
-        this.correlationId = correlationId;
-        this.causationId = causationId;
-    }
 
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
             createdAt = Instant.now();
         }
-        if (timestamp == null) {
-            timestamp = Instant.now();
-        }
     }
 
-    public void incrementRetryCount() {
-        this.retryCount++;
+    protected OutboxEntry() {}
+
+    public OutboxEntry(
+            UUID eventId,
+            UUID aggregateId,
+            AggregateType aggregateType,
+            Long version,
+            String eventType,
+            UUID correlationId,
+            UUID causationId,
+            UUID commandId,
+            Instant timestamp,
+            String payload
+    ) {
+        this.eventId = eventId;
+        this.aggregateId = aggregateId;
+        this.aggregateType = aggregateType;
+        this.version = version;
+        this.eventType = eventType;
+        this.correlationId = correlationId;
+        this.causationId = causationId;
+        this.commandId = commandId;
+        this.timestamp = timestamp;
+        this.payload = payload;
     }
 
-    public boolean shouldRetry(int maxRetries) {
-        return !processed && !failed && retryCount < maxRetries;
-    }
 
-    public long getAgeInSeconds() {
-        return Instant.now().getEpochSecond() - createdAt.getEpochSecond();
-    }
+    public void incrementRetryCount() { this.retryCount++; }
 
 }

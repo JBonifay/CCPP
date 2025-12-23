@@ -1,20 +1,22 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.RemoveBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemRemoved;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
+import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -47,9 +49,13 @@ class RemoveBudgetItemHandlerTest {
     void should_remove_budget_item() {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
 
-        eventStore.saveEvents(projectId.value(),
-                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")))), -1, null, null);
+        eventStore.saveEvents(
+                projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))), null, null, null)),
+                -1
+        );
 
         handler.handle(new RemoveBudgetItemCommand(
                 commandId,
@@ -67,10 +73,13 @@ class RemoveBudgetItemHandlerTest {
     void should_prevent_removing_budget_item_when_ready() {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
 
-        eventStore.saveEvents(projectId.value(),
-                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))),
-                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
+        eventStore.saveEvents(
+                projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new BudgetItemAdded(projectId, budgetItemId, "Hotel", new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))), null, null, null),
+                        new EventMetadata(new ProjectMarkedAsReady(projectId, workspaceId, userId), null, null, null)),
+                -1);
 
         assertThatThrownBy(() -> handler.handle(new RemoveBudgetItemCommand(
                 commandId,

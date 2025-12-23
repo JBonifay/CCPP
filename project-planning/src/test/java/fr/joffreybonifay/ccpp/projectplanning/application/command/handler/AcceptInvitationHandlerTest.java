@@ -1,17 +1,19 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AcceptInvitationCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantAcceptedInvitation;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantInvited;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
+import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -41,10 +43,13 @@ class AcceptInvitationHandlerTest {
     @Test
     void should_accept_participant_invitation() {
         ParticipantId participantId = new ParticipantId(UUID.randomUUID());
-        eventStore.saveEvents(projectId.value(), List.of(
-                new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly")
-        ), -1, correlationId, commandId);
+        eventStore.saveEvents(
+                projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(
+                        new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new ParticipantInvited(projectId, participantId, "mcfly@example.com", "McFly"), null, null, null)),
+                -1);
 
         handler.handle(new AcceptInvitationCommand(commandId, projectId, participantId, correlationId));
 

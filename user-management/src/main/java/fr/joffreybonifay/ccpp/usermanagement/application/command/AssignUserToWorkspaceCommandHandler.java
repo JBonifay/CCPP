@@ -2,6 +2,8 @@ package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.usermanagement.domain.User;
 
@@ -17,19 +19,24 @@ public class AssignUserToWorkspaceCommandHandler implements CommandHandler<Assig
 
     @Override
     public void handle(AssignUserToWorkspaceCommand command) {
-        List<DomainEvent> userEvents = eventStore.loadEvents(command.aggregateId());
+        List<DomainEvent> userEvents = eventStore.loadEvents(command.userId().value());
         User user = User.fromHistory(userEvents);
         int initialVersion = user.version();
 
         user.assignToWorkspace(command.workspaceId());
 
         eventStore.saveEvents(
-                command.aggregateId(),
-                user.uncommittedEvents(),
-                initialVersion,
-                command.correlationId(),
-                command.causationId()
+                command.userId().value(),
+                AggregateType.USER,
+                user.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        command.commandId(),
+                        command.correlationId(),
+                        command.causationId()
+                )).toList(),
+                initialVersion
         );
+
 
     }
 

@@ -8,13 +8,9 @@ import java.util.UUID;
 public record UpgradeWorkspaceSubscriptionCommand(
         WorkspaceId workspaceId
 )  implements Command {
-    @Override
-    public UUID commandId() {
-        return null;
-    }
 
     @Override
-    public UUID aggregateId() {
+    public UUID commandId() {
         return null;
     }
 
@@ -27,4 +23,5 @@ public record UpgradeWorkspaceSubscriptionCommand(
     public UUID causationId() {
         return null;
     }
+
 }

@@ -1,6 +1,8 @@
 package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.usermanagement.domain.User;
 import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
@@ -29,12 +31,18 @@ public class RegisterNewUserCommandHandler implements CommandHandler<RegisterNew
         );
 
         eventStore.saveEvents(
-                newUser.aggregateId(),
-                newUser.uncommittedEvents(),
-                newUser.version(),
-                command.correlationId(),
-                command.causationId()
+                command.userId().value(),
+                AggregateType.USER,
+                newUser.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        command.commandId(),
+                        command.correlationId(),
+                        command.causationId()
+                )).toList(),
+                newUser.version()
         );
+
+        newUser.markEventsAsCommitted();
     }
 
 }

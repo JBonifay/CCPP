@@ -7,11 +7,11 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Money;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

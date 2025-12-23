@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;

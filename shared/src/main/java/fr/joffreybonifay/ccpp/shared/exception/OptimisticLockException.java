@@ -2,7 +2,11 @@ package fr.joffreybonifay.ccpp.shared.exception;
 
 import java.util.UUID;
 
-public class OptimisticLockException extends DomainException {
+public class OptimisticLockException extends RuntimeException {
+
+    public OptimisticLockException(String message) {
+        super(message);
+    }
 
     public OptimisticLockException(
             UUID aggregateId,

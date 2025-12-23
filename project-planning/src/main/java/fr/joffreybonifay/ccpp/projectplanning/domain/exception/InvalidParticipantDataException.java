@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.domain.exception;
 
-import fr.joffreybonifay.ccpp.shared.exception.DomainException;
+import fr.joffreybonifay.ccpp.shared.domain.exception.DomainException;
 
 public class InvalidParticipantDataException extends DomainException {
     public InvalidParticipantDataException(String message) {

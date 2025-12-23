@@ -1,8 +1,8 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;

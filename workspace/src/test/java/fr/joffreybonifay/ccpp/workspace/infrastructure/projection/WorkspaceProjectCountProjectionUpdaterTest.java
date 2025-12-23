@@ -1,14 +1,14 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
-import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
 import org.junit.jupiter.api.Test;
 

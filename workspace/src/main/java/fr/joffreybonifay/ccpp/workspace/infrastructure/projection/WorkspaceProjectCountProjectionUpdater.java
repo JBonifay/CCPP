@@ -1,13 +1,13 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
-import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 
 public class WorkspaceProjectCountProjectionUpdater implements EventHandler {
 

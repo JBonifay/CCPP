@@ -2,7 +2,7 @@ package fr.joffreybonifay.ccpp.workspace;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.spi.MockWorkspaceIdGenerator;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;

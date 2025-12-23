@@ -1,10 +1,10 @@
 package fr.joffreybonifay.ccpp.usermanagement.domain;
 
-import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
+import fr.joffreybonifay.ccpp.shared.domain.AggregateRoot;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserCreationException;

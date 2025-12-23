@@ -1,14 +1,14 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.controller;
 
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectListQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
-import fr.joffreybonifay.ccpp.shared.rest.context.RequestContext;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.ProjectDetailResponse;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.rest.dto.ProjectListResponse;
+import fr.joffreybonifay.ccpp.shared.rest.RequestContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

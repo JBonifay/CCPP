@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.Project;
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;

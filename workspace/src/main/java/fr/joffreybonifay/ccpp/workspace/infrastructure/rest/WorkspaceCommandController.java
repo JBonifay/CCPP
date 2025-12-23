@@ -1,8 +1,8 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.rest;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.rest.context.RequestContext;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.rest.RequestContext;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import fr.joffreybonifay.ccpp.workspace.domain.WorkspaceIdGenerator;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.rest.dto.CreateWorkspaceRequest;

@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.eventstore.impl;
 
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;

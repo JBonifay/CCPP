@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.query;
 
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 

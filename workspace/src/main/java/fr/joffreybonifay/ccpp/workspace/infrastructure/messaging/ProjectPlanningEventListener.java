@@ -2,16 +2,15 @@ package fr.joffreybonifay.ccpp.workspace.infrastructure.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventEntity;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
-import fr.joffreybonifay.ccpp.shared.messaging.EventProcessingException;
+import fr.joffreybonifay.ccpp.shared.exception.EventProcessingException;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 

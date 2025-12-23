@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.query;
 
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 

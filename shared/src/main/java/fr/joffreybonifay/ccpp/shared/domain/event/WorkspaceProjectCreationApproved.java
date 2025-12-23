@@ -1,0 +1,10 @@
+package fr.joffreybonifay.ccpp.shared.domain.event;
+
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+
+public record WorkspaceProjectCreationApproved(
+    WorkspaceId workspaceId,
+    ProjectId projectId
+) implements DomainEvent {
+}

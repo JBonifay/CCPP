@@ -25,7 +25,7 @@ import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
-import fr.joffreybonifay.ccpp.shared.rest.context.TenantContextFilter;
+import fr.joffreybonifay.ccpp.shared.rest.TenantContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

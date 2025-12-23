@@ -3,12 +3,12 @@ package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
-import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

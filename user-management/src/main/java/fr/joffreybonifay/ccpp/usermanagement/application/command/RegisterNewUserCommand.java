@@ -1,8 +1,8 @@
 package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
 import fr.joffreybonifay.ccpp.shared.command.Command;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 
 import java.util.UUID;
 

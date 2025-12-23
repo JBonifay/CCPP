@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.shared.eventstore;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.event.EventEntity;
 import fr.joffreybonifay.ccpp.shared.event.EventRepository;
-import fr.joffreybonifay.ccpp.shared.outbox.OutboxEntity;
+import fr.joffreybonifay.ccpp.shared.outbox.OutboxEntry;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,7 +58,7 @@ public class JpaEventStore implements EventStore {
                 );
                 eventRepository.save(eventEntity);
 
-                OutboxEntity outboxEntity = new OutboxEntity(
+                OutboxEntry outboxEntry = new OutboxEntry(
                         eventId,
                         aggregateId,
                         "Project",
@@ -69,7 +69,7 @@ public class JpaEventStore implements EventStore {
                         correlationId,
                         causationId
                 );
-                outboxRepository.save(outboxEntity);
+                outboxRepository.save(outboxEntry);
 
                 nextVersion++;
             } catch (JsonProcessingException e) {

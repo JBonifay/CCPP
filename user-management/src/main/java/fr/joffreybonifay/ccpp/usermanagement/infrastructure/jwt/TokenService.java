@@ -2,7 +2,6 @@ package fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,18 +26,17 @@ public class TokenService {
     }
 
     public AuthTokens issue(UUID userId, String email, UUID workspaceId) {
-        String workspaceIdStr = workspaceId != null ? workspaceId.toString() : null;
 
         String accessToken = jwt(Map.of(
                 "sub", userId.toString(),
                 "email", email,
-                "workspaceId", workspaceIdStr,
+                "workspaceId", workspaceId.toString(),
                 "type", "access"
         ), ACCESS_TOKEN_EXPIRATION_MINUTES);
 
         String refreshToken = jwt(Map.of(
                 "sub", userId.toString(),
-                "workspaceId", workspaceIdStr,
+                "workspaceId", workspaceId.toString(),
                 "type", "refresh"
         ), REFRESH_TOKEN_EXPIRATION_MINUTES);
 

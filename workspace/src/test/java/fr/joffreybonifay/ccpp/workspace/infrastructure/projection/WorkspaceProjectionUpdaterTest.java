@@ -16,10 +16,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WorkspaceProjectCountProjectionUpdaterTest {
+class WorkspaceProjectionUpdaterTest {
 
     WorkspaceProjectCountReadRepository repository = new InMemoryWorkspaceProjectCountReadRepository();
-    WorkspaceProjectCountProjectionUpdater updater = new WorkspaceProjectCountProjectionUpdater(repository);
+    WorkspaceProjectionUpdater updater = new WorkspaceProjectionUpdater(repository);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());
@@ -28,7 +28,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_create_projection_on_workspace_created() {
         var event = new WorkspaceCreated(workspaceId, userId, "My Workspace", SubscriptionTier.FREEMIUM);
 
-        updater.handle(event);
+        updater.on(event);
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(
@@ -43,7 +43,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_increment_project_count_on_approval() {
         repository.save(new WorkspaceProjectCountDTO(workspaceId, 0, SubscriptionTier.FREEMIUM));
 
-        updater.handle(new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID())));
+        updater.on(new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID())));
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(
@@ -59,7 +59,7 @@ class WorkspaceProjectCountProjectionUpdaterTest {
     void should_update_tier_on_subscription_upgrade() {
         repository.save(new WorkspaceProjectCountDTO(workspaceId, 2, SubscriptionTier.FREEMIUM));
 
-        updater.handle(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
+        updater.on(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
 
         var projection = repository.findById(workspaceId);
         assertThat(projection.get()).isEqualTo(

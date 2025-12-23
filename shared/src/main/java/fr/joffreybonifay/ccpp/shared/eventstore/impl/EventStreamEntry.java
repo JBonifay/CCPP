@@ -59,9 +59,8 @@ public class EventStreamEntry {
         if (createdAt == null) {
             createdAt = Instant.now();
         }
-        // Auto-generate version
         if (version == null) {
-            version = 1L; // Will be updated by query
+            version = 0L;
         }
     }
 
@@ -70,6 +69,7 @@ public class EventStreamEntry {
     public EventStreamEntry(
             UUID aggregateId,
             AggregateType aggregateType,
+            long version,
             String eventType,
             String eventData,
             Instant occurredOn,
@@ -79,6 +79,7 @@ public class EventStreamEntry {
     ) {
         this.aggregateId = aggregateId;
         this.aggregateType = aggregateType;
+        this.version = version;
         this.eventType = eventType;
         this.eventData = eventData;
         this.occurredOn = occurredOn;

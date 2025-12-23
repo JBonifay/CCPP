@@ -5,6 +5,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemRemoved;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
@@ -63,7 +64,13 @@ class RemoveBudgetItemHandlerTest {
 
         assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
-                .isEqualTo(new BudgetItemRemoved(projectId, null));
+                .isEqualTo(new BudgetItemRemoved(
+                        projectId,
+                        new BudgetItem(
+                                budgetItemId,
+                                "Hotel",
+                                new Money(BigDecimal.valueOf(300), Currency.getInstance("USD"))
+                        )));
     }
 
     @Test

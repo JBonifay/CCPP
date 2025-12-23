@@ -13,21 +13,20 @@ import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.MockParticipant
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.MockProjectIdGenerator;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Money;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,7 +34,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
-@ActiveProfiles("in-memory")
 @Import({AbstractE2eTestConfiguration.class, TestcontainersConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AbstractE2eTest {
@@ -82,8 +80,10 @@ public class AbstractE2eTest {
                         "Title",
                         "Description",
                         new DateRange(LocalDate.of(2015, 2, 3), LocalDate.of(2023, 1, 2)),
-                        BigDecimal.valueOf(1000)
-                ), null, null, null)),
+                        BigDecimal.valueOf(1000)),
+                        UUID.randomUUID(),
+                        UUID.randomUUID(),
+                        UUID.randomUUID())),
                 -1);
         projectDetailRepository.save(new ProjectDetailDTO(projectId,
                 workspaceId,
@@ -98,10 +98,24 @@ public class AbstractE2eTest {
     }
 
     public void aBudgetItemIsPresent(ProjectId projectId, BudgetItemId budgetItemId) {
-        commandBus.execute(new AddBudgetItemCommand(projectId, budgetItemId, "description", new Money(BigDecimal.ZERO, Currency.getInstance("EUR")), null));
+        commandBus.execute(new AddBudgetItemCommand(
+                projectId,
+                budgetItemId,
+                "description",
+                new Money(BigDecimal.ZERO, Currency.getInstance("EUR")),
+                UUID.randomUUID(),
+                UUID.randomUUID()
+        ));
     }
 
     protected void aParticipantIsInvited(ProjectId projectId, ParticipantId participantId) {
-        commandBus.execute(new InviteParticipantCommand(projectId, participantId, "mcfly@mcfly.com", "McFly", null));
+        commandBus.execute(new InviteParticipantCommand(
+                projectId,
+                participantId,
+                "mcfly@mcfly.com",
+                "McFly",
+                UUID.randomUUID(),
+                UUID.randomUUID()
+                ));
     }
 }

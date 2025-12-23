@@ -2,6 +2,8 @@ package fr.joffreybonifay.ccpp.workspace.infrastructure.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.eventpublisher.EventPublisher;
+import fr.joffreybonifay.ccpp.shared.eventpublisher.SpringEventPublisher;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.EventStreamRepository;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.JpaEventStore;
@@ -19,21 +21,25 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-@EnableJpaRepositories(basePackages = {"fr.joffreybonifay.ccpp.shared.*"})
-@EntityScan(basePackages = {"fr.joffreybonifay.ccpp.shared.*"})
+@EnableJpaRepositories(basePackages = {"fr.joffreybonifay.ccpp.shared"})
+@EntityScan(basePackages = {"fr.joffreybonifay.ccpp.shared"})
 @EnableScheduling
 @Configuration
-@Profile("default")
 public class ProdConfiguration {
+
+    @Bean
+    EventPublisher eventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        return new SpringEventPublisher(applicationEventPublisher);
+    }
 
     @Bean
     EventStore jpaEventStore(
             EventStreamRepository eventStreamRepository,
             OutboxRepository outboxRepository,
             ObjectMapper objectMapper,
-            ApplicationEventPublisher applicationEventPublisher
+            EventPublisher eventPublisher
     ) {
-        return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, applicationEventPublisher);
+        return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, eventPublisher);
     }
 
     @Bean

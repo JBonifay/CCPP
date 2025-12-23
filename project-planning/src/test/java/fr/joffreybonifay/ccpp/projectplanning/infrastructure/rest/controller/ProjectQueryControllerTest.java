@@ -59,6 +59,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 "Workspace 1 Project",
                 ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(100),
                 1
         ));
         projectListRepository.save(new ProjectListDTO(
@@ -67,6 +68,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 "Workspace 2 Project",
                 ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(100),
                 1
         ));
 
@@ -146,6 +148,7 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 "Project test",
                 ProjectStatus.READY,
                 BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(100),
                 1
         ));
     }

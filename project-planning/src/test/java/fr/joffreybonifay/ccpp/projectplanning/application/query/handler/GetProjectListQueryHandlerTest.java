@@ -1,18 +1,19 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.query.handler;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectListQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class GetProjectListQueryHandlerTest {
 
@@ -50,7 +51,14 @@ class GetProjectListQueryHandlerTest {
     }
 
     public ProjectListDTO projectListDTOExists(WorkspaceId workspaceId) {
-        ProjectListDTO projectListDTO = new ProjectListDTO(new ProjectId(UUID.randomUUID()), workspaceId, "Project", ProjectStatus.PLANNING, BigDecimal.ZERO, 0);
+        ProjectListDTO projectListDTO = new ProjectListDTO(
+                new ProjectId(UUID.randomUUID()),
+                workspaceId,
+                "Project",
+                ProjectStatus.PLANNING,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                0);
         repository.save(projectListDTO);
         return projectListDTO;
     }

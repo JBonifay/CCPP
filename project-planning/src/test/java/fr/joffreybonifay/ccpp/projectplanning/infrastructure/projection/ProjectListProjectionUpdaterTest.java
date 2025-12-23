@@ -3,6 +3,7 @@ package fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
@@ -53,6 +54,7 @@ class ProjectListProjectionUpdaterTest {
                         "New Project",
                         ProjectStatus.PLANNING,
                         BigDecimal.valueOf(1000),
+                        BigDecimal.ZERO,
                         0
                 ));
     }
@@ -79,13 +81,10 @@ class ProjectListProjectionUpdaterTest {
                 Money.of(300, "USD")
         );
 
-        // WHEN
         updater.on(event);
 
-        // THEN
         var projection = repository.findById(projectId);
-        assertThat(projection.get().totalBudget())
-                .isEqualByComparingTo(BigDecimal.valueOf(300));
+        assertThat(projection.get().actualBudget()).isEqualByComparingTo(BigDecimal.valueOf(300));
     }
 
     @Test
@@ -94,15 +93,20 @@ class ProjectListProjectionUpdaterTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         updater.on(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(500, "USD")));
 
-        var event = new BudgetItemRemoved(projectId, null);
+        updater.on(new BudgetItemRemoved(projectId, new BudgetItem(budgetItemId, "Hotel", Money.of(500, "USD"))));
 
-        // WHEN
-        updater.on(event);
-
-        // THEN
         var projection = repository.findById(projectId);
-        assertThat(projection.get().totalBudget())
-                .isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(projection.get()).isEqualTo(
+                new ProjectListDTO(
+                        projectId,
+                        workspaceId,
+                        "Test Project",
+                        ProjectStatus.PLANNING,
+                        BigDecimal.valueOf(1000),
+                        BigDecimal.ZERO,
+                        0
+                )
+        );
     }
 
     @Test
@@ -115,15 +119,24 @@ class ProjectListProjectionUpdaterTest {
                 projectId,
                 budgetItemId,
                 "Hotel (updated)",
-                Money.of(450, "USD"),
+                Money.of(300, "USD"),
                 Money.of(500, "USD")
         );
 
         updater.on(event);
 
         var projection = repository.findById(projectId);
-        assertThat(projection.get().totalBudget())
-                .isEqualByComparingTo(BigDecimal.valueOf(450));
+        assertThat(projection.get()).isEqualTo(
+                new ProjectListDTO(
+                        projectId,
+                        workspaceId,
+                        "Test Project",
+                        ProjectStatus.PLANNING,
+                        BigDecimal.valueOf(1000),
+                        BigDecimal.valueOf(500),
+                        0
+                )
+        );
     }
 
 
@@ -138,10 +151,8 @@ class ProjectListProjectionUpdaterTest {
                 "john@example.com"
         );
 
-        // WHEN
         updater.on(event);
 
-        // THEN
         var projection = repository.findById(projectId);
         assertThat(projection.get().participantCount()).isEqualTo(1);
     }
@@ -152,10 +163,8 @@ class ProjectListProjectionUpdaterTest {
 
         var event = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
-        // WHEN
         updater.on(event);
 
-        // THEN
         var projection = repository.findById(projectId);
         assertThat(projection.get().status()).isEqualTo(ProjectStatus.READY);
     }

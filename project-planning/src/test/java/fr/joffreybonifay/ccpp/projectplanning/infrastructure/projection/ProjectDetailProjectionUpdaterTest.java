@@ -126,15 +126,13 @@ class ProjectDetailProjectionUpdaterTest {
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
         updater.on(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
 
-        var event = new BudgetItemUpdated(
+        updater.on(new BudgetItemUpdated(
                 projectId,
                 budgetItemId,
                 "Hotel (updated)",
-                Money.of(450, "USD"),
+                Money.of(300, "USD"),
                 Money.of(500, "USD")
-        );
-
-        updater.on(event);
+        ));
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -143,7 +141,7 @@ class ProjectDetailProjectionUpdaterTest {
                         "Test Project",
                         "Description",
                         ProjectStatus.PLANNING,
-                        List.of(new BudgetItemDTO(budgetItemId, "Hotel (updated)", Money.of(450, "USD"))),
+                        List.of(new BudgetItemDTO(budgetItemId, "Hotel (updated)", Money.of(500, "USD"))),
                         List.of(),
                         List.of(),
                         timeline

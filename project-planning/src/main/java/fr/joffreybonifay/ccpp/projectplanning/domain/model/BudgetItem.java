@@ -3,12 +3,16 @@ package fr.joffreybonifay.ccpp.projectplanning.domain.model;
 import fr.joffreybonifay.ccpp.shared.domain.Entity;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 
 @Getter
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class BudgetItem extends Entity {
 
     private final BudgetItemId budgetItemId;

@@ -51,7 +51,8 @@ class InviteParticipantHandlerTest {
                 participantId,
                 "mcfly@example.com",
                 "McFly",
-                correlationId
+                correlationId,
+                commandId
         ));
 
         assertThat(eventStore.loadEvents(projectId.value()))
@@ -70,7 +71,8 @@ class InviteParticipantHandlerTest {
                         commandId,
                         projectId,
                         new ParticipantId(UUID.randomUUID()), "", "McFly",
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
@@ -89,7 +91,8 @@ class InviteParticipantHandlerTest {
                         new ParticipantId(UUID.randomUUID()),
                         "mcfly@example.com",
                         "",
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");
@@ -108,7 +111,8 @@ class InviteParticipantHandlerTest {
                         new ParticipantId(UUID.randomUUID()),
                         null,
                         "McFly",
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant email cannot be empty");
@@ -127,7 +131,8 @@ class InviteParticipantHandlerTest {
                         new ParticipantId(UUID.randomUUID()),
                         "mcfly@example.com",
                         null,
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(InvalidParticipantDataException.class)
                 .hasMessageContaining("Participant name cannot be empty");

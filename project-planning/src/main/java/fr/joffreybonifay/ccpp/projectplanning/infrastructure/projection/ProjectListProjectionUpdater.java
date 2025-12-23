@@ -1,51 +1,28 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.projectplanning.application.projection.ProjectListProjection;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectListDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
-import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
-import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
-import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Money;
+import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-public class ProjectListProjectionUpdater implements EventHandler {
+public class ProjectListProjectionUpdater implements ProjectListProjection {
 
     private final ProjectListReadRepository repository;
-
-    private final Map<ProjectId, Map<BudgetItemId, Money>> projectBudgetItems = new ConcurrentHashMap<>();
 
     public ProjectListProjectionUpdater(ProjectListReadRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public void handle(DomainEvent event) {
-        switch (event) {
-            case ProjectCreationRequested e -> handleProjectCreated(e);
-            case ProjectDetailsUpdated e -> handleDetailsUpdated(e);
-            case ProjectMarkedAsReady e -> handleMarkedAsReady(e);
-            case BudgetItemAdded e -> handleBudgetItemAdded(e);
-            case BudgetItemUpdated e -> handleBudgetItemUpdated(e);
-            case BudgetItemRemoved e -> handleBudgetItemRemoved(e);
-            case ParticipantInvited e -> handleParticipantInvited(e);
-            case ProjectActivated e -> handleProjectActivated(e);
-            case ProjectCreationFailed e -> handleProjectCreationFailed(e);
-            default -> {} // Ignore other events
-        }
-    }
-
-    private void handleProjectCreated(ProjectCreationRequested event) {
-        projectBudgetItems.put(event.projectId(), new ConcurrentHashMap<>());
-
+    @EventListener
+    @Transactional
+    public void on(ProjectCreationRequested event) {
         var dto = new ProjectListDTO(
                 event.projectId(),
                 event.workspaceId(),
@@ -57,136 +34,147 @@ public class ProjectListProjectionUpdater implements EventHandler {
         repository.save(dto);
     }
 
-    private void handleDetailsUpdated(ProjectDetailsUpdated event) {
-        repository.findById(event.projectId()).ifPresent(current -> {
-            var updated = new ProjectListDTO(
+    @Override
+    @EventListener
+    @Transactional
+    public void on(ProjectDetailsUpdated event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
+
+        repository.update(new ProjectListDTO(
                     current.projectId(),
                     current.workspaceId(),
                     event.title(),
                     current.status(),
                     current.totalBudget(),
                     current.participantCount()
-            );
-            repository.update(updated);
-        });
+        ));
     }
 
-    private void handleBudgetItemAdded(BudgetItemAdded event) {
-        // Update internal state
-        projectBudgetItems
-                .computeIfAbsent(event.projectId(), k -> new ConcurrentHashMap<>())
-                .put(event.budgetItemId(), event.amount());
+    @Override
+    public void on(BudgetItemAdded event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
 
-        // Recalculate total from internal state
-        var newTotal = calculateTotalBudget(event.projectId());
-
-        // Update projection
-        updateProjectListTotal(event.projectId(), newTotal);
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                current.status(),
+                current.totalBudget().add(event.amount().value()),
+                current.participantCount()
+        ));
     }
 
-    private void handleBudgetItemUpdated(BudgetItemUpdated event) {
-        // Update internal state
-        var budgetItems = projectBudgetItems.get(event.projectId());
-        if (budgetItems != null) {
-            budgetItems.put(event.budgetItemId(), event.newAmount());
-        }
+    @Override
+    public void on(BudgetItemUpdated event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
 
-        // Recalculate total from internal state
-        var newTotal = calculateTotalBudget(event.projectId());
+        var delta = event.newAmount().value()
+                .subtract(event.oldAmount().value());
 
-        // Update projection
-        updateProjectListTotal(event.projectId(), newTotal);
+        repository.update(current.withTotalBudget(
+                current.totalBudget().add(delta)
+        ));
     }
 
-    private void handleBudgetItemRemoved(BudgetItemRemoved event) {
-        // Update internal state
-        var budgetItems = projectBudgetItems.get(event.projectId());
-        if (budgetItems != null) {
-            budgetItems.remove(event.budgetItemId());
-        }
+    @Override
+    @EventListener
+    @Transactional
+    public void on(BudgetItemRemoved event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
 
-        // Recalculate total from internal state
-        var newTotal = calculateTotalBudget(event.projectId());
+        var delta = event.budgetItem().getCost();
 
-        // Update projection
-        updateProjectListTotal(event.projectId(), newTotal);
+        repository.update(current.withTotalBudget(
+                current.totalBudget().subtract(delta)
+        ));
     }
 
-    private void handleParticipantInvited(ParticipantInvited event) {
-        repository.findById(event.projectId()).ifPresent(current -> {
-            var updated = new ProjectListDTO(
+    @Override
+    @EventListener
+    @Transactional
+    public void on(ParticipantInvited event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
+
+        repository.update(new ProjectListDTO(
                     current.projectId(),
                     current.workspaceId(),
                     current.title(),
                     current.status(),
                     current.totalBudget(),
                     current.participantCount() + 1
-            );
-            repository.update(updated);
-        });
+        ));
     }
 
-    private void handleMarkedAsReady(ProjectMarkedAsReady event) {
-        repository.findById(event.projectId()).ifPresent(current -> {
-            var updated = new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    current.title(),
-                    ProjectStatus.READY,
-                    current.totalBudget(),
-                    current.participantCount()
-            );
-            repository.update(updated);
-        });
+    @Override
+    @EventListener
+    @Transactional
+    public void on(ProjectMarkedAsReady event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
+
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                ProjectStatus.READY,
+                current.totalBudget(),
+                current.participantCount()
+        ));
     }
 
-    private BigDecimal calculateTotalBudget(ProjectId projectId) {
-        return projectBudgetItems.getOrDefault(projectId, Map.of())
-                .values()
-                .stream()
-                .map(Money::value)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    @Override
+    @EventListener
+    @Transactional
+    public void on(ProjectActivated event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
+
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                ProjectStatus.ACTIVE,
+                current.totalBudget(),
+                current.participantCount()
+        ));
     }
 
-    private void updateProjectListTotal(ProjectId projectId, BigDecimal newTotal) {
-        repository.findById(projectId).ifPresent(current -> {
-            var updated = new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    current.title(),
-                    current.status(),
-                    newTotal,
-                    current.participantCount()
-            );
-            repository.update(updated);
-        });
+    @Override
+    @EventListener
+    @Transactional
+    public void on(ProjectCreationFailed event) {
+        var current = repository.findById(event.projectId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for project " + event.projectId()
+                ));
+
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                ProjectStatus.FAILED,
+                current.totalBudget(),
+                current.participantCount()
+        ));
     }
 
-    private void handleProjectActivated(ProjectActivated event) {
-        repository.findById(event.projectId()).ifPresent(current -> {
-            var updated = new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    current.title(),
-                    ProjectStatus.ACTIVE,
-                    current.totalBudget(),
-                    current.participantCount()
-            );
-            repository.update(updated);
-        });
-    }
-
-    private void handleProjectCreationFailed(ProjectCreationFailed event) {
-        repository.findById(event.projectId()).ifPresent(current -> {
-            var updated = new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    current.title(),
-                    ProjectStatus.FAILED,
-                    current.totalBudget(),
-                    current.participantCount()
-            );
-            repository.update(updated);
-        });
-    }
 }

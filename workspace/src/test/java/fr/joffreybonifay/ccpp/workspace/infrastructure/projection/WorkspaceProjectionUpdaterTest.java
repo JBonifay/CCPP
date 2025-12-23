@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WorkspaceProjectionUpdaterTest {
 
     WorkspaceProjectCountReadRepository repository = new InMemoryWorkspaceProjectCountReadRepository();
-    WorkspaceProjectionUpdater updater = new WorkspaceProjectionUpdater(repository);
+    WorkspaceProjectCountUpdater updater = new WorkspaceProjectCountUpdater(repository);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());

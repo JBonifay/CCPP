@@ -8,8 +8,6 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReady
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
@@ -32,8 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AddBudgetItemHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     AddBudgetItemHandler handler = new AddBudgetItemHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

@@ -3,8 +3,6 @@ package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.MarkProjectReadyCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
@@ -25,8 +23,7 @@ class MarkProjectReadyHandlerTest {
 
     UUID commandId = UUID.randomUUID();
     UUID correlationId = UUID.randomUUID();
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     MarkProjectReadyHandler handler = new MarkProjectReadyHandler(eventStore);
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
     UserId userId = new UserId(UUID.randomUUID());

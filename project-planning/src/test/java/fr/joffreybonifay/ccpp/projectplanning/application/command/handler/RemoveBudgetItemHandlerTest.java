@@ -7,16 +7,14 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
-import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Money;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -30,8 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RemoveBudgetItemHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     RemoveBudgetItemHandler handler = new RemoveBudgetItemHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
@@ -66,7 +63,7 @@ class RemoveBudgetItemHandlerTest {
 
         assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
-                .isEqualTo(new BudgetItemRemoved(projectId, budgetItemId));
+                .isEqualTo(new BudgetItemRemoved(projectId, null));
     }
 
     @Test

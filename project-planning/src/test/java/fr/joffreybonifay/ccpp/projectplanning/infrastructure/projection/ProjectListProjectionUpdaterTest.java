@@ -43,7 +43,7 @@ class ProjectListProjectionUpdaterTest {
                 BigDecimal.valueOf(1000)
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         Optional<ProjectListDTO> projection = repository.findById(projectId);
         assertThat(projection.get()).isEqualTo(
@@ -63,7 +63,7 @@ class ProjectListProjectionUpdaterTest {
 
         ProjectDetailsUpdated event = new ProjectDetailsUpdated(projectId, "Updated Title", "Updated Description");
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get().title()).isEqualTo("Updated Title");
     }
@@ -80,7 +80,7 @@ class ProjectListProjectionUpdaterTest {
         );
 
         // WHEN
-        updater.handle(event);
+        updater.on(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -92,12 +92,12 @@ class ProjectListProjectionUpdaterTest {
     void should_decrement_total_budget_on_budget_item_removed() {
         givenProjectCreated();
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(500, "USD")));
+        updater.on(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(500, "USD")));
 
-        var event = new BudgetItemRemoved(projectId, budgetItemId);
+        var event = new BudgetItemRemoved(projectId, null);
 
         // WHEN
-        updater.handle(event);
+        updater.on(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -109,16 +109,17 @@ class ProjectListProjectionUpdaterTest {
     void should_update_budget_on_budget_item_updated() {
         givenProjectCreated();
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
+        updater.on(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
 
         var event = new BudgetItemUpdated(
                 projectId,
                 budgetItemId,
                 "Hotel (updated)",
-                Money.of(450, "USD")  // Only newAmount - no oldAmount!
+                Money.of(450, "USD"),
+                Money.of(500, "USD")
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         var projection = repository.findById(projectId);
         assertThat(projection.get().totalBudget())
@@ -138,7 +139,7 @@ class ProjectListProjectionUpdaterTest {
         );
 
         // WHEN
-        updater.handle(event);
+        updater.on(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -152,7 +153,7 @@ class ProjectListProjectionUpdaterTest {
         var event = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
         // WHEN
-        updater.handle(event);
+        updater.on(event);
 
         // THEN
         var projection = repository.findById(projectId);
@@ -160,7 +161,7 @@ class ProjectListProjectionUpdaterTest {
     }
 
     private void givenProjectCreated() {
-        updater.handle(new ProjectCreationRequested(
+        updater.on(new ProjectCreationRequested(
                 projectId,
                 workspaceId,
                 userId,

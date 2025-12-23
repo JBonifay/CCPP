@@ -1,14 +1,12 @@
 package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
-import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
-import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
 import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
+import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -18,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CreateWorkspaceCommandHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     CreateWorkspaceCommandHandler createWorkspaceCommandHandler = new CreateWorkspaceCommandHandler(eventStore);
 
     UserId userId = new UserId(UUID.randomUUID());

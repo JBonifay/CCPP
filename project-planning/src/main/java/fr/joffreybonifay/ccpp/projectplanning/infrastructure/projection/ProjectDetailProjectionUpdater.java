@@ -1,6 +1,7 @@
 
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.projectplanning.application.projection.ProjectDetailProjection;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.BudgetItemDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.NoteDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ParticipantDTO;
@@ -9,15 +10,13 @@ import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.Proje
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
-import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 
 import java.util.ArrayList;
 
-public class ProjectDetailProjectionUpdater implements EventHandler {
+public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
 
     private final ProjectDetailReadRepository repository;
 
@@ -26,26 +25,7 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
     }
 
     @Override
-    public void handle(DomainEvent event) {
-        switch (event) {
-            case ProjectCreationRequested e -> handleProjectCreated(e);
-            case ProjectDetailsUpdated e -> handleDetailsUpdated(e);
-            case ProjectTimelineChanged e -> handleTimelineChanged(e);
-            case ProjectMarkedAsReady e -> handleMarkedAsReady(e);
-            case BudgetItemAdded e -> handleBudgetItemAdded(e);
-            case BudgetItemUpdated e -> handleBudgetItemUpdated(e);
-            case BudgetItemRemoved e -> handleBudgetItemRemoved(e);
-            case ParticipantInvited e -> handleParticipantInvited(e);
-            case ParticipantAcceptedInvitation e -> handleParticipantAccepted(e);
-            case ParticipantDeclinedInvitation e -> handleParticipantDeclined(e);
-            case NoteAdded e -> handleNoteAdded(e);
-            case ProjectActivated e -> handleProjectActivated(e);
-            case ProjectCreationFailed e -> handleProjectCreationFailed(e);
-            default -> {}
-        }
-    }
-
-    private void handleProjectCreated(ProjectCreationRequested event) {
+    public void on(ProjectCreationRequested event) {
         var dto = new ProjectDetailDTO(
                 event.projectId(),
                 event.workspaceId(),
@@ -60,7 +40,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         repository.save(dto);
     }
 
-    private void handleDetailsUpdated(ProjectDetailsUpdated event) {
+    @Override
+    public void on(ProjectDetailsUpdated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
                     current.projectId(),
@@ -77,7 +58,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleTimelineChanged(ProjectTimelineChanged event) {
+    @Override
+    public void on(ProjectTimelineChanged event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
                     current.projectId(),
@@ -94,7 +76,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleBudgetItemAdded(BudgetItemAdded event) {
+    @Override
+    public void on(BudgetItemAdded event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = new ArrayList<>(current.budgetItems());
             budgetItems.add(new BudgetItemDTO(
@@ -118,7 +101,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleBudgetItemUpdated(BudgetItemUpdated event) {
+    @Override
+    public void on(BudgetItemUpdated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = current.budgetItems().stream()
                     .map(item -> item.budgetItemId().equals(event.budgetItemId())
@@ -141,10 +125,11 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleBudgetItemRemoved(BudgetItemRemoved event) {
+    @Override
+    public void on(BudgetItemRemoved event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = current.budgetItems().stream()
-                    .filter(item -> !item.budgetItemId().equals(event.budgetItemId()))
+                    .filter(item -> !item.budgetItemId().equals(event.budgetItem().getBudgetItemId()))
                     .toList();
 
             var updated = new ProjectDetailDTO(
@@ -162,7 +147,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleParticipantInvited(ParticipantInvited event) {
+    @Override
+    public void on(ParticipantInvited event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = new ArrayList<>(current.participants());
             participants.add(new ParticipantDTO(
@@ -187,7 +173,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleParticipantAccepted(ParticipantAcceptedInvitation event) {
+    @Override
+    public void on(ParticipantAcceptedInvitation event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
                     .map(p -> p.participantId().equals(event.participantId())
@@ -210,7 +197,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleParticipantDeclined(ParticipantDeclinedInvitation event) {
+    @Override
+    public void on(ParticipantDeclinedInvitation event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
                     .map(p -> p.participantId().equals(event.participantId())
@@ -233,7 +221,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleNoteAdded(NoteAdded event) {
+    @Override
+    public void on(NoteAdded event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var notes = new ArrayList<>(current.notes());
             notes.add(new NoteDTO(
@@ -256,7 +245,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleMarkedAsReady(ProjectMarkedAsReady event) {
+    @Override
+    public void on(ProjectMarkedAsReady event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
                     current.projectId(),
@@ -273,7 +263,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleProjectActivated(ProjectActivated event) {
+    @Override
+    public void on(ProjectActivated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
                     current.projectId(),
@@ -290,7 +281,8 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
         });
     }
 
-    private void handleProjectCreationFailed(ProjectCreationFailed event) {
+    @Override
+    public void on(ProjectCreationFailed event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
                     current.projectId(),
@@ -306,5 +298,6 @@ public class ProjectDetailProjectionUpdater implements EventHandler {
             repository.update(updated);
         });
     }
+
 }
 

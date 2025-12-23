@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi;
 
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.projectplanning.domain.spi.ProjectIdGenerator;
 import lombok.Setter;
 

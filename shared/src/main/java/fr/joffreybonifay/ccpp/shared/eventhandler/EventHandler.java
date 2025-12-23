@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.eventhandler;
 
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 
 @FunctionalInterface
 public interface EventHandler {

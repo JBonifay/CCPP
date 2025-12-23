@@ -1,10 +1,10 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.command;
 
 import fr.joffreybonifay.ccpp.shared.command.Command;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.DateRange;
 
 import java.math.BigDecimal;
 import java.util.UUID;

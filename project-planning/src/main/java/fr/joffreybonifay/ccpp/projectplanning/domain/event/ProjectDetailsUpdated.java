@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.projectplanning.domain.event;
 
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 
 public record ProjectDetailsUpdated(
         ProjectId projectId,

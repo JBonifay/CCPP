@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.eventbus;
 
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 
 import java.util.List;
 

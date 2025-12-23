@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.workspace.domain.exception;
 
-import fr.joffreybonifay.ccpp.shared.exception.DomainException;
+import fr.joffreybonifay.ccpp.shared.domain.exception.DomainException;
 
 public class ProjectLimitReachedException extends DomainException {
 

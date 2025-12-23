@@ -1,10 +1,11 @@
 package fr.joffreybonifay.ccpp.shared.eventstore.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
+import fr.joffreybonifay.ccpp.shared.exception.OptimisticLockException;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxEntry;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class JpaEventStore implements EventStore {
             long currentVersion = eventStreamRepository.findMaxVersionByAggregateId(aggregateId).orElse(0L);
 
             if (currentVersion != expectedVersion) {
-                throw new OptimisticLockingException("Expected version " + expectedVersion + " but was " + currentVersion);
+                throw new OptimisticLockException("Expected version " + expectedVersion + " but was " + currentVersion);
             }
 
             String eventData = serializeEvent(domainEvent);

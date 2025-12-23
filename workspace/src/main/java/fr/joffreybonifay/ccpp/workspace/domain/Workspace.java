@@ -1,19 +1,19 @@
 package fr.joffreybonifay.ccpp.workspace.domain;
 
-import fr.joffreybonifay.ccpp.shared.aggregate.AggregateRoot;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.domain.AggregateRoot;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectLimitReached;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.ProjectLimitReachedException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.SubscriptionTierException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.WorkspaceDoesNotExistException;
-import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 
 import java.util.List;
 

@@ -9,10 +9,10 @@ import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.Proje
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.event.ProjectActivated;
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationFailed;
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.ProjectActivated;
+import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationFailed;
+import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventhandler.EventHandler;
 
 import java.util.ArrayList;

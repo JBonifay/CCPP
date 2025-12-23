@@ -1,7 +1,7 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.projection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;

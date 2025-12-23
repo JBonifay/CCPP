@@ -1,8 +1,8 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.query.handler;
 
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.DateRange;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.GetProjectDetailQuery;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.exception.ProjectNotFoundException;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;

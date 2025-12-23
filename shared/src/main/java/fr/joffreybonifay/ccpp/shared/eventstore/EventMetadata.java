@@ -1,6 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.eventstore;
 
-import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 
 import java.time.Instant;
 import java.util.UUID;

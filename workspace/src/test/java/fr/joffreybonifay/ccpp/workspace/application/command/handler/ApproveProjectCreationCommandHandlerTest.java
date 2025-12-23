@@ -2,8 +2,6 @@ package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
@@ -24,8 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ApproveProjectCreationCommandHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     ApproveProjectCreationCommandHandler approveProjectCreationCommandHandler = new ApproveProjectCreationCommandHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

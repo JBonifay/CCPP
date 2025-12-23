@@ -1,7 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.eventstore.impl;
 
 import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
@@ -14,11 +13,6 @@ public class InMemoryEventStore implements EventStore {
 
     private final Map<UUID, List<DomainEvent>> events = new ConcurrentHashMap<>();
 
-    private final EventBus eventBus;
-
-    public InMemoryEventStore(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
 
     @Override
     public void saveEvents(UUID aggregateId, AggregateType aggregateType, List<EventMetadata> eventsWithMetadata, int expectedVersion) {
@@ -33,7 +27,6 @@ public class InMemoryEventStore implements EventStore {
         List<DomainEvent> domainEvents = eventsWithMetadata.stream().map(EventMetadata::domainEvent).toList();
 
         stream.addAll(domainEvents);
-        eventBus.publish(domainEvents);
     }
 
     @Override

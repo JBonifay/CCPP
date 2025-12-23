@@ -1,7 +1,10 @@
 package fr.joffreybonifay.ccpp.projectplanning.domain;
 
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
-import fr.joffreybonifay.ccpp.projectplanning.domain.exception.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
+import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidParticipantDataException;
+import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
+import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
@@ -132,7 +135,8 @@ public class Project extends AggregateRoot {
 
     public void removeBudgetItem(BudgetItemId budgetItemId) {
         verifyProjectIsModifiable();
-        raiseEvent(new BudgetItemRemoved(new ProjectId(aggregateId), budgetItemId));
+        BudgetItem budgetItem = budgetItems.get(budgetItemId);
+        raiseEvent(new BudgetItemRemoved(new ProjectId(aggregateId), budgetItem));
     }
 
     public void changeTimeline(DateRange newTimeline) {
@@ -143,7 +147,8 @@ public class Project extends AggregateRoot {
     public void updateBudgetItem(BudgetItemId budgetItemId, String description, Money newAmount) {
         verifyProjectIsModifiable();
         verifyBudgetItemIsPresent(budgetItemId);
-        raiseEvent(new BudgetItemUpdated(new ProjectId(aggregateId), budgetItemId, description, newAmount));
+        BudgetItem old = budgetItems.get(budgetItemId);
+        raiseEvent(new BudgetItemUpdated(new ProjectId(aggregateId), budgetItemId, description, old.getAmount(), newAmount));
     }
 
     public void addNote(String content, UserId userId) {
@@ -245,7 +250,7 @@ public class Project extends AggregateRoot {
     }
 
     private void apply(BudgetItemRemoved budgetItemRemoved) {
-        budgetItems.remove(budgetItemRemoved.budgetItemId());
+        budgetItems.remove(budgetItemRemoved.budgetItem().getBudgetItemId());
     }
 
     private void apply(BudgetItemUpdated budgetItemUpdated) {

@@ -4,8 +4,6 @@ import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddNot
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.NoteAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectNoteException;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
@@ -25,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AddNoteHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     AddNoteHandler handler = new AddNoteHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

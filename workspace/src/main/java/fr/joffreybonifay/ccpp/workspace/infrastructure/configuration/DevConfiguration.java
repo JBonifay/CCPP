@@ -1,10 +1,9 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.configuration;
 
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
-import fr.joffreybonifay.ccpp.workspace.infrastructure.projection.WorkspaceProjectionUpdater;
+import fr.joffreybonifay.ccpp.workspace.infrastructure.projection.WorkspaceProjectCountUpdater;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +19,15 @@ public class DevConfiguration {
     }
 
     @Bean
-    WorkspaceProjectionUpdater workspaceProjectCountProjectionUpdater(
+    WorkspaceProjectCountUpdater workspaceProjectCountProjectionUpdater(
             WorkspaceProjectCountReadRepository workspaceProjectCountReadRepository
     ) {
-        return new WorkspaceProjectionUpdater(workspaceProjectCountReadRepository);
+        return new WorkspaceProjectCountUpdater(workspaceProjectCountReadRepository);
     }
 
     @Bean
-    EventStore eventStore(EventBus eventBus) {
-        return new InMemoryEventStore(eventBus);
+    EventStore eventStore() {
+        return new InMemoryEventStore();
     }
 
 }

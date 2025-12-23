@@ -6,6 +6,7 @@ import fr.joffreybonifay.ccpp.projectplanning.application.query.model.Participan
 import fr.joffreybonifay.ccpp.projectplanning.application.query.model.ProjectDetailDTO;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.*;
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.BudgetItem;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.InvitationStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
@@ -47,7 +48,7 @@ class ProjectDetailProjectionUpdaterTest {
                 BigDecimal.valueOf(1000)
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         var projection = repository.findById(projectId);
         assertThat(projection.get()).isEqualTo(
@@ -69,7 +70,7 @@ class ProjectDetailProjectionUpdaterTest {
     void should_update_details_on_project_details_updated() {
         givenProjectCreated();
 
-        updater.handle(new ProjectDetailsUpdated(
+        updater.on(new ProjectDetailsUpdated(
                 projectId,
                 "Updated Title",
                 "Updated Description"
@@ -102,7 +103,7 @@ class ProjectDetailProjectionUpdaterTest {
                 Money.of(300, "USD")
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -123,16 +124,17 @@ class ProjectDetailProjectionUpdaterTest {
     void should_update_budget_item_in_collection() {
         givenProjectCreated();
         var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
+        updater.on(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
 
         var event = new BudgetItemUpdated(
                 projectId,
                 budgetItemId,
                 "Hotel (updated)",
-                Money.of(450, "USD")
+                Money.of(450, "USD"),
+                Money.of(500, "USD")
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -152,12 +154,10 @@ class ProjectDetailProjectionUpdaterTest {
     @Test
     void should_remove_budget_item_from_collection() {
         givenProjectCreated();
-        var budgetItemId = new BudgetItemId(UUID.randomUUID());
-        updater.handle(new BudgetItemAdded(projectId, budgetItemId, "Hotel", Money.of(300, "USD")));
 
-        var event = new BudgetItemRemoved(projectId, budgetItemId);
+        var event = new BudgetItemRemoved(projectId, null);
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -186,7 +186,7 @@ class ProjectDetailProjectionUpdaterTest {
                 "John Doe"
         );
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -207,11 +207,11 @@ class ProjectDetailProjectionUpdaterTest {
     void should_update_participant_status_on_acceptance() {
         givenProjectCreated();
         var participantId = new ParticipantId(UUID.randomUUID());
-        updater.handle(new ParticipantInvited(projectId, participantId, "john@example.com", "John Doe"));
+        updater.on(new ParticipantInvited(projectId, participantId, "john@example.com", "John Doe"));
 
         var event = new ParticipantAcceptedInvitation(projectId, participantId);
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -234,7 +234,7 @@ class ProjectDetailProjectionUpdaterTest {
 
         var event = new NoteAdded(projectId, "Important note", userId);
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -258,7 +258,7 @@ class ProjectDetailProjectionUpdaterTest {
         var newTimeline = new DateRange(LocalDate.of(2025, 2, 1), LocalDate.of(2025, 4, 30));
         var event = new ProjectTimelineChanged(projectId, newTimeline);
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -281,7 +281,7 @@ class ProjectDetailProjectionUpdaterTest {
 
         var event = new ProjectMarkedAsReady(projectId, workspaceId, userId);
 
-        updater.handle(event);
+        updater.on(event);
 
         assertThat(repository.findById(projectId).get()).isEqualTo(
                 new ProjectDetailDTO(
@@ -299,7 +299,7 @@ class ProjectDetailProjectionUpdaterTest {
     }
 
     private void givenProjectCreated() {
-        updater.handle(new ProjectCreationRequested(
+        updater.on(new ProjectCreationRequested(
                 projectId,
                 workspaceId,
                 userId,

@@ -9,6 +9,7 @@ public record BudgetItemUpdated(
         ProjectId projectId,
         BudgetItemId budgetItemId,
         String description,
+        Money oldAmount,
         Money newAmount
 ) implements DomainEvent {
 

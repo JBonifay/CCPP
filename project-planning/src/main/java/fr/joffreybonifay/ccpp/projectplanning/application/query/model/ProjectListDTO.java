@@ -14,5 +14,10 @@ public record ProjectListDTO(
         BigDecimal totalBudget,
         int participantCount
 ) {
+
+    public ProjectListDTO withTotalBudget(BigDecimal add) {
+        return new ProjectListDTO(projectId, workspaceId, title, status, totalBudget.add(add), participantCount);
+    }
+
 }
 

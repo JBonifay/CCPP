@@ -2,19 +2,18 @@ package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
-import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
-import fr.joffreybonifay.ccpp.workspace.application.projection.WorkspaceProjectionHandler;
+import fr.joffreybonifay.ccpp.workspace.application.projection.WorkspaceProjectCountProjection;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WorkspaceProjectionUpdater implements WorkspaceProjectionHandler {
+public class WorkspaceProjectCountUpdater implements WorkspaceProjectCountProjection {
 
     private final WorkspaceProjectCountReadRepository repository;
 
-    public WorkspaceProjectionUpdater(WorkspaceProjectCountReadRepository repository) {
+    public WorkspaceProjectCountUpdater(WorkspaceProjectCountReadRepository repository) {
         this.repository = repository;
     }
 

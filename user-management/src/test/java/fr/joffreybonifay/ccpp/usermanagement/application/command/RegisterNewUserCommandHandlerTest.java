@@ -1,7 +1,5 @@
 package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
@@ -22,8 +20,7 @@ class RegisterNewUserCommandHandlerTest {
 
     PasswordEncoder passwordEncoder = new MockPasswordEncoder();
     MockUserUniquenessChecker uniquenessChecker = new MockUserUniquenessChecker();
-    EventBus eventBus = new SimpleEventBus();
-    EventStore eventStore = new InMemoryEventStore(eventBus);
+    EventStore eventStore = new InMemoryEventStore();
     RegisterNewUserCommandHandler handler = new RegisterNewUserCommandHandler(eventStore, passwordEncoder, uniquenessChecker);
 
     UserId userId = new UserId(UUID.randomUUID());

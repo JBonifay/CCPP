@@ -5,8 +5,6 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantAcceptedIn
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ParticipantInvited;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.ParticipantId;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
@@ -25,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AcceptInvitationHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     AcceptInvitationHandler handler = new AcceptInvitationHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

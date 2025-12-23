@@ -1,8 +1,6 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.domain.exception.DateRangeException;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
@@ -22,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class RequestProjectCreationHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    InMemoryEventStore eventStore = new InMemoryEventStore(eventBus);
+    InMemoryEventStore eventStore = new InMemoryEventStore();
     RequestProjectCreationHandler handler = new RequestProjectCreationHandler(eventStore);
 
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());

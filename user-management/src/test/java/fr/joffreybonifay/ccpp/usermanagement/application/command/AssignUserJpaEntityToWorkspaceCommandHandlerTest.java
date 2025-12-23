@@ -1,7 +1,5 @@
 package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
@@ -22,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
-    EventBus eventBus = new SimpleEventBus();
-    EventStore eventStore = new InMemoryEventStore(eventBus);
+    EventStore eventStore = new InMemoryEventStore();
     AssignUserToWorkspaceCommandHandler handler = new AssignUserToWorkspaceCommandHandler(eventStore);
 
     UserId userId = new UserId(UUID.randomUUID());

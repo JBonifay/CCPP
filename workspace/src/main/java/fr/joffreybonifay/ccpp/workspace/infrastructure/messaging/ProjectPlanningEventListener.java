@@ -70,7 +70,8 @@ public class ProjectPlanningEventListener {
         commandBus.execute(new ApproveProjectCreationCommand(
                 event.workspaceId(),
                 event.projectId(),
-                envelope.correlationId()
+                envelope.correlationId(),
+                envelope.causationId()
         ));
     }
 

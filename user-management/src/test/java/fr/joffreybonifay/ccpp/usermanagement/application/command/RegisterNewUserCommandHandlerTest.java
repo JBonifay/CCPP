@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.usermanagement.application.command;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;

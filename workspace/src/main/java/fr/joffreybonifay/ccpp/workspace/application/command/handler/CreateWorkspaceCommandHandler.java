@@ -1,6 +1,8 @@
 package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.CreateWorkspaceCommand;
 import fr.joffreybonifay.ccpp.workspace.domain.Workspace;
@@ -23,12 +25,17 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
 
         eventStore.saveEvents(
                 createWorkspaceCommand.workspaceId().value(),
-                workspace.uncommittedEvents(),
-                workspace.version(),
-                createWorkspaceCommand.correlationId(),
-                createWorkspaceCommand.causationId()
+                AggregateType.WORKSPACE,
+                workspace.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        createWorkspaceCommand.commandId(),
+                        createWorkspaceCommand.correlationId(),
+                        createWorkspaceCommand.causationId()
+                )).toList(), workspace.version()
         );
+
         workspace.markEventsAsCommitted();
     }
+
 
 }

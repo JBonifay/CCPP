@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.exception.DateRangeException;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;

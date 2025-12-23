@@ -2,6 +2,8 @@ package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
 import fr.joffreybonifay.ccpp.shared.command.CommandHandler;
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import fr.joffreybonifay.ccpp.workspace.domain.Workspace;
@@ -28,7 +30,18 @@ public class ApproveProjectCreationCommandHandler implements CommandHandler<Appr
 
         workspace.approveProjectCreation(command.projectId());
 
-        eventStore.saveEvents(command.aggregateId(), workspace.uncommittedEvents(), initialVersion, command.correlationId(), command.causationId());
+        eventStore.saveEvents(
+                command.workspaceId().value(),
+                AggregateType.WORKSPACE,
+                workspace.uncommittedEvents().stream().map(domainEvent -> new EventMetadata(
+                        domainEvent,
+                        command.commandId(),
+                        command.correlationId(),
+                        command.causationId()
+                )).toList(),
+                initialVersion
+        );
+
         workspace.markEventsAsCommitted();
     }
 

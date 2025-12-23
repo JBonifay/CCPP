@@ -1,17 +1,19 @@
 package fr.joffreybonifay.ccpp.workspace.application.command.handler;
 
+import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
-import fr.joffreybonifay.ccpp.shared.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectLimitReached;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.WorkspaceDoesNotExistException;
-import fr.joffreybonifay.ccpp.shared.model.SubscriptionTier;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -35,11 +37,14 @@ class ApproveProjectCreationCommandHandlerTest {
 
     @Test
     void should_create_project() {
-        eventStore.saveEvents(workspaceId.value(), List.of(
-                new WorkspaceCreated(workspaceId, userId, "Workspace name", SubscriptionTier.FREEMIUM)
-        ), -1, null, null);
+        eventStore.saveEvents(
+                workspaceId.value(),
+                AggregateType.WORKSPACE,
+                List.of(new EventMetadata(new WorkspaceCreated(workspaceId, userId, "Workspace name", SubscriptionTier.FREEMIUM), null, null, null)),
+                -1)
+        ;
 
-        approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId));
+        approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId, commandId));
 
         assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()
@@ -48,19 +53,21 @@ class ApproveProjectCreationCommandHandlerTest {
 
     @Test
     void should_fail_if_workspace_does_not_exists() {
-        assertThatThrownBy(() -> approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId)))
+        assertThatThrownBy(() -> approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId, commandId)))
                 .isInstanceOf(WorkspaceDoesNotExistException.class)
                 .hasMessage("Workspace does not exists");
     }
 
     @Test
     void should_inform_when_limit_reached() {
-        eventStore.saveEvents(workspaceId.value(), List.of(
-                new WorkspaceCreated(workspaceId, userId, "Workspace name", SubscriptionTier.FREEMIUM),
-                new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID()))
-        ), -1, null, null);
+        eventStore.saveEvents(
+                workspaceId.value(),
+                AggregateType.WORKSPACE,
+                List.of(new EventMetadata(new WorkspaceCreated(workspaceId, userId, "Workspace name", SubscriptionTier.FREEMIUM), null, null, null),
+                        new EventMetadata(new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID())), null, null, null)),
+                -1);
 
-        approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId));
+        approveProjectCreationCommandHandler.handle(new ApproveProjectCreationCommand(commandId, workspaceId, projectId, correlationId, commandId));
 
         assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()

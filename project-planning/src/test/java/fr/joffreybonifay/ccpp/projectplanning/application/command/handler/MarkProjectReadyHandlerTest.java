@@ -1,15 +1,17 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.projectplanning.application.command.command.MarkProjectReadyCommand;
+import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.projectplanning.application.command.command.MarkProjectReadyCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -36,7 +38,10 @@ class MarkProjectReadyHandlerTest {
 
     @Test
     void should_mark_project_as_ready() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null)),
+                -1);
 
         handler.handle(new MarkProjectReadyCommand(
                 commandId,
@@ -56,7 +61,13 @@ class MarkProjectReadyHandlerTest {
     void should_be_idempotent_when_marking_ready_project_as_ready() {
         var projectCreatedEvent = new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit);
         var projectMarkedAsReadyEvent = new ProjectMarkedAsReady(projectId, workspaceId, userId);
-        eventStore.saveEvents(projectId.value(), List.of(projectCreatedEvent, projectMarkedAsReadyEvent), -1, null, null);
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(
+                        new EventMetadata(projectCreatedEvent, null, null, null),
+                        new EventMetadata(projectMarkedAsReadyEvent, null, null, null)
+                ),
+                -1);
 
         var command = new MarkProjectReadyCommand(
                 commandId,

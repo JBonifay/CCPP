@@ -1,7 +1,10 @@
-package fr.joffreybonifay.ccpp.shared.eventstore;
+package fr.joffreybonifay.ccpp.shared.eventstore.impl;
 
 import fr.joffreybonifay.ccpp.shared.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.exception.OptimisticLockException;
 
 import java.util.*;
@@ -18,7 +21,7 @@ public class InMemoryEventStore implements EventStore {
     }
 
     @Override
-    public void saveEvents(UUID aggregateId, List<DomainEvent> domainEvents, int expectedVersion, UUID correlationId, UUID causationId) {
+    public void saveEvents(UUID aggregateId, AggregateType aggregateType, List<EventMetadata> eventsWithMetadata, int expectedVersion) {
 
         List<DomainEvent> stream = events.computeIfAbsent(aggregateId, id -> new ArrayList<>());
         int currentVersion = stream.size() - 1;
@@ -26,6 +29,8 @@ public class InMemoryEventStore implements EventStore {
         if (currentVersion != expectedVersion) {
             throw new OptimisticLockException(aggregateId, expectedVersion, currentVersion);
         }
+
+        List<DomainEvent> domainEvents = eventsWithMetadata.stream().map(EventMetadata::domainEvent).toList();
 
         stream.addAll(domainEvents);
         eventBus.publish(domainEvents);

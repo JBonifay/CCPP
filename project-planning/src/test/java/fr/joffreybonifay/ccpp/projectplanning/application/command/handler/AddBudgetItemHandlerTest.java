@@ -1,15 +1,5 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
-import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
-import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
-import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
-import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
-import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
-import fr.joffreybonifay.ccpp.shared.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import fr.joffreybonifay.ccpp.projectplanning.application.command.command.AddBudgetItemCommand;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.BudgetItemAdded;
 import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectBudgetCapExceeded;
@@ -17,6 +7,18 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectMarkedAsReady;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.CannotModifyReadyProjectException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.exception.InvalidProjectDataException;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
+import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
+import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.exception.CurrencyException;
+import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
+import fr.joffreybonifay.ccpp.shared.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
+import fr.joffreybonifay.ccpp.shared.valueobjects.Money;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -48,7 +50,12 @@ class AddBudgetItemHandlerTest {
     @Test
     void should_add_budget_item_to_project() {
         UUID budgetItemId = UUID.randomUUID();
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(
+                projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(
+                        new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null)),
+                -1);
 
         handler.handle(new AddBudgetItemCommand(
                 commandId,
@@ -72,10 +79,10 @@ class AddBudgetItemHandlerTest {
     void should_mark_project_budget_as_over_limit_when_total_budget_exceeds_cap() {
         eventStore.saveEvents(
                 projectId.value(),
-                List.of(
-                        new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, new BigDecimal(100)),
-                        new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD")))
-                ), -1, null, null);
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, new BigDecimal(100)), null, null, null),
+                        new EventMetadata(new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item 1", new Money(BigDecimal.valueOf(50), Currency.getInstance("USD"))), null, null, null)),
+                -1);
 
         handler.handle(new AddBudgetItemCommand(
                 commandId,
@@ -95,8 +102,10 @@ class AddBudgetItemHandlerTest {
     void should_prevent_adding_budget_item_when_ready() {
         eventStore.saveEvents(
                 projectId.value(),
-                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new ProjectMarkedAsReady(projectId, workspaceId, userId)), -1, null, null);
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new ProjectMarkedAsReady(projectId, workspaceId, userId), null, null, null)),
+                -1);
 
         assertThatThrownBy(() -> handler.handle(
                 new AddBudgetItemCommand(
@@ -113,7 +122,9 @@ class AddBudgetItemHandlerTest {
 
     @Test
     void should_reject_empty_budget_item_description() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null)), -1);
 
         assertThatThrownBy(() -> handler.handle(
                 new AddBudgetItemCommand(
@@ -132,8 +143,11 @@ class AddBudgetItemHandlerTest {
     void should_fail_to_add_budgetItem_in_different_currency() {
         eventStore.saveEvents(
                 projectId.value(),
-                List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit),
-                        new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item in USD", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD")))), -1, null, null);
+                AggregateType.PROJECT_PLANNING,
+                List.of(
+                        new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null),
+                        new EventMetadata(new BudgetItemAdded(projectId, new BudgetItemId(UUID.randomUUID()), "Item in USD", new Money(BigDecimal.valueOf(100), Currency.getInstance("USD"))), null, null, null)),
+                -1);
 
         assertThatThrownBy(() -> handler.handle(
                 new AddBudgetItemCommand(

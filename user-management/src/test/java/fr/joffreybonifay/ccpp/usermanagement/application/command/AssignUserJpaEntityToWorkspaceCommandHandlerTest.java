@@ -2,8 +2,10 @@ package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.Email;
@@ -32,7 +34,12 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
     @Test
     void should_assign_user_to_workspace() {
-        eventStore.saveEvents(userId.value(), List.of(new UserCreated(userId, new Email("test@test.com"), "", "")), -1, null, null);
+        eventStore.saveEvents(
+                userId.value(),
+                AggregateType.USER,
+                List.of(new EventMetadata(new UserCreated(userId, new Email("test@test.com"), "", ""), null, null, null)),
+                -1
+        );
 
         handler.handle(new AssignUserToWorkspaceCommand(
                 commandId,

@@ -3,7 +3,7 @@ package fr.joffreybonifay.ccpp.projectplanning.infrastructure.configuration;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection.ProjectDetailProjectionUpdater;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection.ProjectListProjectionUpdater;
 import org.springframework.context.annotation.Bean;

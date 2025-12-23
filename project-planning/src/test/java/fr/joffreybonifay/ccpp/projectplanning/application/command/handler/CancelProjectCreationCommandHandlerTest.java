@@ -1,15 +1,17 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.command.handler;
 
+import fr.joffreybonifay.ccpp.projectplanning.application.command.command.CancelProjectCreationCommand;
+import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreationCancelled;
 import fr.joffreybonifay.ccpp.shared.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventbus.EventBus;
 import fr.joffreybonifay.ccpp.shared.eventbus.SimpleEventBus;
-import fr.joffreybonifay.ccpp.shared.eventstore.InMemoryEventStore;
+import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
+import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
+import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.shared.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.valueobjects.DateRange;
-import fr.joffreybonifay.ccpp.projectplanning.application.command.command.CancelProjectCreationCommand;
-import fr.joffreybonifay.ccpp.projectplanning.domain.event.ProjectCreationCancelled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -38,7 +40,10 @@ class CancelProjectCreationCommandHandlerTest {
 
     @Test
     void should_cancel_project_creation_with_valid_reason() {
-        eventStore.saveEvents(projectId.value(), List.of(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit)), -1, null, null);
+        eventStore.saveEvents(projectId.value(),
+                AggregateType.PROJECT_PLANNING,
+                List.of(new EventMetadata(new ProjectCreationRequested(projectId, workspaceId, userId, title, description, timeline, projectBudgetLimit), null, null, null)),
+                -1);
 
         handler.handle(new CancelProjectCreationCommand(
                 commandId,

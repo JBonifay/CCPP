@@ -21,7 +21,7 @@ public class InMemoryProjectListReadRepository implements ProjectListReadReposit
 
     @Override
     public void update(ProjectListDTO dto) {
-        store.put(dto.projectId(), dto);
+        save(dto);
     }
 
     @Override

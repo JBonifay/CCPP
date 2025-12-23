@@ -13,6 +13,7 @@ import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
+import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectCreationRequested event) {
         var dto = new ProjectDetailDTO(
                 event.projectId(),
@@ -41,6 +43,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectDetailsUpdated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
@@ -59,6 +62,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectTimelineChanged event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
@@ -77,6 +81,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(BudgetItemAdded event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = new ArrayList<>(current.budgetItems());
@@ -102,6 +107,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(BudgetItemUpdated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = current.budgetItems().stream()
@@ -126,6 +132,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(BudgetItemRemoved event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var budgetItems = current.budgetItems().stream()
@@ -148,6 +155,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ParticipantInvited event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = new ArrayList<>(current.participants());
@@ -174,6 +182,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ParticipantAcceptedInvitation event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
@@ -198,6 +207,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ParticipantDeclinedInvitation event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var participants = current.participants().stream()
@@ -222,6 +232,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(NoteAdded event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var notes = new ArrayList<>(current.notes());
@@ -246,6 +257,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectMarkedAsReady event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
@@ -264,6 +276,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectActivated event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(
@@ -282,6 +295,7 @@ public class ProjectDetailProjectionUpdater implements ProjectDetailProjection {
     }
 
     @Override
+    @EventListener
     public void on(ProjectCreationFailed event) {
         repository.findById(event.projectId()).ifPresent(current -> {
             var updated = new ProjectDetailDTO(

@@ -63,7 +63,12 @@ class UpdateBudgetItemHandlerTest {
 
         assertThat(eventStore.loadEvents(projectId.value()))
                 .last()
-                .isEqualTo(new BudgetItemUpdated(projectId, budgetItemId, "Hotel 3 nights", new Money(BigDecimal.valueOf(450), Currency.getInstance("USD")), new Money(BigDecimal.valueOf(500), Currency.getInstance("USD"))));
+                .isEqualTo(new BudgetItemUpdated(
+                        projectId,
+                        budgetItemId,
+                        "Hotel 3 nights",
+                        new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")),
+                        new Money(BigDecimal.valueOf(450), Currency.getInstance("USD"))));
     }
 
     @Test

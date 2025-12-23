@@ -11,6 +11,8 @@ import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 public class ProjectListProjectionUpdater implements ProjectListProjection {
 
     private final ProjectListReadRepository repository;
@@ -29,6 +31,7 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 event.title(),
                 ProjectStatus.PLANNING,
                 event.projectBudgetLimit(),
+                BigDecimal.ZERO,
                 0
         );
         repository.save(dto);
@@ -44,12 +47,13 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 ));
 
         repository.update(new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    event.title(),
-                    current.status(),
-                    current.totalBudget(),
-                    current.participantCount()
+                current.projectId(),
+                current.workspaceId(),
+                event.title(),
+                current.status(),
+                current.totalBudget(),
+                current.actualBudget(),
+                current.participantCount()
         ));
     }
 
@@ -65,7 +69,8 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 current.workspaceId(),
                 current.title(),
                 current.status(),
-                current.totalBudget().add(event.amount().value()),
+                current.totalBudget(),
+                current.actualBudget().add(event.amount().value()),
                 current.participantCount()
         ));
     }
@@ -77,11 +82,14 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                         "Missing projection for project " + event.projectId()
                 ));
 
-        var delta = event.newAmount().value()
-                .subtract(event.oldAmount().value());
-
-        repository.update(current.withTotalBudget(
-                current.totalBudget().add(delta)
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                current.status(),
+                current.totalBudget(),
+                current.actualBudget().subtract(event.oldAmount().value()).add(event.newAmount().value()),
+                current.participantCount()
         ));
     }
 
@@ -94,12 +102,15 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                         "Missing projection for project " + event.projectId()
                 ));
 
-        var delta = event.budgetItem().getCost();
-
-        repository.update(current.withTotalBudget(
-                current.totalBudget().subtract(delta)
-        ));
-    }
+        repository.update(new ProjectListDTO(
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                current.status(),
+                current.totalBudget(),
+                current.actualBudget().subtract(event.budgetItem().getCost()),
+                current.participantCount()
+        ));    }
 
     @Override
     @EventListener
@@ -111,12 +122,13 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 ));
 
         repository.update(new ProjectListDTO(
-                    current.projectId(),
-                    current.workspaceId(),
-                    current.title(),
-                    current.status(),
-                    current.totalBudget(),
-                    current.participantCount() + 1
+                current.projectId(),
+                current.workspaceId(),
+                current.title(),
+                current.status(),
+                current.totalBudget(),
+                current.actualBudget(),
+                current.participantCount() + 1
         ));
     }
 
@@ -135,6 +147,7 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 current.title(),
                 ProjectStatus.READY,
                 current.totalBudget(),
+                current.actualBudget(),
                 current.participantCount()
         ));
     }
@@ -154,6 +167,7 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 current.title(),
                 ProjectStatus.ACTIVE,
                 current.totalBudget(),
+                current.actualBudget(),
                 current.participantCount()
         ));
     }
@@ -173,6 +187,7 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
                 current.title(),
                 ProjectStatus.FAILED,
                 current.totalBudget(),
+                current.actualBudget(),
                 current.participantCount()
         ));
     }

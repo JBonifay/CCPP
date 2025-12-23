@@ -60,7 +60,8 @@ class AddBudgetItemHandlerTest {
                 new BudgetItemId(budgetItemId),
                 "Hotel 2 nights",
                 new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")),
-                correlationId
+                correlationId,
+                commandId
         ));
 
         assertThat(eventStore.loadEvents(projectId.value()))
@@ -87,7 +88,8 @@ class AddBudgetItemHandlerTest {
                 new BudgetItemId(UUID.randomUUID()),
                 "Item 2",
                 new Money(BigDecimal.valueOf(51), Currency.getInstance("USD")),
-                correlationId
+                correlationId,
+                commandId
         ));
 
         assertThat(eventStore.loadEvents(projectId.value()))
@@ -111,7 +113,8 @@ class AddBudgetItemHandlerTest {
                         new BudgetItemId(UUID.randomUUID()),
                         "Hotel",
                         new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")),
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(CannotModifyReadyProjectException.class)
                 .hasMessageContaining("Cannot modify project in READY status");
@@ -130,7 +133,8 @@ class AddBudgetItemHandlerTest {
                         new BudgetItemId(UUID.randomUUID()),
                         "",
                         new Money(BigDecimal.valueOf(300), Currency.getInstance("USD")),
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(InvalidProjectDataException.class)
                 .hasMessageContaining("Budget item description cannot be empty");
@@ -153,7 +157,8 @@ class AddBudgetItemHandlerTest {
                         new BudgetItemId(UUID.randomUUID()),
                         "Item in EUR",
                         new Money(BigDecimal.valueOf(100), Currency.getInstance("EUR")),
-                        correlationId
+                        correlationId,
+                        commandId
                 )))
                 .isInstanceOf(CurrencyException.class)
                 .hasMessageContaining("Cannot add budget items with different currencies");

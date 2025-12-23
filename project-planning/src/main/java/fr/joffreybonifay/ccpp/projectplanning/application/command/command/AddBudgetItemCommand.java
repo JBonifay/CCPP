@@ -13,12 +13,13 @@ public record AddBudgetItemCommand(
         BudgetItemId budgetItemId,
         String description,
         Money amount,
-        UUID correlationId
+        UUID correlationId,
+        UUID causationId
 ) implements Command {
 
 
-    public AddBudgetItemCommand(ProjectId projectId, BudgetItemId budgetItemId, String description, Money amount, UUID correlationId) {
-        this(UUID.randomUUID(), projectId, budgetItemId, description, amount, correlationId);
+    public AddBudgetItemCommand(ProjectId projectId, BudgetItemId budgetItemId, String description, Money amount, UUID correlationId, UUID causationId) {
+        this(UUID.randomUUID(), projectId, budgetItemId, description, amount, correlationId, causationId);
     }
 
     @Override
@@ -30,4 +31,5 @@ public record AddBudgetItemCommand(
     public UUID causationId() {
         return commandId;
     }
+
 }

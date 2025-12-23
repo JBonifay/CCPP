@@ -1,9 +1,9 @@
 package fr.joffreybonifay.ccpp.projectplanning.application.query.model;
 
+import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 
-import fr.joffreybonifay.ccpp.projectplanning.domain.model.ProjectStatus;
 import java.math.BigDecimal;
 
 public record ProjectListDTO(
@@ -12,11 +12,12 @@ public record ProjectListDTO(
         String title,
         ProjectStatus status,
         BigDecimal totalBudget,
+        BigDecimal actualBudget,
         int participantCount
 ) {
 
     public ProjectListDTO withTotalBudget(BigDecimal add) {
-        return new ProjectListDTO(projectId, workspaceId, title, status, totalBudget.add(add), participantCount);
+        return new ProjectListDTO(projectId, workspaceId, title, status, totalBudget.add(add), actualBudget, participantCount);
     }
 
 }

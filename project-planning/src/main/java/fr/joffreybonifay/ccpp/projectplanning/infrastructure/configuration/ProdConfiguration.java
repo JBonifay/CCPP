@@ -3,6 +3,8 @@ package fr.joffreybonifay.ccpp.projectplanning.infrastructure.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.messaging.WorkspaceEventListener;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
+import fr.joffreybonifay.ccpp.shared.eventpublisher.EventPublisher;
+import fr.joffreybonifay.ccpp.shared.eventpublisher.SpringEventPublisher;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.EventStreamRepository;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.JpaEventStore;
@@ -13,7 +15,6 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -23,17 +24,21 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan(basePackages = {"fr.joffreybonifay.ccpp.shared"})
 @EnableScheduling
 @Configuration
-@Profile("default")
 public class ProdConfiguration {
+
+    @Bean
+    EventPublisher eventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        return new SpringEventPublisher(applicationEventPublisher);
+    }
 
     @Bean
     EventStore jpaEventStore(
             EventStreamRepository eventStreamRepository,
             OutboxRepository outboxRepository,
             ObjectMapper objectMapper,
-            ApplicationEventPublisher applicationEventPublisher
+            EventPublisher eventPublisher
     ) {
-        return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, applicationEventPublisher);
+        return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, eventPublisher);
     }
 
     @Bean

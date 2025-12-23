@@ -101,7 +101,8 @@ public class ProjectCommandController {
                 budgetItemId,
                 addBudgetItemRequest.description(),
                 new Money(addBudgetItemRequest.amount(), Currency.getInstance(addBudgetItemRequest.currency())),
-                newCorrelationId()
+                newCorrelationId(),
+                newCausationId()
         ));
 
         return new ResponseEntity<>(budgetItemId.value(), HttpStatus.CREATED);
@@ -155,7 +156,8 @@ public class ProjectCommandController {
                 participantId,
                 inviteParticipantRequest.email(),
                 inviteParticipantRequest.name(),
-                newCorrelationId()
+                newCorrelationId(),
+                newCausationId()
         );
 
         commandBus.execute(command);
@@ -202,15 +204,13 @@ public class ProjectCommandController {
             @PathVariable String projectId,
             @RequestBody AddNoteRequest addNoteRequest
     ) {
-        AddNoteCommand command = new AddNoteCommand(
+        commandBus.execute(new AddNoteCommand(
                 newCommandId(),
                 new ProjectId(projectId),
                 addNoteRequest.content(),
                 RequestContext.getUserId(),
                 newCorrelationId()
-        );
-
-        commandBus.execute(command);
+        ));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -232,4 +232,6 @@ public class ProjectCommandController {
 
     private UUID newCommandId() { return UUID.randomUUID(); }
     private UUID newCorrelationId() { return UUID.randomUUID(); }
+    private UUID newCausationId() { return UUID.randomUUID(); }
+
 }

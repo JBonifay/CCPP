@@ -60,6 +60,8 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
     }
 
     @Override
+    @EventListener
+    @Transactional
     public void on(BudgetItemAdded event) {
         var current = repository.findById(event.projectId())
                 .orElseThrow(() -> new IllegalStateException(
@@ -78,6 +80,8 @@ public class ProjectListProjectionUpdater implements ProjectListProjection {
     }
 
     @Override
+    @EventListener
+    @Transactional
     public void on(BudgetItemUpdated event) {
         var current = repository.findById(event.projectId())
                 .orElseThrow(() -> new IllegalStateException(

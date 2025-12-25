@@ -70,7 +70,7 @@ jobs:
             done
           else
             for mod in $ALL_MODULES; do
-              if echo "$CHANGED_FILES" | grep -q "^$mod/"; then
+              if echo "$CHANGED_FILES" | tr ' ' '\n' | grep -q "^$mod/"; then
                 TO_BUILD+=("$mod")
               fi
             done

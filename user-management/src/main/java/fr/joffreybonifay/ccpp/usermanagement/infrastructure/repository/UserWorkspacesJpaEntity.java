@@ -1,9 +1,11 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 @Entity
 @Table(name = "user_workspaces")
 public class UserWorkspacesJpaEntity {

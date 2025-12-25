@@ -4,10 +4,10 @@ import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.LoginRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.RegisterRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.SelectWorkspaceRequest;
@@ -27,13 +27,18 @@ import java.util.UUID;
 public class AuthController {
 
     private final CommandBus commandBus;
-    private final JpaUserRepository jpaUserRepository;
+    private final UserReadRepository userReadRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public AuthController(CommandBus commandBus, JpaUserRepository jpaUserRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+    public AuthController(
+            CommandBus commandBus,
+            UserReadRepository userReadRepository,
+            PasswordEncoder passwordEncoder,
+            TokenService tokenService
+    ) {
         this.commandBus = commandBus;
-        this.jpaUserRepository = jpaUserRepository;
+        this.userReadRepository = userReadRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
     }
@@ -74,16 +79,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthTokens> login(@RequestBody LoginRequest request) {
-        UserJpaEntity userJpaEntity = jpaUserRepository.findByEmail(request.email())
+        UserDTO user = userReadRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-        if (!passwordEncoder.matches(request.password(), userJpaEntity.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.passwordHash())) {
             throw new RuntimeException("Invalid credentials");
         }
 
         // Conventional: Always start with a "Neutral" token on login
         // unless you want to implement "Remember Last Workspace" logic.
-        AuthTokens tokens = tokenService.issue(userJpaEntity.getId(), userJpaEntity.getEmail());
+        AuthTokens tokens = tokenService.issue(user.userId().value(), user.email());
 
         return ResponseEntity.ok(tokens);
     }
@@ -105,4 +110,3 @@ public class AuthController {
         return ResponseEntity.ok(tokens);
     }
 }
-

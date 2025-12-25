@@ -1,70 +1,57 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.projection;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
-import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
+import fr.joffreybonifay.ccpp.usermanagement.application.projection.UserProjectionHandler;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserWorkspacesRepository;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserWorkspacesJpaEntity;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
+import java.util.HashSet;
+
 @Component
-public class UserProjectionUpdater {
+public class UserProjectionUpdater implements UserProjectionHandler {
 
-    private final JpaUserRepository jpaUserRepository;
-    private final JpaUserWorkspacesRepository jpaUserWorkspacesRepository;
-    private final ObjectMapper objectMapper;
+    private final UserReadRepository repository;
 
-    public UserProjectionUpdater(
-            JpaUserRepository jpaUserRepository,
-            JpaUserWorkspacesRepository jpaUserWorkspacesRepository,
-            ObjectMapper objectMapper
-    ) {
-        this.jpaUserRepository = jpaUserRepository;
-        this.jpaUserWorkspacesRepository = jpaUserWorkspacesRepository;
-        this.objectMapper = objectMapper;
+    public UserProjectionUpdater(UserReadRepository repository) {
+        this.repository = repository;
     }
 
-    @KafkaListener(topics = "user-management-events", groupId = "user-projection-group")
-    public void onMessage(String message) {
-        try {
-            EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);
-            Class<?> eventClass = Class.forName(envelope.eventType());
-            DomainEvent event = (DomainEvent) objectMapper.readValue(envelope.payload(), eventClass);
-
-            switch (event) {
-                case UserCreated userCreated -> handle(userCreated);
-                case UserAssignedToWorkspace userAssignedToWorkspace -> handle(userAssignedToWorkspace);
-                default -> log.debug("Ignoring non-saga event: {}", event.getClass().getSimpleName());
-            }
-        } catch (Exception e) {
-            log.error("Error processing user projection", e);
-        }
-    }
-
-    private void handle(UserCreated event) {
-        UserJpaEntity entity = new UserJpaEntity(
-                event.userId().value(),
+    @Override
+    @EventListener
+    @Transactional
+    public void on(UserCreated event) {
+        var dto = new UserDTO(
+                event.userId(),
                 event.email().value(),
                 event.passwordHash(),
-                event.fullname()
+                event.fullname(),
+                new HashSet<>()
         );
-        jpaUserRepository.save(entity);
+        repository.save(dto);
     }
 
-    private void handle(UserAssignedToWorkspace userAssignedToWorkspace) {
-        jpaUserWorkspacesRepository.save(
-                new UserWorkspacesJpaEntity(
-                        userAssignedToWorkspace.userId().value(),
-                        userAssignedToWorkspace.workspaceId().value()
-                )
-        );
-    }
+    @Override
+    @EventListener
+    @Transactional
+    public void on(UserAssignedToWorkspace event) {
+        var current = repository.findById(event.userId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Missing projection for user " + event.userId()
+                ));
 
+        var updatedWorkspaces = new HashSet<>(current.workspaceIds());
+        updatedWorkspaces.add(event.workspaceId().value());
+
+        repository.update(new UserDTO(
+                current.userId(),
+                current.email(),
+                current.passwordHash(),
+                current.fullName(),
+                updatedWorkspaces
+        ));
+    }
 }

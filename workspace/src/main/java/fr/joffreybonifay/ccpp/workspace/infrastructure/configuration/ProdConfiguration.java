@@ -31,11 +31,6 @@ public class ProdConfiguration {
     }
 
     @Bean
-    WorkspaceProjectCountReadRepository inMemoryWorkspaceProjectCountReadRepository() {
-        return new InMemoryWorkspaceProjectCountReadRepository();
-    }
-
-    @Bean
     EventStore jpaEventStore(
             EventStreamRepository eventStreamRepository,
             OutboxRepository outboxRepository,
@@ -43,6 +38,11 @@ public class ProdConfiguration {
             EventPublisher eventPublisher
     ) {
         return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, eventPublisher);
+    }
+
+    @Bean
+    WorkspaceProjectCountReadRepository inMemoryWorkspaceProjectCountReadRepository() {
+        return new InMemoryWorkspaceProjectCountReadRepository();
     }
 
     @Bean

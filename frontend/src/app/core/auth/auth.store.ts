@@ -1,6 +1,6 @@
 import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
+import { signalStore, withState, withComputed, withMethods, withHooks, patchState } from '@ngrx/signals';
 import { AUTH_STRATEGY } from './auth.strategy';
 
 export interface User {
@@ -30,14 +30,6 @@ export const AuthStore = signalStore(
     userInitial: computed(() => store.user()?.name?.charAt(0).toUpperCase() ?? 'U'),
   })),
   withMethods((store, router = inject(Router), authStrategy = inject(AUTH_STRATEGY)) => ({
-    initialize(): void {
-      const stored = localStorage.getItem('user');
-      const token = localStorage.getItem('token');
-      if (stored && token) {
-        patchState(store, { user: JSON.parse(stored) });
-      }
-    },
-
     async login(email: string, password: string): Promise<boolean> {
       patchState(store, { loading: true, error: null });
 
@@ -70,5 +62,14 @@ export const AuthStore = signalStore(
     clearError(): void {
       patchState(store, { error: null });
     },
-  }))
+  })),
+  withHooks({
+    onInit(store) {
+      const storedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      if (storedUser && token) {
+        patchState(store, { user: JSON.parse(storedUser) });
+      }
+    },
+  })
 );

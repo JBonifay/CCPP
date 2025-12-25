@@ -12,8 +12,6 @@ import fr.joffreybonifay.ccpp.usermanagement.application.command.AssignUserToWor
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommandHandler;
 import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
-import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserUniquenessChecker;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,11 +34,6 @@ public class BeanConfig {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
-    }
-
-    @Bean
-    UserUniquenessChecker userUniquenessChecker(JpaUserRepository jpaUserRepository) {
-        return new JpaUserUniquenessChecker(jpaUserRepository);
     }
 
     @Bean

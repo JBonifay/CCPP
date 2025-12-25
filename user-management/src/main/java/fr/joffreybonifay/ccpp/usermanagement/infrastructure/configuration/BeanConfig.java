@@ -12,15 +12,11 @@ import fr.joffreybonifay.ccpp.usermanagement.application.command.AssignUserToWor
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommandHandler;
 import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
-import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@EnableJpaRepositories(basePackages = {"fr.joffreybonifay.ccpp.usermanagement"})
-@EntityScan(basePackages = {"fr.joffreybonifay.ccpp.usermanagement"})
 @Configuration
 public class BeanConfig {
 

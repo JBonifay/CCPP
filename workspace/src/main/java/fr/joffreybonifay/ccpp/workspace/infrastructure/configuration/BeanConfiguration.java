@@ -47,8 +47,7 @@ public class BeanConfiguration {
 
     @Bean
     QueryBus queryBus() {
-        SimpleQueryBus simpleQueryBus = new SimpleQueryBus();
-        return simpleQueryBus;
+        return new SimpleQueryBus();
     }
 
 }

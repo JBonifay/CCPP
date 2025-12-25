@@ -1,9 +1,6 @@
 package fr.joffreybonifay.ccpp.shared.indempotency;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -11,7 +8,10 @@ import java.util.UUID;
 
 @Getter
 @Entity
-@Table(name = "processed_events")
+@Table(
+        name = "processed_events",
+        uniqueConstraints = @UniqueConstraint(columnNames = "eventId")
+)
 public class ProcessedEventEntity {
 
     @Id
@@ -20,16 +20,22 @@ public class ProcessedEventEntity {
     @Column(nullable = false)
     private String eventType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Instant processedAt;
+
+    @PrePersist
+    void onPersist() {
+        if (processedAt == null) {
+            processedAt = Instant.now();
+        }
+    }
 
     public ProcessedEventEntity() {
     }
 
-    public ProcessedEventEntity(UUID eventId, String eventType, Instant processedAt) {
+    public ProcessedEventEntity(UUID eventId, String eventType) {
         this.eventId = eventId;
         this.eventType = eventType;
-        this.processedAt = processedAt;
     }
 
 }

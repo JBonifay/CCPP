@@ -55,7 +55,7 @@ public class WorkspaceEventListener {
 
             // Mark as processed
             processedEventRepository.save(
-                    new ProcessedEventEntity(envelope.eventId(), envelope.eventType(), Instant.now())
+                    new ProcessedEventEntity(envelope.eventId(), envelope.eventType())
             );
 
         } catch (ClassNotFoundException e) {

@@ -24,7 +24,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/auth/register",
+							"raw": "{{baseUrl}}/auth/register",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -69,7 +69,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/auth/login",
+							"raw": "{{baseUrl}}/auth/login",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -114,7 +114,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/auth/refresh",
+							"raw": "{{baseUrl}}/auth/refresh",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -144,7 +144,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects",
+							"raw": "{{baseUrl}}/projects",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -168,7 +168,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId",
+							"raw": "{{baseUrl}}/projects/:projectId",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -208,7 +208,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects",
+							"raw": "{{baseUrl}}/projects",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -241,7 +241,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/details",
+							"raw": "{{baseUrl}}/projects/:projectId/details",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -282,7 +282,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/timeline",
+							"raw": "{{baseUrl}}/projects/:projectId/timeline",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -323,7 +323,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/budget",
+							"raw": "{{baseUrl}}/projects/:projectId/budget",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -364,7 +364,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/budget/:budgetItemId",
+							"raw": "{{baseUrl}}/projects/:projectId/budget/:budgetItemId",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -401,7 +401,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/budget/:budgetItemId",
+							"raw": "{{baseUrl}}/projects/:projectId/budget/:budgetItemId",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -447,7 +447,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/participants",
+							"raw": "{{baseUrl}}/projects/:projectId/participants",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -479,7 +479,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/participants/:participantId/accept",
+							"raw": "{{baseUrl}}/projects/:projectId/participants/:participantId/accept",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -517,7 +517,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/participants/:participantId/decline",
+							"raw": "{{baseUrl}}/projects/:projectId/participants/:participantId/decline",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -564,7 +564,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/notes",
+							"raw": "{{baseUrl}}/projects/:projectId/notes",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -596,7 +596,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/projects/:projectId/ready",
+							"raw": "{{baseUrl}}/projects/:projectId/ready",
 							"host": [
 								"{{baseUrl}}"
 							],

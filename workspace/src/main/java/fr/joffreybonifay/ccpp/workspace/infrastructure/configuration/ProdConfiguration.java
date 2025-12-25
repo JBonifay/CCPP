@@ -41,7 +41,7 @@ public class ProdConfiguration {
     }
 
     @Bean
-    WorkspaceProjectCountReadRepository inMemoryWorkspaceProjectCountReadRepository() {
+    WorkspaceProjectCountReadRepository workspaceProjectCountReadRepository() {
         return new InMemoryWorkspaceProjectCountReadRepository();
     }
 

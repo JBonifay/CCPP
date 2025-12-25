@@ -9,10 +9,12 @@ import fr.joffreybonifay.ccpp.shared.domain.event.ProjectActivated;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationFailed;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+@Component
 public class ProjectListProjectionUpdater implements ProjectListProjection {
 
     private final ProjectListReadRepository repository;

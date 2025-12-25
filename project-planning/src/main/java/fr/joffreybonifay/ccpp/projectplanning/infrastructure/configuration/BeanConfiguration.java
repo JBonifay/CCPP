@@ -10,16 +10,8 @@ import fr.joffreybonifay.ccpp.projectplanning.application.query.handler.GetProje
 import fr.joffreybonifay.ccpp.projectplanning.application.query.handler.GetProjectListQueryHandler;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectDetailReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.application.query.repository.ProjectListReadRepository;
-import fr.joffreybonifay.ccpp.projectplanning.domain.spi.BudgetItemIdGenerator;
-import fr.joffreybonifay.ccpp.projectplanning.domain.spi.ParticipantIdGenerator;
-import fr.joffreybonifay.ccpp.projectplanning.domain.spi.ProjectIdGenerator;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection.ProjectDetailProjectionUpdater;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.projection.ProjectListProjectionUpdater;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.query.InMemoryProjectDetailReadRepository;
 import fr.joffreybonifay.ccpp.projectplanning.infrastructure.query.InMemoryProjectListReadRepository;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidBudgetItemIdGenerator;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidParticipantIdGenerator;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi.UuidProjectIdGenerator;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
@@ -48,35 +40,10 @@ public class BeanConfiguration {
     }
 
     @Bean
-    ProjectDetailProjectionUpdater projectDetailProjectionUpdater(ProjectDetailReadRepository projectDetailReadRepository) {
-        return new ProjectDetailProjectionUpdater(projectDetailReadRepository);
-    }
-
-    @Bean
-    ProjectListProjectionUpdater projectListProjectionUpdater(ProjectListReadRepository projectListReadRepository) {
-        return new ProjectListProjectionUpdater(projectListReadRepository);
-    }
-
-    @Bean
     ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
-    }
-
-    @Bean
-    public ProjectIdGenerator projectIdGenerator() {
-        return new UuidProjectIdGenerator();
-    }
-
-    @Bean
-    public BudgetItemIdGenerator budgetItemIdGenerator() {
-        return new UuidBudgetItemIdGenerator();
-    }
-
-    @Bean
-    public ParticipantIdGenerator participantIdGenerator() {
-        return new UuidParticipantIdGenerator();
     }
 
     @Bean

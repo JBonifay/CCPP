@@ -2,9 +2,11 @@ package fr.joffreybonifay.ccpp.projectplanning.infrastructure.spi;
 
 import fr.joffreybonifay.ccpp.projectplanning.domain.spi.BudgetItemIdGenerator;
 import fr.joffreybonifay.ccpp.projectplanning.domain.valueobject.BudgetItemId;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component
 public class UuidBudgetItemIdGenerator implements BudgetItemIdGenerator {
 
     @Override

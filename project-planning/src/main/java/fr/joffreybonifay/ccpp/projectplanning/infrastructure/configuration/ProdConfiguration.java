@@ -1,14 +1,11 @@
 package fr.joffreybonifay.ccpp.projectplanning.infrastructure.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.joffreybonifay.ccpp.projectplanning.infrastructure.messaging.WorkspaceEventListener;
-import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.eventpublisher.EventPublisher;
 import fr.joffreybonifay.ccpp.shared.eventpublisher.SpringEventPublisher;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.EventStreamRepository;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.JpaEventStore;
-import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxProcessor;
 import fr.joffreybonifay.ccpp.shared.outbox.OutboxRepository;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
@@ -39,15 +36,6 @@ public class ProdConfiguration {
             EventPublisher eventPublisher
     ) {
         return new JpaEventStore(eventStreamRepository, outboxRepository, objectMapper, eventPublisher);
-    }
-
-    @Bean
-    WorkspaceEventListener workspaceEventListener(
-            ProcessedEventRepository processedEventRepository,
-            ObjectMapper objectMapper,
-            CommandBus commandBus
-    ) {
-        return new WorkspaceEventListener(objectMapper, commandBus, processedEventRepository);
     }
 
     @Bean

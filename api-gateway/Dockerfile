@@ -9,7 +9,7 @@ USER spring:spring
 COPY target/*.jar app.jar
 
 # Expose port
-EXPOSE 8761
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

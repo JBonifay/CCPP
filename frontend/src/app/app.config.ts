@@ -5,13 +5,14 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core';
+import { authInterceptor, provideAuth } from './core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideAuth(),
     providePrimeNG({
       theme: {
         preset: Aura,

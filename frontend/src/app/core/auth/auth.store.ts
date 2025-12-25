@@ -1,6 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
+import { AUTH_STRATEGY } from './auth.strategy';
 
 export interface User {
   id: string;
@@ -28,10 +29,11 @@ export const AuthStore = signalStore(
     userName: computed(() => store.user()?.name ?? ''),
     userInitial: computed(() => store.user()?.name?.charAt(0).toUpperCase() ?? 'U'),
   })),
-  withMethods((store, router = inject(Router)) => ({
+  withMethods((store, router = inject(Router), authStrategy = inject(AUTH_STRATEGY)) => ({
     initialize(): void {
       const stored = localStorage.getItem('user');
-      if (stored) {
+      const token = localStorage.getItem('token');
+      if (stored && token) {
         patchState(store, { user: JSON.parse(stored) });
       }
     },
@@ -39,32 +41,30 @@ export const AuthStore = signalStore(
     async login(email: string, password: string): Promise<boolean> {
       patchState(store, { loading: true, error: null });
 
-      try {
-        // TODO: Replace with actual API call
-        await new Promise((resolve) => setTimeout(resolve, 500));
+      const result = await authStrategy.login(email, password);
 
-        const user: User = {
-          id: '1',
-          email,
-          name: email.split('@')[0],
-        };
-
-        localStorage.setItem('user', JSON.stringify(user));
-        patchState(store, { user, loading: false });
+      if (result.success && result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user));
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+        patchState(store, { user: result.user, loading: false });
         return true;
-      } catch (error) {
+      } else {
         patchState(store, {
           loading: false,
-          error: 'Login failed. Please try again.',
+          error: result.error ?? 'Login failed. Please try again.',
         });
         return false;
       }
     },
 
-    logout(): void {
+    async logout(): Promise<void> {
+      await authStrategy.logout();
       localStorage.removeItem('user');
+      localStorage.removeItem('token');
       patchState(store, { user: null, error: null });
-      router.navigate(['/']);
+      await router.navigate(['/']);
     },
 
     clearError(): void {

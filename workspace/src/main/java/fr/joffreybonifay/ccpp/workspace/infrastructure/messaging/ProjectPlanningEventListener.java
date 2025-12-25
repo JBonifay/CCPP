@@ -5,12 +5,14 @@ import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
 import fr.joffreybonifay.ccpp.shared.domain.event.ProjectCreationRequested;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
+import fr.joffreybonifay.ccpp.shared.exception.EventProcessingException;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventEntity;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
-import fr.joffreybonifay.ccpp.shared.exception.EventProcessingException;
 import fr.joffreybonifay.ccpp.workspace.application.command.command.ApproveProjectCreationCommand;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
@@ -31,36 +33,47 @@ public class ProjectPlanningEventListener {
         this.processedEventRepository = processedEventRepository;
     }
 
+    @Transactional
     @KafkaListener(topics = "project-planning-events")
     public void listen(String message) {
+        EventEnvelope envelope;
+
         try {
-            EventEnvelope envelope = objectMapper.readValue(message, EventEnvelope.class);
-            log.info("Received event: {} (correlationId: {}, aggregateType: {})", envelope.eventType(), envelope.correlationId(), envelope.aggregateType());
+            envelope = objectMapper.readValue(message, EventEnvelope.class);
+        } catch (Exception e) {
+            throw new EventProcessingException("Invalid event envelope", e);
+        }
 
-            if (processedEventRepository.existsById(envelope.eventId())) {
-                log.info("Event {} already processed, skipping", envelope.eventId());
-                return;
-            }
+        try {
+            processedEventRepository.save(
+                    new ProcessedEventEntity(
+                            envelope.eventId(),
+                            envelope.eventType()
+                    )
+            );
+        } catch (DataIntegrityViolationException ex) {
+            log.info("Event {} already processed, skipping", envelope.eventId());
+            return;
+        }
 
+        try {
             Class<?> eventClass = Class.forName(envelope.eventType());
-            DomainEvent event = (DomainEvent) objectMapper.readValue(envelope.payload(), eventClass);
+            DomainEvent event =
+                    (DomainEvent) objectMapper.readValue(envelope.payload(), eventClass);
 
-            // React to workspace events by dispatching commands (choreography)
             switch (event) {
                 case ProjectCreationRequested e -> handle(e, envelope);
-                default -> log.debug("Ignoring non-saga event: {}", event.getClass().getSimpleName());
+                default -> log.debug(
+                        "Ignoring non-saga event: {}",
+                        event.getClass().getSimpleName()
+                );
             }
 
-            // Mark as processed
-            processedEventRepository.save(
-                    new ProcessedEventEntity(envelope.eventId(), envelope.eventType(), Instant.now())
-            );
-
         } catch (ClassNotFoundException e) {
-            log.warn("Unknown event type while processing workspace event: {}", e.getMessage());
-            // Don't rethrow - skip unknown event types to avoid blocking the consumer
+            log.warn("Unknown event type: {}", envelope.eventType());
+            // swallow → event is considered processed
         } catch (Exception e) {
-            log.error("Failed to process workspace event", e);
+            log.error("Failed to process event {}", envelope.eventId(), e);
             throw new EventProcessingException("Failed to process workspace event", e);
         }
     }

@@ -98,7 +98,7 @@ frontend/
 │   ├── environments/     # Environment configurations
 │   ├── index.html        # HTML entry point
 │   ├── main.ts           # Application bootstrap
-│   └── styles.scss       # Global styles
+│   └── styles.css       # Global styles
 ├── nginx.conf            # Production Nginx config
 ├── proxy.conf.json       # Development proxy config
 ├── Dockerfile            # Multi-stage Docker build

@@ -10,11 +10,6 @@ import { ProjectStore } from '../stores/project.store';
   imports: [RouterLink, Button, Card, ProgressSpinner],
   providers: [ProjectStore],
   template: `
-    <div class="project-list-header">
-      <h1>Projects</h1>
-      <p-button label="New Project" icon="pi pi-plus" />
-    </div>
-
     @if (projectStore.loading()) {
       <div class="loading-container">
         <p-progress-spinner />

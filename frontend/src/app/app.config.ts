@@ -2,7 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
 
 import { routes } from './app.routes';
 import { authInterceptor, provideAuth } from './core';
@@ -15,7 +15,14 @@ export const appConfig: ApplicationConfig = {
     provideAuth(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: Lara,
+        options: {
+          darkModeSelector: 'none',
+          cssLayer: {
+            name: 'primeng',
+            order: 'theme, base, primeng'
+          }
+        }
       },
       ripple: true,
     }),

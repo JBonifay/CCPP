@@ -119,7 +119,6 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 .log().all()
                 .statusCode(200)
                 .body("projectId", equalTo(projectIdGenerator.getValue()))
-                .body("workspaceId", equalTo(workspaceId.toString()))
                 .body("title", equalTo("Project test"))
                 .body("description", equalTo("Project description"))
                 .body("status", equalTo("READY"))

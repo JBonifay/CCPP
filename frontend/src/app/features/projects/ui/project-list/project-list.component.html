@@ -9,6 +9,8 @@
     [value]="isLoading() ? Array(10).fill({}) : projects()"
     [paginator]="true"
     [rows]="10"
+    selectionMode="single"
+    (onRowSelect)="onRowSelect($event)"
   >
     <ng-template #header>
       <tr>

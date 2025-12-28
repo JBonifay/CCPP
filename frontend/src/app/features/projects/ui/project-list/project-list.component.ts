@@ -6,7 +6,7 @@ import {CardModule} from 'primeng/card';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 import {Fieldset} from 'primeng/fieldset';
-import {ProjectsStore} from '../../store/projects.store';
+import {ProjectListStore} from '../../store/project-list.store';
 import {TableModule} from 'primeng/table';
 import {Skeleton} from 'primeng/skeleton';
 
@@ -26,7 +26,7 @@ import {Skeleton} from 'primeng/skeleton';
   styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent {
-  private readonly store = inject(ProjectsStore);
+  private readonly store = inject(ProjectListStore);
 
   constructor() {
     this.store.loadProjects();
@@ -41,4 +41,8 @@ export class ProjectListComponent {
   }
 
   protected readonly Array = Array;
+
+  protected onRowSelect($event: any) {
+    this.store.selectProject($event.data.projectId);
+  }
 }

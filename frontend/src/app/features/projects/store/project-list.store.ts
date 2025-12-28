@@ -19,7 +19,7 @@ const initialState: ProjectState = {
   error: null,
 };
 
-export const ProjectsStore = signalStore(
+export const ProjectListStore = signalStore(
   {providedIn: 'root'},
   withState(initialState),
 

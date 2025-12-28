@@ -7,19 +7,17 @@ import {ProjectListItem} from '../data/model/project-list-item';
 
 export interface ProjectState {
   projects: ProjectListItem[];
-  selectedProject: ProjectListItem | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ProjectState = {
   projects: [],
-  selectedProject: null,
   loading: false,
   error: null,
 };
 
-export const ProjectListStore = signalStore(
+export const ProjectsListStore = signalStore(
   {providedIn: 'root'},
   withState(initialState),
 
@@ -44,10 +42,6 @@ export const ProjectListStore = signalStore(
         )
       )
     ),
-
-    selectProject(project: ProjectListItem | null): void {
-      patchState(store, {selectedProject: project});
-    },
 
     clearError(): void {
       patchState(store, {error: null});

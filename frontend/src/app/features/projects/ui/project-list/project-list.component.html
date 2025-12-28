@@ -21,7 +21,7 @@
       </tr>
     </ng-template>
     <ng-template #body let-project>
-      <tr>
+      <tr [pSelectableRow]="project">
         @if (isLoading()) {
           <td><p-skeleton/></td>
           <td><p-skeleton/></td>

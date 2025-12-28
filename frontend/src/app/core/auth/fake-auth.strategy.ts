@@ -7,9 +7,6 @@ export class FakeAuthStrategy implements AuthStrategy {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Accept any credentials in dev mode
-    console.log('[FakeAuth] Login with:', email);
-
     return {
       success: true,
       user: {
@@ -22,7 +19,6 @@ export class FakeAuthStrategy implements AuthStrategy {
   }
 
   async logout(): Promise<void> {
-    console.log('[FakeAuth] Logout');
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 }

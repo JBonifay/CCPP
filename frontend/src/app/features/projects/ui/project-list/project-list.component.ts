@@ -1,14 +1,17 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
 
 import {ButtonModule} from 'primeng/button';
 import {CardModule} from 'primeng/card';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 
 import {Fieldset} from 'primeng/fieldset';
-import {ProjectListStore} from '../../store/project-list.store';
+import {ProjectsListStore} from '../../store/projects-list.store';
 import {TableModule} from 'primeng/table';
 import {Skeleton} from 'primeng/skeleton';
+import {AppRoutePaths} from '../../../../app.routes';
+import {ProjectDetailsStore} from '../../store/project-details.store';
 
 @Component({
   selector: 'app-project-list',
@@ -26,23 +29,28 @@ import {Skeleton} from 'primeng/skeleton';
   styleUrls: ['./project-list.component.css']
 })
 export class ProjectListComponent {
-  private readonly store = inject(ProjectListStore);
+  private readonly projectsListStore = inject(ProjectsListStore);
+  private readonly projectDetailsStore = inject(ProjectDetailsStore);
+  private readonly router = inject(Router);
 
   constructor() {
-    this.store.loadProjects();
+    this.projectsListStore.loadProjects();
   }
 
   projects() {
-    return this.store.projects();
+    return this.projectsListStore.projects();
   }
 
   isLoading() {
-    return this.store.loading();
+    return this.projectsListStore.loading();
   }
 
   protected readonly Array = Array;
 
-  protected onRowSelect($event: any) {
-    this.store.selectProject($event.data.projectId);
+  onRowSelect(event: any) {
+    const projectId = event.data.projectId;
+    if (!projectId) return;
+    this.projectDetailsStore.selectProject(projectId);
+    this.router.navigate(AppRoutePaths.project(projectId));
   }
 }

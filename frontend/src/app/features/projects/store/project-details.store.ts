@@ -1,5 +1,5 @@
 import {ProjectDetails} from '../data/model/project-details';
-import {patchState, signalStore, withComputed, withMethods, withState} from '@ngrx/signals';
+import {patchState, signalStore, withMethods, withState} from '@ngrx/signals';
 import {inject} from '@angular/core';
 import {ProjectsRepository} from '../data/projects.repository';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
@@ -22,7 +22,7 @@ export const ProjectDetailsStore = signalStore(
 
   withState(initialState),
 
-  withComputed(({project}) => ({})),
+  // withComputed(),
 
   withMethods((store, projectsRepository = inject(ProjectsRepository)) => ({
     selectProject: rxMethod<string>(

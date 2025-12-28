@@ -7,7 +7,6 @@ import java.util.List;
 
 public record ProjectListResponse(
         String projectId,
-        String workspaceId,
         String title,
         String status,
         BigDecimal totalBudget,
@@ -21,7 +20,6 @@ public record ProjectListResponse(
     public static ProjectListResponse from(ProjectListDTO projectListDTO) {
         return new ProjectListResponse(
                 projectListDTO.projectId().value().toString(),
-                projectListDTO.workspaceId().value().toString(),
                 projectListDTO.title(),
                 projectListDTO.status().name(),
                 projectListDTO.totalBudget(),

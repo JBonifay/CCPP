@@ -40,7 +40,6 @@ public class ProjectQueryControllerTest extends AbstractE2eTest {
                 .log().all()
                 .body("size()", equalTo(1))
                 .body("[0].projectId", equalTo(projectIdGenerator.getValue()))
-                .body("[0].workspaceId", equalTo(workspaceId.toString()))
                 .body("[0].title", equalTo("Project test"))
                 .body("[0].status", equalTo("READY"))
                 .body("[0].totalBudget", equalTo(10000))

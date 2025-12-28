@@ -22,12 +22,12 @@ export class SidebarComponent {
       items: [
         {
           icon: PrimeIcons.HOME,
-          routerLink: AppRoutePaths.projects(),
+          routerLink: AppRoutePaths.home(),
           exact: true
         },
         {
           icon: PrimeIcons.FOLDER,
-          routerLink: AppRoutePaths.project(1)
+          routerLink: AppRoutePaths.projects()
         }
       ]
     },

@@ -3,19 +3,16 @@ import {authGuard, publicGuard} from './core';
 import {AppLayoutComponent, PublicLayoutComponent} from './layouts';
 
 export const AppRoutePaths = {
-  settings: () => ['/', RouteTokens.APP, RouteTokens.SETTINGS],
+  home: () => ['/', RouteTokens.APP],
   projects: () => ['/', RouteTokens.APP, RouteTokens.PROJECTS],
-  project: (id: string | number) => [
-    '/',
-    RouteTokens.APP,
-    RouteTokens.PROJECTS,
-    id,
-  ],
+  project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id,],
+  settings: () => ['/', RouteTokens.APP, RouteTokens.SETTINGS],
 };
 
 export const RouteTokens = {
   APP: 'app',
   PROJECTS: 'projects',
+  HOME: 'home',
   PROJECT_ID: ':id',
   LOGIN: 'login',
   SETTINGS: 'settings'
@@ -30,7 +27,7 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('./features/home/home.routes').then(m => m.HOME_ROUTES),
+          import('./features/landing/landing.routes').then(m => m.LANDING_ROUTES),
       },
       {
         path: RouteTokens.LOGIN,
@@ -46,8 +43,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: RouteTokens.PROJECTS,
-        pathMatch: 'full',
+        loadChildren: () =>
+          import('./features/home/home.routes').then(m => m.HOME_ROUTES),
       },
       {
         path: RouteTokens.PROJECTS,
@@ -56,5 +53,5 @@ export const routes: Routes = [
       },
     ],
   },
-  {path: '**', redirectTo: ''},
+  {path: '**', redirectTo: RouteTokens.APP}
 ];

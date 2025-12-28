@@ -8,7 +8,7 @@ export function provideAuth(): Provider[] {
   return [
     {
       provide: AUTH_STRATEGY,
-      useClass: environment.useFakeAuth ? FakeAuthStrategy : RealAuthStrategy,
+      useClass: environment.useMocks ? FakeAuthStrategy : RealAuthStrategy,
     },
   ];
 }

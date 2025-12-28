@@ -1,18 +1,18 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { providePrimeNG } from 'primeng/config';
+import {ApplicationConfig, provideBrowserGlobalErrorListeners} from '@angular/core';
+import {provideRouter, withComponentInputBinding} from '@angular/router';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
+import {providePrimeNG} from 'primeng/config';
 import Lara from '@primeuix/themes/lara';
 
-import { routes } from './app.routes';
-import { authInterceptor, provideAuth } from './core';
+import {routes} from './app.routes';
+import {authInterceptor, provideAuth} from './core';
+import {projectsProviders} from './features/projects/projects.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideAuth(),
     providePrimeNG({
       theme: {
         preset: Lara,
@@ -26,5 +26,7 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: true,
     }),
+    provideAuth(),
+    projectsProviders
   ],
 };

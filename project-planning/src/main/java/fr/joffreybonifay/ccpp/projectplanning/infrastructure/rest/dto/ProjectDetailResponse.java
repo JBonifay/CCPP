@@ -7,7 +7,6 @@ import java.util.List;
 
 public record ProjectDetailResponse(
         String projectId,
-        String workspaceId,
         String title,
         String description,
         String status,
@@ -21,7 +20,6 @@ public record ProjectDetailResponse(
     public static ProjectDetailResponse from(ProjectDetailDTO projectDetailDTO) {
         return new ProjectDetailResponse(
                 projectDetailDTO.projectId().value().toString(),
-                projectDetailDTO.workspaceId().value().toString(),
                 projectDetailDTO.title(),
                 projectDetailDTO.description(),
                 projectDetailDTO.status().name(),

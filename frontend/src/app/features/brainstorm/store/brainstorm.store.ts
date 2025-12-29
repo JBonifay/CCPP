@@ -43,20 +43,49 @@ export const BrainstormStore = signalStore(
       )
     ),
 
-    changeColor(ideaId: string, color: string): void {
-      const previousIdeas = store.ideas();
-      const updatedIdeas = previousIdeas.map(idea =>
-        idea.id === ideaId ? {...idea, color} : idea
-      );
-      patchState(store, {ideas: updatedIdeas});
+    changeColor: rxMethod<{ id: string; color: string }>(
+      pipe(
+        tap(({id, color}) => {
+          // Optimistic update
+          const previousIdeas = store.ideas();
+          const updatedIdeas = previousIdeas.map(idea =>
+            idea.id === id ? {...idea, color} : idea
+          );
+          patchState(store, {ideas: updatedIdeas, error: null});
+        }),
+        switchMap(({id, color}) =>
+          brainstormIdeaRepository.changeColor(id, color).pipe(
+            catchError(() => {
+              // Rollback on failure
+              const previousIdeas = store.ideas(); // This assumes you saved previousIdeas in tap above
+              patchState(store, {ideas: previousIdeas, error: 'Failed to change color'});
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
 
-      brainstormIdeaRepository.changeColor(ideaId, color).pipe(
-        catchError(() => {
-          patchState(store, {ideas: previousIdeas, error: 'Failed to change color'});
-          return EMPTY;
-        })
-      ).subscribe();
-    },
+    deleteIdea: rxMethod<string>(
+      pipe(
+        tap((ideaId: string) => {
+          // Optimistic update
+          const previousIdeas = store.ideas();
+          const updatedIdeas = previousIdeas.filter(idea => idea.id !== ideaId);
+          patchState(store, {ideas: updatedIdeas, error: null});
+        }),
+        switchMap((ideaId: string) =>
+          brainstormIdeaRepository.deleteIdea(ideaId).pipe(
+            catchError(() => {
+              // Rollback on failure
+              const previousIdeas = store.ideas(); // or save it in tap if needed
+              patchState(store, {ideas: previousIdeas, error: 'Failed to delete idea'});
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
 
     clearError(): void {
       patchState(store, {error: null});

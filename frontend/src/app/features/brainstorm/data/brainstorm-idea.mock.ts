@@ -36,5 +36,11 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
     return of(undefined);
   }
 
+  deleteIdea(ideaId: string): Observable<void> {
+    console.log(`Deleting idea ${ideaId}`);
+    this.brainstormIdea = this.brainstormIdea.filter(i => i.id !== ideaId);
+    return of(undefined);
+  }
+
 }
 

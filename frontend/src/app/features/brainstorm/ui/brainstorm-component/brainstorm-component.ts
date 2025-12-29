@@ -72,18 +72,6 @@ export class BrainstormComponent implements OnInit {
     this.brainstormStore.loadIdeas();
   }
 
-  private cleanUpPositions(positions: Record<string, { x: number; y: number }>) {
-    const validIds = new Set(this.brainstormIdea().map(i => i.id));
-    let changed = false;
-    for (const id of Object.keys(positions)) {
-      if (!validIds.has(id)) {
-        delete positions[id];
-        changed = true;
-      }
-    }
-    if (changed) localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
-  }
-
   onIdeaRightClick(event: MouseEvent, idea: BrainstormIdea) {
     this.selectedIdea = idea;
     this.ideaMenu.show(event);
@@ -94,11 +82,11 @@ export class BrainstormComponent implements OnInit {
   }
 
   private deleteIdea(selectedIdea: BrainstormIdea) {
-
+    this.brainstormStore.deleteIdea(selectedIdea.id);
   }
 
   private editColor(selectedIdea: BrainstormIdea, color: string) {
-    this.brainstormStore.changeColor(selectedIdea.id, color);
+    this.brainstormStore.changeColor({id: selectedIdea.id, color: color});
   }
 
   onDragEnd(event: CdkDragEnd, idea: BrainstormIdea) {

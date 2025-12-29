@@ -28,19 +28,10 @@ export class SidebarComponent {
         {
           icon: PrimeIcons.FOLDER,
           routerLink: AppRoutePaths.projects()
-        }
-      ]
-    },
-    {
-      label: 'Management',
-      items: [
-        {
-          icon: PrimeIcons.USERS,
-          routerLink: ['/customers']
         },
         {
-          icon: 'pi pi-chart-bar',
-          routerLink: ['/reports']
+          icon: PrimeIcons.LIGHTBULB,
+          routerLink: AppRoutePaths.brainstorm()
         }
       ]
     },

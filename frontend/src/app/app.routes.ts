@@ -7,15 +7,17 @@ export const AppRoutePaths = {
   projects: () => ['/', RouteTokens.APP, RouteTokens.PROJECTS],
   project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id,],
   settings: () => ['/', RouteTokens.APP, RouteTokens.SETTINGS],
+  brainstorm: () => ['/', RouteTokens.APP, RouteTokens.BRAINSTORM],
 };
 
 export const RouteTokens = {
-  APP: 'app',
-  PROJECTS: 'projects',
-  HOME: 'home',
-  PROJECT_ID: ':id',
   LOGIN: 'login',
-  SETTINGS: 'settings'
+  APP: 'app',
+  HOME: 'home',
+  PROJECTS: 'projects',
+  PROJECT_ID: ':id',
+  SETTINGS: 'settings',
+  BRAINSTORM: 'brainstorm'
 } as const;
 
 export const routes: Routes = [
@@ -43,14 +45,16 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadChildren: () =>
-          import('./features/home/home.routes').then(m => m.HOME_ROUTES),
+        loadChildren: () => import('./features/home/home.routes').then(m => m.HOME_ROUTES),
       },
       {
         path: RouteTokens.PROJECTS,
-        loadChildren: () =>
-          import('./features/projects/projects.routes').then(m => m.PROJECTS_ROUTES),
+        loadChildren: () => import('./features/projects/projects.routes').then(m => m.PROJECTS_ROUTES),
       },
+      {
+        path: RouteTokens.BRAINSTORM,
+        loadChildren: () => import('./features/brainstorm/brainstorm.routes').then(m => m.BRAINSTORM_ROUTES),
+      }
     ],
   },
   {path: '**', redirectTo: RouteTokens.APP}

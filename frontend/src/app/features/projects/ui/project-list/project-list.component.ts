@@ -11,7 +11,6 @@ import {ProjectsListStore} from '../../store/projects-list.store';
 import {TableModule} from 'primeng/table';
 import {Skeleton} from 'primeng/skeleton';
 import {AppRoutePaths} from '../../../../app.routes';
-import {ProjectDetailsStore} from '../../store/project-details.store';
 
 @Component({
   selector: 'app-project-list',
@@ -30,7 +29,6 @@ import {ProjectDetailsStore} from '../../store/project-details.store';
 })
 export class ProjectListComponent {
   private readonly projectsListStore = inject(ProjectsListStore);
-  private readonly projectDetailsStore = inject(ProjectDetailsStore);
   private readonly router = inject(Router);
 
   constructor() {
@@ -50,7 +48,6 @@ export class ProjectListComponent {
   onRowSelect(event: any) {
     const projectId = event.data.projectId;
     if (!projectId) return;
-    this.projectDetailsStore.selectProject(projectId);
     this.router.navigate(AppRoutePaths.project(projectId));
   }
 }

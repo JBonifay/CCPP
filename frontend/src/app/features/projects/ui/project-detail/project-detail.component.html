@@ -1,0 +1,34 @@
+@if (isLoading()) {
+  <p>Loading project...</p>
+} @else if (project(); as proj) {
+  <div>
+    <h2>{{ proj.title }}</h2>
+    <p>{{ proj.description }}</p>
+    <p>Status: {{ proj.status }}</p>
+    <p>Start: {{ proj.startDate | date }}</p>
+    <p>End: {{ proj.endDate | date }}</p>
+
+    <h3>Budget Items:</h3>
+    <ul>
+      @for (item of proj.budgetItems; track item.id) {
+        <li>{{ item.description }}: {{ item.value }} {{ item.currency }}</li>
+      }
+    </ul>
+
+    <h3>Participants:</h3>
+    <ul>
+      @for (participant of proj.participants; track participant.participantId) {
+        <li>{{ participant.name }} - {{ participant.status }}</li>
+      }
+    </ul>
+
+    <h3>Notes:</h3>
+    <ul>
+      @for (note of proj.notes; track note.userId) {
+        <li>{{ note.content }} - {{ note.userId }}</li>
+      }
+    </ul>
+  </div>
+} @else if (error()) {
+  <p>Error: {{ error() }}</p>
+}

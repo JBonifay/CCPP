@@ -25,7 +25,7 @@ export const ProjectDetailsStore = signalStore(
   // withComputed(),
 
   withMethods((store, projectsRepository = inject(ProjectsRepository)) => ({
-    selectProject: rxMethod<string>(
+    loadProject: rxMethod<string>(
       pipe(
         tap(() => patchState(store, {loading: true, error: null})),
         switchMap((projectId) =>  // Capture the projectId parameter here
@@ -40,6 +40,10 @@ export const ProjectDetailsStore = signalStore(
           )
         )
       )
-    )
+    ),
+
+    clearProject: () => {
+      patchState(store, {project: null, error: null, loading: false});
+    }
   }))
 );

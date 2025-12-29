@@ -1,9 +1,30 @@
-<div class="brainstorm-board w-full h-full">
+<div #brainstormboard class="brainstorm-board">
+  <p-contextMenu [target]="brainstormboard" [model]="boardMenuItems"/>
 
-  <p-card header="Simple Card" cdkDragBoundary=".brainstorm-board" cdkDrag class="draggeable-card">
-    <p class="m-0">
-      Lorem ipsum dolor sit amet...
-    </p>
-  </p-card>
+  <div class="board-header">
+    <div class="board-title">
+      <span class="board-icon">🧠</span>
+      <span>Brainstorm</span>
+    </div>
+    <div class="board-subtitle">Drag ideas freely on the board</div>
+  </div>
+
+  @for (bi of brainstormIdea; track bi.id) {
+    <p-card
+      [header]="bi.title"
+      cdkDrag
+      cdkDragBoundary=".brainstorm-board"
+      class="brainstorm-card"
+      [style]="{ backgroundColor: bi.color }"
+      (contextmenu)="onIdeaRightClick($event, bi)"
+    >
+      <p class="m-0">{{ bi.description }}</p>
+    </p-card>
+  }
+
+  <p-contextMenu
+    #ideaMenu
+    [model]="ideaMenuItems"
+  ></p-contextMenu>
 
 </div>

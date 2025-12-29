@@ -13,6 +13,7 @@ export class FakeAuthStrategy implements AuthStrategy {
         id: 'fake-user-id',
         email,
         name: email.split('@')[0],
+        role: email.includes('admin') ? 'admin' : 'user',
       },
       token: 'fake-jwt-token-for-development',
     };

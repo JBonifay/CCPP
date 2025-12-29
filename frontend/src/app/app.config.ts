@@ -2,13 +2,13 @@ import {ApplicationConfig, provideBrowserGlobalErrorListeners} from '@angular/co
 import {provideRouter, withComponentInputBinding} from '@angular/router';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {providePrimeNG} from 'primeng/config';
-import Lara from '@primeuix/themes/lara';
 
 import {routes} from './app.routes';
 import {authInterceptor, provideAuth} from './core';
 import {projectsProviders} from './features/projects/projects.providers';
 import {brainstormProviders} from './features/brainstorm/brainstorm.providers';
 import {customerPreset} from './color-preset';
+import {settingsProviders} from './features/settings/settings.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideAuth(),
     projectsProviders,
-    brainstormProviders
+    brainstormProviders,
+    settingsProviders
   ],
 };

@@ -2,12 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiService } from '../api/api.service';
 import type { AuthStrategy, AuthResult } from './auth.strategy';
+import type { User } from './auth.store';
 
 interface LoginResponse {
-  id: string;
-  email: string;
-  name: string;
   token: string;
+  refreshToken: string;
 }
 
 @Injectable()
@@ -16,18 +15,23 @@ export class RealAuthStrategy implements AuthStrategy {
 
   async login(email: string, password: string): Promise<AuthResult> {
     try {
-      const response = await firstValueFrom(
+      const loginResponse = await firstValueFrom(
         this.api.post<LoginResponse>('/auth/login', { email, password })
+      );
+
+      // Store tokens first so the /auth/me call is authenticated
+      localStorage.setItem('token', loginResponse.token);
+      localStorage.setItem('refreshToken', loginResponse.refreshToken);
+
+      // Fetch user details
+      const user = await firstValueFrom(
+        this.api.get<User>('/auth/me')
       );
 
       return {
         success: true,
-        user: {
-          id: response.id,
-          email: response.email,
-          name: response.name,
-        },
-        token: response.token,
+        user,
+        token: loginResponse.token,
       };
     } catch (error: unknown) {
       const message =

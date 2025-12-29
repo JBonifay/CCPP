@@ -28,14 +28,12 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
   }
 
   createIdea(idea: Omit<BrainstormIdea, 'position'>): Observable<BrainstormIdea> {
-    console.log(`Creating idea: ${idea.title}`);
     const newIdea: BrainstormIdea = {...idea, position: {x: 100, y: 100}};
     this.brainstormIdea.push(newIdea);
     return of(newIdea);
   }
 
   changeColor(ideaId: string, color: string): Observable<void> {
-    console.log(`Changing color of idea ${ideaId} to ${color}`);
     const idea = this.brainstormIdea.find(i => i.id === ideaId);
     if (idea) {
       idea.color = color;
@@ -44,13 +42,11 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
   }
 
   deleteIdea(ideaId: string): Observable<void> {
-    console.log(`Deleting idea ${ideaId}`);
     this.brainstormIdea = this.brainstormIdea.filter(i => i.id !== ideaId);
     return of(undefined);
   }
 
   updateIdea(ideaId: string, title: string, description: string): Observable<void> {
-    console.log(`Updating idea ${ideaId}: ${title}`);
     const idea = this.brainstormIdea.find(i => i.id === ideaId);
     if (idea) {
       idea.title = title;

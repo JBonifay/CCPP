@@ -1,12 +1,9 @@
 import { InjectionToken } from '@angular/core';
+import type { User } from './auth.store';
 
 export interface AuthResult {
   success: boolean;
-  user?: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  user?: User;
   token?: string;
   error?: string;
 }

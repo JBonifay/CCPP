@@ -2,8 +2,8 @@
 
   <!-- top bar left -->
   <ul aria-label="top bar left" aria-orientation="horizontal" class="flex items-center gap-3">
-    <img class="h-16 mx-auto" src="/creator_logo.png" alt="creator logo"/>
-    <span class="text-xl font-bold text-primary-950">Content creator name</span>
+    <img class="h-16 mx-auto" [src]="workspaceConfigStore.config().logoUrl" alt="workspace logo"/>
+    <span class="text-xl font-bold text-primary-950">{{ workspaceConfigStore.config().name }}</span>
   </ul>
 
   <!-- to bar right  -->

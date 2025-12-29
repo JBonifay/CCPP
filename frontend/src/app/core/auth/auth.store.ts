@@ -3,10 +3,13 @@ import { Router } from '@angular/router';
 import { signalStore, withState, withComputed, withMethods, withHooks, patchState } from '@ngrx/signals';
 import { AUTH_STRATEGY } from './auth.strategy';
 
+export type UserRole = 'admin' | 'user';
+
 export interface User {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
 }
 
 interface AuthState {
@@ -26,6 +29,7 @@ export const AuthStore = signalStore(
   withState(initialState),
   withComputed((store) => ({
     isAuthenticated: computed(() => store.user() !== null),
+    isAdmin: computed(() => store.user()?.role === 'admin'),
     userName: computed(() => store.user()?.name ?? ''),
     userInitial: computed(() => store.user()?.name?.charAt(0).toUpperCase() ?? 'U'),
   })),

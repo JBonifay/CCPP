@@ -8,6 +8,7 @@ import {routes} from './app.routes';
 import {authInterceptor, provideAuth} from './core';
 import {projectsProviders} from './features/projects/projects.providers';
 import {brainstormProviders} from './features/brainstorm/brainstorm.providers';
+import {customerPreset} from './color-preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,13 +17,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     providePrimeNG({
       theme: {
-        preset: Lara,
+        preset: customerPreset,
         options: {
           darkModeSelector: 'none',
-          cssLayer: {
-            name: 'primeng',
-            order: 'theme, base, primeng'
-          }
         }
       },
       ripple: true,

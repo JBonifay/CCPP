@@ -5,18 +5,17 @@
   </ul>
 
   <!-- to bar right  -->
-  <ul aria-label="top bar right" aria-orientation="horizontal" class="px-8 flex items-center">
-    <li class="relative">
-
-    </li>
-
-    <li class="h-8 w-8 ml-3">
-    </li>
-
-    <li class="h-8 w-8 ml-3">
-    </li>
-
-    <li class="h-8 w-8 ml-3">
+  <ul aria-label="top bar right" aria-orientation="horizontal" class="px-8 flex items-center gap-3">
+    <li>
+      <p-toggleButton
+        [ngModel]="visitorMode.isActive()"
+        (ngModelChange)="visitorMode.toggle()"
+        onIcon="pi pi-eye-slash"
+        offIcon="pi pi-eye"
+        onLabel="Visitor"
+        offLabel="Visitor"
+        styleClass="p-button-sm"
+      />
     </li>
 
     <li class="">

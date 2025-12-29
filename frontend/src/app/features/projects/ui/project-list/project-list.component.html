@@ -30,7 +30,7 @@
         } @else {
           <td>{{ project.title }}</td>
           <td>{{ project.status }}</td>
-          <td>{{ project.totalBudget }}</td>
+          <td [class.visitor-blur]="visitorMode.isActive()">{{ project.totalBudget }}</td>
           <td>{{ project.participantCount }}</td>
         }
       </tr>

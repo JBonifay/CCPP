@@ -17,6 +17,7 @@
       (cdkDragEnded)="onDragEnd($event, bi)"
       cdkDragBoundary=".brainstorm-board"
       class="brainstorm-card"
+      [class.visitor-blur]="visitorMode.isActive()"
       [style]="{ backgroundColor: bi.color }"
       (contextmenu)="onIdeaRightClick($event, bi)"
       (dblclick)="editIdea(bi)"

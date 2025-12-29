@@ -11,6 +11,7 @@ import {ProjectsListStore} from '../../store/projects-list.store';
 import {TableModule} from 'primeng/table';
 import {Skeleton} from 'primeng/skeleton';
 import {AppRoutePaths} from '../../../../app.routes';
+import {VisitorModeService} from '../../../../shared/services/visitor-mode.service';
 
 @Component({
   selector: 'app-project-list',
@@ -29,6 +30,7 @@ import {AppRoutePaths} from '../../../../app.routes';
 })
 export class ProjectListComponent {
   private readonly projectsListStore = inject(ProjectsListStore);
+  protected readonly visitorMode = inject(VisitorModeService);
   private readonly router = inject(Router);
 
   constructor() {

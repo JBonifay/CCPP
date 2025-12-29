@@ -10,6 +10,7 @@ import {Textarea} from 'primeng/textarea';
 import {Button} from 'primeng/button';
 import {BrainstormIdea} from '../../data/model/brainstorm-idea';
 import {BrainstormStore} from '../../store/brainstorm.store';
+import {VisitorModeService} from '../../../../shared/services/visitor-mode.service';
 
 @Component({
   selector: 'app-brainstorm-component',
@@ -30,6 +31,7 @@ export class BrainstormComponent implements OnInit {
 
   private readonly STORAGE_KEY = 'brainstorm-positions';
   private readonly brainstormStore = inject(BrainstormStore);
+  readonly visitorMode = inject(VisitorModeService);
 
   @ViewChild('ideaMenu') ideaMenu!: ContextMenu;
   selectedIdea!: BrainstormIdea;

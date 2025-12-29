@@ -1,3 +1,9 @@
 @import "tailwindcss";
 @import "tailwindcss-primeui";
 @import 'primeicons/primeicons.css';
+
+.visitor-blur {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}

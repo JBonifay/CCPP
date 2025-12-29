@@ -1,4 +1,5 @@
-<nav aria-label="side bar" aria-orientation="vertical" class="h-full flex-none flex flex-col items-center text-center bg-primary-400 text-gray-600">
+<nav aria-label="side bar" aria-orientation="vertical"
+     class="h-full flex-none flex flex-col items-center text-center bg-primary-400 text-gray-600">
 
   <div class="h-16 flex items-center w-full">
     <img class="h-6 w-6 mx-auto"
@@ -19,7 +20,7 @@
         <li>
           <a
             [routerLink]="item.routerLink"
-            routerLinkActive="bg-teal-700 text-white"
+            routerLinkActive="bg-primary-300 text-white"
             [routerLinkActiveOptions]="{ exact: true }"
             class="h-16 px-6 flex items-center w-full hover:text-white"
           >
@@ -31,12 +32,27 @@
     }
   </ul>
 
-  <div class="mt-auto flex flex-col items-center w-full space-y-2 mb-6 gap-4">
-    <a class="hover:text-white" [routerLink]="['/', RouteTokens.APP, RouteTokens.SETTINGS]">
-      <i [class]="PrimeIcons.COG + ' text-xl mx-auto'"></i>
-    </a>
-    <a class="hover:text-white" [routerLink]="['/']" (click)="logout()">
-      <i [class]="PrimeIcons.SIGN_OUT + ' text-xl mx-auto'"></i>
-    </a>
+  <div class="mt-auto flex flex-col items-center w-full mb-2">
+    <ul>
+      <li>
+        <a
+          [routerLink]="['/', RouteTokens.APP, RouteTokens.SETTINGS]"
+          routerLinkActive="bg-primary-300 text-white"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="h-12 px-6 flex items-center w-full hover:text-white"
+        >
+          <i [class]="PrimeIcons.COG + ' text-xl mx-auto'"></i>
+        </a>
+      </li>
+      <li>
+        <a
+          [routerLink]="['/']"
+          (click)="logout()"
+          class="h-12 px-6 flex items-center w-full hover:text-white"
+        >
+          <i [class]="PrimeIcons.SIGN_OUT + ' text-xl mx-auto'"></i>
+        </a>
+      </li>
+    </ul>
   </div>
 </nav>

@@ -1,10 +1,8 @@
 import {BrainstormIdea} from '../data/model/brainstorm-idea';
 import {patchState, signalStore, withComputed, withMethods, withState} from '@ngrx/signals';
 import {computed, inject} from '@angular/core';
-import {ProjectsRepository} from '../../projects/data/projects.repository';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {catchError, EMPTY, pipe, switchMap, tap} from 'rxjs';
-import {ProjectListItem} from '../../projects/data/model/project-list-item';
 import {BrainstormIdeaRepository} from '../data/brainstorm-idea.repository';
 
 export interface BrainstormState {
@@ -44,6 +42,21 @@ export const BrainstormStore = signalStore(
         )
       )
     ),
+
+    changeColor(ideaId: string, color: string): void {
+      const previousIdeas = store.ideas();
+      const updatedIdeas = previousIdeas.map(idea =>
+        idea.id === ideaId ? {...idea, color} : idea
+      );
+      patchState(store, {ideas: updatedIdeas});
+
+      brainstormIdeaRepository.changeColor(ideaId, color).pipe(
+        catchError(() => {
+          patchState(store, {ideas: previousIdeas, error: 'Failed to change color'});
+          return EMPTY;
+        })
+      ).subscribe();
+    },
 
     clearError(): void {
       patchState(store, {error: null});

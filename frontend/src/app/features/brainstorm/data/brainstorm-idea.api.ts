@@ -1,14 +1,21 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {BrainstormIdeaRepository} from './brainstorm-idea.repository';
 import {Observable} from "rxjs";
 import {BrainstormIdea} from "./model/brainstorm-idea";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({providedIn: 'root'})
 export class BrainstormIdeaApi implements BrainstormIdeaRepository {
 
+  private http = inject(HttpClient);
+
   getAll(): Observable<BrainstormIdea[]> {
-        throw new Error("Method not implemented.");
-    }
+    throw new Error("Method not implemented.");
+  }
+
+  changeColor(ideaId: string, color: string): Observable<void> {
+    return this.http.patch<void>(`/api/brainstorm/ideas/${ideaId}/color`, {color});
+  }
 
 }
 

@@ -27,5 +27,14 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
     return of(this.brainstormIdea);
   }
 
+  changeColor(ideaId: string, color: string): Observable<void> {
+    console.log(`Changing color of idea ${ideaId} to ${color}`);
+    const idea = this.brainstormIdea.find(i => i.id === ideaId);
+    if (idea) {
+      idea.color = color;
+    }
+    return of(undefined);
+  }
+
 }
 

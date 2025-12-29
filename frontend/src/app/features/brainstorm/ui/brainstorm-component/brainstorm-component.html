@@ -9,7 +9,7 @@
     <div class="board-subtitle">Drag ideas freely on the board</div>
   </div>
 
-  @for (bi of brainstormIdea; track bi.id) {
+  @for (bi of brainstormIdea(); track bi.id) {
     <p-card
       [header]="bi.title"
       cdkDrag

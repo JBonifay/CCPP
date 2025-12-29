@@ -1,5 +1,5 @@
 <nav aria-label="side bar" aria-orientation="vertical"
-     class="h-full flex-none flex flex-col items-center text-center bg-linear-to-b from-primary to-primary-400 text-gray-600">
+     class="h-full w-16 flex-none flex flex-col items-center text-center bg-linear-to-b from-primary to-primary-400 text-gray-600">
 
   <ul>
     @for (group of items; track group.id) {
@@ -14,9 +14,9 @@
         <li>
           <a
             [routerLink]="item.routerLink"
-            routerLinkActive="bg-primary-300 text-white"
+            routerLinkActive="bg-primary-500 text-white"
             [routerLinkActiveOptions]="{ exact: true }"
-            class="h-16 px-6 flex items-center w-full hover:text-white"
+            class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300"
           >
             <i [class]="item.icon" style="font-size: 1.2rem"></i>
           </a>
@@ -26,27 +26,26 @@
     }
   </ul>
 
-  <div class="mt-auto flex flex-col items-center w-full mb-2">
-    <ul>
-      <li>
-        <a
-          [routerLink]="['/', RouteTokens.APP, RouteTokens.SETTINGS]"
-          routerLinkActive="bg-primary-300 text-white"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="h-12 px-6 flex items-center w-full hover:text-white"
-        >
-          <i [class]="PrimeIcons.COG" style="font-size: 1.2rem"></i>
-        </a>
-      </li>
-      <li>
-        <a
-          [routerLink]="['/']"
-          (click)="logout()"
-          class="h-12 px-6 flex items-center w-full hover:text-white"
-        >
-          <i [class]="PrimeIcons.SIGN_OUT" style="font-size: 1.2rem"></i>
-        </a>
-      </li>
-    </ul>
-  </div>
+  <ul class="mt-auto mb-2 w-full">
+    <li class="w-full">
+      <a
+        [routerLink]="['/', RouteTokens.APP, RouteTokens.SETTINGS]"
+        routerLinkActive="bg-primary-500 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300 mx-auto"
+      >
+        <i [class]="PrimeIcons.COG" style="font-size: 1.2rem"></i>
+      </a>
+    </li>
+    <li class="w-full">
+      <a
+        [routerLink]="['/']"
+        (click)="logout()"
+        class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300 mx-auto"
+      >
+        <i [class]="PrimeIcons.SIGN_OUT" style="font-size: 1.2rem"></i>
+      </a>
+    </li>
+  </ul>
+
 </nav>

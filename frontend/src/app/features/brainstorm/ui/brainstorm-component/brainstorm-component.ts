@@ -1,10 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {Card} from 'primeng/card';
 import {FormsModule} from '@angular/forms';
 import {MenuItem, PrimeIcons} from 'primeng/api';
 import {CdkDrag, CdkDragEnd} from '@angular/cdk/drag-drop';
 import {ContextMenu} from 'primeng/contextmenu';
 import {BrainstormIdea} from '../../data/model/brainstorm-idea';
+import {BrainstormStore} from '../../store/brainstorm.store';
 
 @Component({
   selector: 'app-brainstorm-component',
@@ -20,8 +21,10 @@ import {BrainstormIdea} from '../../data/model/brainstorm-idea';
 export class BrainstormComponent implements OnInit {
 
   private readonly STORAGE_KEY = 'brainstorm-positions';
+  private readonly brainstormStore = inject(BrainstormStore);
 
   @ViewChild('ideaMenu') ideaMenu!: ContextMenu;
+  brainstormIdea: BrainstormIdea[] = [];
   selectedIdea!: BrainstormIdea;
 
   boardMenuItems: MenuItem[] = [
@@ -48,44 +51,32 @@ export class BrainstormComponent implements OnInit {
   ];
 
   ngOnInit() {
+    // Trigger loading (rxMethod returns void)
+    this.brainstormStore.loadIdeas();
+
+    // Read the current ideas from the store snapshot
     const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (!stored) return;
+    const positions: Record<string, { x: number; y: number }> = stored ? JSON.parse(stored) : {};
 
-    const positions = JSON.parse(stored);
+    this.brainstormIdea = this.brainstormStore.ideas().map(i => ({
+      ...i,
+      position: positions[i.id] ?? { x: 20, y: 20 }
+    }));
 
+    this.cleanUpPositions(positions);
+  }
+
+  private cleanUpPositions(positions: Record<string, { x: number; y: number }>) {
     const validIds = new Set(this.brainstormIdea.map(i => i.id));
-
+    let changed = false;
     for (const id of Object.keys(positions)) {
       if (!validIds.has(id)) {
         delete positions[id];
+        changed = true;
       }
     }
-
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
-
-    this.brainstormIdea.forEach(i => {
-      if (positions[i.id]) {
-        i.position = positions[i.id];
-      }
-    });
+    if (changed) localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
   }
-
-  brainstormIdea: BrainstormIdea[] = [
-    {
-      id: 'b87d868b-8662-4855-b5bf-4a0fcd280948',
-      title: 'User Onboarding Flow',
-      description: 'Design a clearer onboarding flow with fewer steps, inline tips, and a short product tour to help users reach their first success faster.',
-      color: "#78e770",
-      position: {x: 20, y: 100}
-    },
-    {
-      id: '7ea2e876-0b82-4824-99da-12a74e717e01',
-      title: 'Real-Time Collaboration',
-      description: 'Allow multiple users to edit and move cards simultaneously with live cursors and presence indicators.',
-      color: "#e77070",
-      position: {x: 200, y: 100}
-    }
-  ];
 
   onIdeaRightClick(event: MouseEvent, idea: BrainstormIdea) {
     this.selectedIdea = idea;
@@ -111,11 +102,9 @@ export class BrainstormComponent implements OnInit {
 
   private persistPositions() {
     const positions: Record<string, { x: number; y: number }> = {};
-
     for (const idea of this.brainstormIdea) {
-      positions[idea.id] = idea.position;
+      if (idea.position) positions[idea.id] = idea.position;
     }
-
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
   }
 

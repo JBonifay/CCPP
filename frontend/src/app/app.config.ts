@@ -7,6 +7,7 @@ import Lara from '@primeuix/themes/lara';
 import {routes} from './app.routes';
 import {authInterceptor, provideAuth} from './core';
 import {projectsProviders} from './features/projects/projects.providers';
+import {brainstormProviders} from './features/brainstorm/brainstorm.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       ripple: true,
     }),
     provideAuth(),
-    projectsProviders
+    projectsProviders,
+    brainstormProviders
   ],
 };

@@ -33,7 +33,7 @@
 </div>
 
 <p-dialog
-  header="Edit Idea"
+  [header]="isCreating ? 'New Idea' : 'Edit Idea'"
   [(visible)]="editDialogVisible"
   [modal]="true"
   [style]="{ width: '400px' }"

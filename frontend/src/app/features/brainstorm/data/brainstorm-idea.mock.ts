@@ -27,6 +27,13 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
     return of(this.brainstormIdea);
   }
 
+  createIdea(idea: Omit<BrainstormIdea, 'position'>): Observable<BrainstormIdea> {
+    console.log(`Creating idea: ${idea.title}`);
+    const newIdea: BrainstormIdea = {...idea, position: {x: 100, y: 100}};
+    this.brainstormIdea.push(newIdea);
+    return of(newIdea);
+  }
+
   changeColor(ideaId: string, color: string): Observable<void> {
     console.log(`Changing color of idea ${ideaId} to ${color}`);
     const idea = this.brainstormIdea.find(i => i.id === ideaId);

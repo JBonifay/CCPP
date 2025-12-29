@@ -37,6 +37,7 @@ export class BrainstormComponent implements OnInit {
   editDialogVisible = false;
   editTitle = '';
   editDescription = '';
+  isCreating = false;
 
   brainstormIdea = computed(() => {
     const stored = localStorage.getItem(this.STORAGE_KEY);
@@ -48,7 +49,11 @@ export class BrainstormComponent implements OnInit {
   });
 
   boardMenuItems: MenuItem[] = [
-    {label: 'New', icon: PrimeIcons.PLUS}
+    {
+      label: 'New',
+      icon: PrimeIcons.PLUS,
+      command: () => this.createIdea()
+    }
   ];
 
   ideaMenuItems = [
@@ -89,7 +94,15 @@ export class BrainstormComponent implements OnInit {
     this.ideaMenu.show(event);
   }
 
+  private createIdea() {
+    this.isCreating = true;
+    this.editTitle = '';
+    this.editDescription = '';
+    this.editDialogVisible = true;
+  }
+
   editIdea(idea: BrainstormIdea) {
+    this.isCreating = false;
     this.selectedIdea = idea;
     this.editTitle = idea.title;
     this.editDescription = idea.description;
@@ -97,11 +110,20 @@ export class BrainstormComponent implements OnInit {
   }
 
   saveIdea() {
-    this.brainstormStore.updateIdea({
-      id: this.selectedIdea.id,
-      title: this.editTitle,
-      description: this.editDescription
-    });
+    if (this.isCreating) {
+      this.brainstormStore.createIdea({
+        id: crypto.randomUUID(),
+        title: this.editTitle,
+        description: this.editDescription,
+        color: '#e3e3e3'
+      });
+    } else {
+      this.brainstormStore.updateIdea({
+        id: this.selectedIdea.id,
+        title: this.editTitle,
+        description: this.editDescription
+      });
+    }
     this.editDialogVisible = false;
   }
 

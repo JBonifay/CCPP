@@ -106,6 +106,23 @@ export const BrainstormStore = signalStore(
       )
     ),
 
+    createIdea: rxMethod<Omit<BrainstormIdea, 'position'>>(
+      pipe(
+        tap((idea) => {
+          const newIdea: BrainstormIdea = {...idea, position: {x: 100, y: 100}};
+          patchState(store, {ideas: [...store.ideas(), newIdea], error: null});
+        }),
+        switchMap((idea) =>
+          brainstormIdeaRepository.createIdea(idea).pipe(
+            catchError(() => {
+              patchState(store, {error: 'Failed to create idea'});
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
+
     clearError(): void {
       patchState(store, {error: null});
     },

@@ -19,6 +19,7 @@
       class="brainstorm-card"
       [style]="{ backgroundColor: bi.color }"
       (contextmenu)="onIdeaRightClick($event, bi)"
+      (dblclick)="editIdea(bi)"
     >
       <p class="m-0">{{ bi.description }}</p>
     </p-card>
@@ -30,3 +31,25 @@
   ></p-contextMenu>
 
 </div>
+
+<p-dialog
+  header="Edit Idea"
+  [(visible)]="editDialogVisible"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+>
+  <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-1">
+      <label for="title">Title</label>
+      <input pInputText id="title" [(ngModel)]="editTitle" />
+    </div>
+    <div class="flex flex-col gap-1">
+      <label for="description">Description</label>
+      <textarea pTextarea id="description" [(ngModel)]="editDescription" rows="4"></textarea>
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" (click)="editDialogVisible = false" />
+    <p-button label="Save" (click)="saveIdea()" />
+  </ng-template>
+</p-dialog>

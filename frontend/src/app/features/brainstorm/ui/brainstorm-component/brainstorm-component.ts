@@ -4,6 +4,10 @@ import {FormsModule} from '@angular/forms';
 import {MenuItem, PrimeIcons} from 'primeng/api';
 import {CdkDrag, CdkDragEnd} from '@angular/cdk/drag-drop';
 import {ContextMenu} from 'primeng/contextmenu';
+import {Dialog} from 'primeng/dialog';
+import {InputText} from 'primeng/inputtext';
+import {Textarea} from 'primeng/textarea';
+import {Button} from 'primeng/button';
 import {BrainstormIdea} from '../../data/model/brainstorm-idea';
 import {BrainstormStore} from '../../store/brainstorm.store';
 
@@ -13,7 +17,11 @@ import {BrainstormStore} from '../../store/brainstorm.store';
     Card,
     FormsModule,
     CdkDrag,
-    ContextMenu
+    ContextMenu,
+    Dialog,
+    InputText,
+    Textarea,
+    Button
   ],
   templateUrl: './brainstorm-component.html',
   styleUrl: './brainstorm-component.css',
@@ -25,6 +33,10 @@ export class BrainstormComponent implements OnInit {
 
   @ViewChild('ideaMenu') ideaMenu!: ContextMenu;
   selectedIdea!: BrainstormIdea;
+
+  editDialogVisible = false;
+  editTitle = '';
+  editDescription = '';
 
   brainstormIdea = computed(() => {
     const stored = localStorage.getItem(this.STORAGE_KEY);
@@ -44,7 +56,7 @@ export class BrainstormComponent implements OnInit {
       label: 'Edit',
       icon: PrimeIcons.FILE_EDIT,
       command: () => this.editIdea(this.selectedIdea)
-    },
+    } as MenuItem,
     {
       label: 'Color',
       icon: PrimeIcons.PALETTE,
@@ -77,8 +89,20 @@ export class BrainstormComponent implements OnInit {
     this.ideaMenu.show(event);
   }
 
-  private editIdea(selectedIdea: BrainstormIdea) {
+  editIdea(idea: BrainstormIdea) {
+    this.selectedIdea = idea;
+    this.editTitle = idea.title;
+    this.editDescription = idea.description;
+    this.editDialogVisible = true;
+  }
 
+  saveIdea() {
+    this.brainstormStore.updateIdea({
+      id: this.selectedIdea.id,
+      title: this.editTitle,
+      description: this.editDescription
+    });
+    this.editDialogVisible = false;
   }
 
   private deleteIdea(selectedIdea: BrainstormIdea) {

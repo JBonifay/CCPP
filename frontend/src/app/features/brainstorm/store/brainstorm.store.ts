@@ -87,6 +87,25 @@ export const BrainstormStore = signalStore(
       )
     ),
 
+    updateIdea: rxMethod<{ id: string; title: string; description: string }>(
+      pipe(
+        tap(({id, title, description}) => {
+          const updatedIdeas = store.ideas().map(idea =>
+            idea.id === id ? {...idea, title, description} : idea
+          );
+          patchState(store, {ideas: updatedIdeas, error: null});
+        }),
+        switchMap(({id, title, description}) =>
+          brainstormIdeaRepository.updateIdea(id, title, description).pipe(
+            catchError(() => {
+              patchState(store, {error: 'Failed to update idea'});
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
+
     clearError(): void {
       patchState(store, {error: null});
     },

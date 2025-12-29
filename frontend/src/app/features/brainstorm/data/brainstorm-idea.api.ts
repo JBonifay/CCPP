@@ -21,5 +21,9 @@ export class BrainstormIdeaApi implements BrainstormIdeaRepository {
     return this.http.delete<void>(`/api/brainstorm/ideas/${ideaId}`);
   }
 
+  updateIdea(ideaId: string, title: string, description: string): Observable<void> {
+    return this.http.patch<void>(`/api/brainstorm/ideas/${ideaId}`, {title, description});
+  }
+
 }
 

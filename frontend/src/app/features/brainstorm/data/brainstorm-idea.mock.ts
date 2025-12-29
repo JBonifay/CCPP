@@ -42,5 +42,15 @@ export class BrainstormIdeaMock implements BrainstormIdeaRepository {
     return of(undefined);
   }
 
+  updateIdea(ideaId: string, title: string, description: string): Observable<void> {
+    console.log(`Updating idea ${ideaId}: ${title}`);
+    const idea = this.brainstormIdea.find(i => i.id === ideaId);
+    if (idea) {
+      idea.title = title;
+      idea.description = description;
+    }
+    return of(undefined);
+  }
+
 }
 

@@ -54,6 +54,10 @@ export const routes: Routes = [
       {
         path: RouteTokens.BRAINSTORM,
         loadChildren: () => import('./features/brainstorm/brainstorm.routes').then(m => m.BRAINSTORM_ROUTES),
+      },
+      {
+        path: RouteTokens.SETTINGS,
+        loadChildren: () => import('./features/settings/settings.routes').then(m => m.SETTINGS_ROUTES),
       }
     ],
   },

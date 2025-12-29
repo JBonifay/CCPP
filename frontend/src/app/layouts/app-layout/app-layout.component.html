@@ -1,12 +1,19 @@
-<div class="min-h-screen w-full flex overflow-hidden antialiased text-gray-800 bg-gray-100">
+<div class="min-h-screen w-full flex flex-col bg-surface-100 text-gray-800">
 
-  <app-sidebar></app-sidebar>
+  <!-- TopBar -->
+  <app-topbar class="flex-none"></app-topbar>
 
-  <div class="flex-1 flex flex-col">
-    <app-topbar></app-topbar>
-    <div class="m-4 h-full">
+  <!-- Main area: Sidebar + Content -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar -->
+    <app-sidebar class="flex-none"></app-sidebar>
+
+    <!-- Content area -->
+    <div class="flex-1 overflow-auto p-4">
       <router-outlet></router-outlet>
     </div>
+
   </div>
 
 </div>

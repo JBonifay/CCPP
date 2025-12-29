@@ -24,7 +24,7 @@
             [routerLinkActiveOptions]="{ exact: true }"
             class="h-16 px-6 flex items-center w-full hover:text-white"
           >
-            <i [class]="item.icon + ' text-xl mx-auto'"></i>
+            <i [class]="item.icon" style="font-size: 1.2rem"></i>
           </a>
         </li>
       }
@@ -41,7 +41,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           class="h-12 px-6 flex items-center w-full hover:text-white"
         >
-          <i [class]="PrimeIcons.COG + ' text-xl mx-auto'"></i>
+          <i [class]="PrimeIcons.COG" style="font-size: 1.2rem"></i>
         </a>
       </li>
       <li>
@@ -50,7 +50,7 @@
           (click)="logout()"
           class="h-12 px-6 flex items-center w-full hover:text-white"
         >
-          <i [class]="PrimeIcons.SIGN_OUT + ' text-xl mx-auto'"></i>
+          <i [class]="PrimeIcons.SIGN_OUT" style="font-size: 1.2rem"></i>
         </a>
       </li>
     </ul>

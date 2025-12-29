@@ -13,6 +13,8 @@
     <p-card
       [header]="bi.title"
       cdkDrag
+      [cdkDragFreeDragPosition]="bi.position"
+      (cdkDragEnded)="onDragEnd($event, bi)"
       cdkDragBoundary=".brainstorm-board"
       class="brainstorm-card"
       [style]="{ backgroundColor: bi.color }"

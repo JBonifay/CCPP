@@ -1,8 +1,8 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Card} from 'primeng/card';
 import {FormsModule} from '@angular/forms';
 import {MenuItem, PrimeIcons} from 'primeng/api';
-import {CdkDrag} from '@angular/cdk/drag-drop';
+import {CdkDrag, CdkDragEnd} from '@angular/cdk/drag-drop';
 import {ContextMenu} from 'primeng/contextmenu';
 import {BrainstormIdea} from '../../data/model/brainstorm-idea';
 
@@ -17,7 +17,10 @@ import {BrainstormIdea} from '../../data/model/brainstorm-idea';
   templateUrl: './brainstorm-component.html',
   styleUrl: './brainstorm-component.css',
 })
-export class BrainstormComponent {
+export class BrainstormComponent implements OnInit {
+
+  private readonly STORAGE_KEY = 'brainstorm-positions';
+
   @ViewChild('ideaMenu') ideaMenu!: ContextMenu;
   selectedIdea!: BrainstormIdea;
 
@@ -44,18 +47,43 @@ export class BrainstormComponent {
     }
   ];
 
+  ngOnInit() {
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    if (!stored) return;
+
+    const positions = JSON.parse(stored);
+
+    const validIds = new Set(this.brainstormIdea.map(i => i.id));
+
+    for (const id of Object.keys(positions)) {
+      if (!validIds.has(id)) {
+        delete positions[id];
+      }
+    }
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
+
+    this.brainstormIdea.forEach(i => {
+      if (positions[i.id]) {
+        i.position = positions[i.id];
+      }
+    });
+  }
+
   brainstormIdea: BrainstormIdea[] = [
     {
       id: 'b87d868b-8662-4855-b5bf-4a0fcd280948',
       title: 'User Onboarding Flow',
       description: 'Design a clearer onboarding flow with fewer steps, inline tips, and a short product tour to help users reach their first success faster.',
-      color: "#78e770"
+      color: "#78e770",
+      position: {x: 20, y: 100}
     },
     {
       id: '7ea2e876-0b82-4824-99da-12a74e717e01',
       title: 'Real-Time Collaboration',
       description: 'Allow multiple users to edit and move cards simultaneously with live cursors and presence indicators.',
-      color: "#e77070"
+      color: "#e77070",
+      position: {x: 200, y: 100}
     }
   ];
 
@@ -74,6 +102,21 @@ export class BrainstormComponent {
 
   private editColor(selectedIdea: BrainstormIdea) {
 
+  }
+
+  onDragEnd(event: CdkDragEnd, idea: BrainstormIdea) {
+    idea.position = event.source.getFreeDragPosition();
+    this.persistPositions();
+  }
+
+  private persistPositions() {
+    const positions: Record<string, { x: number; y: number }> = {};
+
+    for (const idea of this.brainstormIdea) {
+      positions[idea.id] = idea.position;
+    }
+
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(positions));
   }
 
 }

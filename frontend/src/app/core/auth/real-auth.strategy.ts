@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { ApiService } from '../api/api.service';
-import type { AuthStrategy, AuthResult } from './auth.strategy';
-import type { User } from './auth.store';
+import {inject, Injectable} from '@angular/core';
+import {firstValueFrom} from 'rxjs';
+import {ApiService} from '../api/api.service';
+import type {AuthResult, AuthStrategy} from './auth.strategy';
+import {User} from './auth.store';
 
 interface LoginResponse {
   token: string;
@@ -14,6 +14,7 @@ export class RealAuthStrategy implements AuthStrategy {
   private readonly api = inject(ApiService);
 
   async login(email: string, password: string): Promise<AuthResult> {
+    console.log('Logging in with email:', email);
     try {
       const loginResponse = await firstValueFrom(
         this.api.post<LoginResponse>('/auth/login', { email, password })
@@ -46,7 +47,7 @@ export class RealAuthStrategy implements AuthStrategy {
 
   async logout(): Promise<void> {
     try {
-      await firstValueFrom(this.api.post('/auth/logout', {}));
+      await firstValueFrom(this.api.post('/api/auth/logout', {}));
     } catch {
       // Ignore logout errors - we'll clear local state anyway
     }
@@ -55,7 +56,7 @@ export class RealAuthStrategy implements AuthStrategy {
   async refreshToken(): Promise<string | null> {
     try {
       const response = await firstValueFrom(
-        this.api.post<{ token: string }>('/auth/refresh', {})
+        this.api.post<{ token: string }>('/api/auth/refresh', {})
       );
       return response.token;
     } catch {

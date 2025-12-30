@@ -4,7 +4,7 @@ import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {providePrimeNG} from 'primeng/config';
 
 import {routes} from './app.routes';
-import {authInterceptor, provideAuth} from './core';
+import {authInterceptor, authProviders} from './core';
 import {projectsProviders} from './features/projects/projects.providers';
 import {brainstormProviders} from './features/brainstorm/brainstorm.providers';
 import {customerPreset} from './color-preset';
@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
       },
       ripple: true,
     }),
-    provideAuth(),
+    authProviders,
     projectsProviders,
     brainstormProviders,
     settingsProviders

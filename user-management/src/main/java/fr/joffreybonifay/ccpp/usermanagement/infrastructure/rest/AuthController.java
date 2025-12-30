@@ -3,21 +3,22 @@ package fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest;
 import fr.joffreybonifay.ccpp.shared.command.CommandBus;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
+import fr.joffreybonifay.ccpp.shared.rest.RequestContext;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
+import fr.joffreybonifay.ccpp.usermanagement.domain.User;
+import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.LoginRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.RegisterRequest;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.SelectWorkspaceRequest;
+import fr.joffreybonifay.ccpp.usermanagement.infrastructure.rest.dto.UserDetailsResponse;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -108,5 +109,16 @@ public class AuthController {
         AuthTokens tokens = tokenService.issue(UUID.fromString(userId), email, workspaceId);
 
         return ResponseEntity.ok(tokens);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDetailsResponse> me() {
+        UserDTO userDTO = userReadRepository.findById(RequestContext.getUserId()).orElseThrow(() -> new UserDoesNotExistException("User not found"));
+        return ResponseEntity.ok(new UserDetailsResponse(
+                userDTO.userId(),
+                userDTO.email(),
+                userDTO.fullName(),
+                "user"
+        ));
     }
 }

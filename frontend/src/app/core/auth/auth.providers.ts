@@ -1,14 +1,11 @@
-import { Provider } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { AUTH_STRATEGY } from './auth.strategy';
-import { FakeAuthStrategy } from './fake-auth.strategy';
-import { RealAuthStrategy } from './real-auth.strategy';
+import {environment} from '../../../environments/environment';
+import {AUTH_STRATEGY} from './auth.strategy';
+import {FakeAuthStrategy} from './fake-auth.strategy';
+import {RealAuthStrategy} from './real-auth.strategy';
 
-export function provideAuth(): Provider[] {
-  return [
-    {
-      provide: AUTH_STRATEGY,
-      useClass: environment.useMocks ? FakeAuthStrategy : RealAuthStrategy,
-    },
-  ];
-}
+export const authProviders = [
+  {
+    provide: AUTH_STRATEGY,
+    useClass: environment.useMocks ? FakeAuthStrategy : RealAuthStrategy,
+  },
+];

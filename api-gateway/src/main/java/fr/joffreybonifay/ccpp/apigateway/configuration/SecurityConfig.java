@@ -4,11 +4,14 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -18,16 +21,27 @@ import java.nio.charset.StandardCharsets;
 public class SecurityConfig {
 
     @Bean
-    SecurityWebFilterChain security(
+    @Order(1)
+    SecurityWebFilterChain publicSecurity(ServerHttpSecurity http) {
+        return http
+                .securityMatcher(new OrServerWebExchangeMatcher(
+                        new PathPatternParserServerWebExchangeMatcher("/auth/login"),
+                        new PathPatternParserServerWebExchangeMatcher("/auth/register")
+                ))
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(ex -> ex.anyExchange().permitAll())
+                .build();
+    }
+
+    @Bean
+    @Order(2)
+    SecurityWebFilterChain protectedSecurity(
             ServerHttpSecurity http,
             ReactiveJwtDecoder jwtDecoder
     ) {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(ex -> ex
-                        .pathMatchers("/auth/**").permitAll()
-                        .anyExchange().authenticated()
-                )
+                .authorizeExchange(ex -> ex.anyExchange().authenticated())
                 .oauth2ResourceServer(oauth ->
                         oauth.jwt(jwt -> jwt.jwtDecoder(jwtDecoder))
                 )

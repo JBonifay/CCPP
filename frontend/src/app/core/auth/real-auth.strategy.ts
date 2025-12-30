@@ -5,7 +5,7 @@ import type {AuthResult, AuthStrategy} from './auth.strategy';
 import {User} from './auth.store';
 
 interface LoginResponse {
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
 
@@ -14,14 +14,13 @@ export class RealAuthStrategy implements AuthStrategy {
   private readonly api = inject(ApiService);
 
   async login(email: string, password: string): Promise<AuthResult> {
-    console.log('Logging in with email:', email);
     try {
       const loginResponse = await firstValueFrom(
         this.api.post<LoginResponse>('/auth/login', { email, password })
       );
 
       // Store tokens first so the /auth/me call is authenticated
-      localStorage.setItem('token', loginResponse.token);
+      localStorage.setItem('token', loginResponse.accessToken);
       localStorage.setItem('refreshToken', loginResponse.refreshToken);
 
       // Fetch user details
@@ -32,7 +31,7 @@ export class RealAuthStrategy implements AuthStrategy {
       return {
         success: true,
         user,
-        token: loginResponse.token,
+        token: loginResponse.accessToken,
       };
     } catch (error: unknown) {
       const message =

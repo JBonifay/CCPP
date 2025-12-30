@@ -3,6 +3,7 @@ import {authGuard, publicGuard} from './core';
 import {AppLayoutComponent, PublicLayoutComponent} from './layouts';
 
 export const AppRoutePaths = {
+  landing: () => [RouteTokens.LANDING],
   home: () => ['/', RouteTokens.APP],
   projects: () => ['/', RouteTokens.APP, RouteTokens.PROJECTS],
   project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id,],
@@ -11,6 +12,7 @@ export const AppRoutePaths = {
 };
 
 export const RouteTokens = {
+  LANDING: '',
   LOGIN: 'login',
   APP: 'app',
   HOME: 'home',

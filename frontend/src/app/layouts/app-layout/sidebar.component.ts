@@ -40,7 +40,7 @@ export class SidebarComponent {
     effect(() => {
       const isAuthenticated = this.authStore.isAuthenticated();
       if (!isAuthenticated && this.loggedOut) {
-        this.router.navigate(['/']);
+        this.router.navigate([AppRoutePaths.landing()]);
         this.loggedOut = false;
       }
     });

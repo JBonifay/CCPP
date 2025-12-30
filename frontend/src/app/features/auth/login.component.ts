@@ -7,6 +7,7 @@ import { Password } from 'primeng/password';
 import { Card } from 'primeng/card';
 import { Message } from 'primeng/message';
 import { AuthStore } from '../../core';
+import {AppRoutePaths} from '../../app.routes';
 
 @Component({
   selector: 'app-login',
@@ -118,7 +119,7 @@ export class LoginComponent {
   constructor() {
     effect(() => {
       if (this.authStore.isAuthenticated()) {
-        this.router.navigate(['/app']);
+        this.router.navigate([AppRoutePaths.home()]);
       }
     });
   }

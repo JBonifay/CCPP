@@ -12,22 +12,39 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
     @Order(1)
-    SecurityWebFilterChain publicSecurity(ServerHttpSecurity http) {
+    SecurityWebFilterChain publicSecurity(ServerHttpSecurity http, CorsConfigurationSource corsConfigurationSource) {
         return http
                 .securityMatcher(new OrServerWebExchangeMatcher(
                         new PathPatternParserServerWebExchangeMatcher("/auth/login"),
                         new PathPatternParserServerWebExchangeMatcher("/auth/register")
                 ))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex.anyExchange().permitAll())
                 .build();
@@ -37,9 +54,11 @@ public class SecurityConfig {
     @Order(2)
     SecurityWebFilterChain protectedSecurity(
             ServerHttpSecurity http,
-            ReactiveJwtDecoder jwtDecoder
+            ReactiveJwtDecoder jwtDecoder,
+            CorsConfigurationSource corsConfigurationSource
     ) {
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(ex -> ex.anyExchange().authenticated())
                 .oauth2ResourceServer(oauth ->

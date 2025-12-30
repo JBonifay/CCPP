@@ -1,65 +1,65 @@
-import {inject, Injectable} from '@angular/core';
-import {firstValueFrom} from 'rxjs';
-import {ApiService} from '../api/api.service';
-import type {AuthResult, AuthStrategy} from './auth.strategy';
-import {User} from './auth.store';
+import { inject, Injectable } from '@angular/core';
+import { finalize, Observable, switchMap, tap } from 'rxjs';
+import { ApiService } from '../api/api.service';
+import { AuthStrategy } from './auth.strategy';
+import { User } from './user';
 
-interface LoginResponse {
+interface AuthTokens {
   accessToken: string;
   refreshToken: string;
 }
 
-@Injectable()
-export class RealAuthStrategy implements AuthStrategy {
+@Injectable({ providedIn: 'root' })
+export class RealAuthStrategy extends AuthStrategy {
   private readonly api = inject(ApiService);
 
-  async login(email: string, password: string): Promise<AuthResult> {
-    try {
-      const loginResponse = await firstValueFrom(
-        this.api.post<LoginResponse>('/auth/login', { email, password })
-      );
-
-      // Store tokens first so the /auth/me call is authenticated
-      localStorage.setItem('token', loginResponse.accessToken);
-      localStorage.setItem('refreshToken', loginResponse.refreshToken);
-
-      // Fetch user details
-      const user = await firstValueFrom(
-        this.api.get<User>('/auth/me')
-      );
-
-      return {
-        success: true,
-        user,
-        token: loginResponse.accessToken,
-      };
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'Authentication failed. Please try again.';
-
-      return {
-        success: false,
-        error: message,
-      };
-    }
+  login(email: string, password: string): Observable<User> {
+    return this.api.post<AuthTokens>('/auth/login', { email, password }).pipe(
+      switchMap(tokens =>
+        this.api.get<User>('/auth/me').pipe(
+          tap(user => {
+            this.persistTokens(tokens);
+            this.persistUser(user);
+          })
+        )
+      )
+    );
   }
 
-  async logout(): Promise<void> {
-    try {
-      await firstValueFrom(this.api.post('/auth/logout', {}));
-    } catch {
-      // Ignore logout errors - we'll clear local state anyway
-    }
+  logout(): Observable<void> {
+    return this.api.post<void>('/auth/logout', {}).pipe(
+      finalize(() => this.clearStorage())
+    );
   }
 
-  async refreshToken(): Promise<string | null> {
-    try {
-      const response = await firstValueFrom(
-        this.api.post<{ token: string }>('/auth/refresh', {})
-      );
-      return response.token;
-    } catch {
+  override restore(): User | null {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
+    if (!token || !storedUser) {
       return null;
     }
+
+    try {
+      return JSON.parse(storedUser) as User;
+    } catch {
+      this.clearStorage();
+      return null;
+    }
+  }
+
+  private persistTokens(tokens: AuthTokens): void {
+    localStorage.setItem('token', tokens.accessToken);
+    localStorage.setItem('refreshToken', tokens.refreshToken);
+  }
+
+  private persistUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
+  private clearStorage(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
   }
 }

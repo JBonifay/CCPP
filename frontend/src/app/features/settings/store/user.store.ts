@@ -3,7 +3,7 @@ import {inject} from '@angular/core';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {catchError, EMPTY, pipe, switchMap, tap} from 'rxjs';
 import {UserListItem, UserRepository} from '../data/user.repository';
-import {UserRole} from '../../../core/auth/auth.store';
+import {UserRole} from '../../../core';
 
 export interface UserState {
   users: UserListItem[];

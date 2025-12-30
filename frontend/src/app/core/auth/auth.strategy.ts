@@ -1,17 +1,14 @@
-import { InjectionToken } from '@angular/core';
-import type { User } from './auth.store';
+import {Observable} from 'rxjs';
+import {User} from './user';
 
-export interface AuthResult {
-  success: boolean;
-  user?: User;
-  token?: string;
-  error?: string;
+export const STORAGE_KEYS = {
+  accessToken: 'token',
+  refreshToken: 'refreshToken',
+  user: 'user',
+} as const;
+
+export abstract class AuthStrategy {
+  abstract login(email: string, password: string): Observable<User>;
+  abstract logout(): Observable<void>;
+  abstract restore(): User | null;
 }
-
-export interface AuthStrategy {
-  login(email: string, password: string): Promise<AuthResult>;
-  logout(): Promise<void>;
-  refreshToken?(): Promise<string | null>;
-}
-
-export const AUTH_STRATEGY = new InjectionToken<AuthStrategy>('AUTH_STRATEGY');

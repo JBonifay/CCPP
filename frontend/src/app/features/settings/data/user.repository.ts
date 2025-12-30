@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {UserRole} from '../../../core/auth/auth.store';
+import {UserRole} from '../../../core';
 
 export interface UserListItem {
   id: string;

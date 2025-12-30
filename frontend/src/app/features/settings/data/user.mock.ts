@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {UserListItem, UserRepository} from './user.repository';
-import {UserRole} from '../../../core/auth/auth.store';
+import {UserRole} from '../../../core';
 
 @Injectable({providedIn: 'root'})
 export class UserMock implements UserRepository {

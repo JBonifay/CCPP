@@ -1,19 +1,16 @@
-import {AppRoutePaths, RouteTokens} from '../../app.routes';
-import {MenuItem, PrimeIcons} from 'primeng/api';
-import {AuthStore} from '../../core';
-import {Component, inject} from '@angular/core';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import { Component, effect, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { MenuItem, PrimeIcons } from 'primeng/api';
+import { AppRoutePaths, RouteTokens } from '../../app.routes';
+import { AuthStore } from '../../core';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  imports: [
-    RouterLink,
-    RouterLinkActive
-  ],
+  imports: [RouterLink, RouterLinkActive],
 })
 export class SidebarComponent {
-
+  private readonly router = inject(Router);
   readonly authStore = inject(AuthStore);
 
   items: MenuItem[] = [
@@ -23,21 +20,34 @@ export class SidebarComponent {
         {
           icon: PrimeIcons.HOME,
           routerLink: AppRoutePaths.home(),
-          exact: true
+          exact: true,
         },
         {
           icon: PrimeIcons.FOLDER,
-          routerLink: AppRoutePaths.projects()
+          routerLink: AppRoutePaths.projects(),
         },
         {
           icon: PrimeIcons.LIGHTBULB,
-          routerLink: AppRoutePaths.brainstorm()
-        }
-      ]
+          routerLink: AppRoutePaths.brainstorm(),
+        },
+      ],
     },
   ];
 
+  private loggedOut = false;
+
+  constructor() {
+    effect(() => {
+      const isAuthenticated = this.authStore.isAuthenticated();
+      if (!isAuthenticated && this.loggedOut) {
+        this.router.navigate(['/']);
+        this.loggedOut = false;
+      }
+    });
+  }
+
   protected logout() {
+    this.loggedOut = true;
     this.authStore.logout();
   }
 

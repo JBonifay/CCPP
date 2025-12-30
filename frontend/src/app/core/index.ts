@@ -1,3 +1,4 @@
+export * from './auth/user';
 export * from './auth/auth.store';
 export * from './auth/auth.guard';
 export * from './auth/auth.strategy';

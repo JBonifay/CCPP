@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Button } from 'primeng/button';
@@ -109,22 +109,27 @@ import { AuthStore } from '../../core';
   `,
 })
 export class LoginComponent {
-  readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  readonly authStore = inject(AuthStore);
 
   email = '';
   password = '';
 
-  async onSubmit(): Promise<void> {
+  constructor() {
+    effect(() => {
+      if (this.authStore.isAuthenticated()) {
+        this.router.navigate(['/app']);
+      }
+    });
+  }
+
+  onSubmit(): void {
     this.authStore.clearError();
 
     if (!this.email || !this.password) {
       return;
     }
 
-    const success = await this.authStore.login(this.email, this.password);
-    if (success) {
-      this.router.navigate(['/app']);
-    }
+    this.authStore.login({ email: this.email, password: this.password });
   }
 }

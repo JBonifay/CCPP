@@ -6,6 +6,8 @@ import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 
 public record UserAssignedToWorkspace(
         UserId userId,
-        WorkspaceId workspaceId
+        WorkspaceId workspaceId,
+        String workspaceName,
+        String workspaceLogoUrl
 ) implements DomainEvent {
 }

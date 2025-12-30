@@ -4,13 +4,14 @@ import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.query.InMemoryUserReadRepository;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,6 +23,8 @@ class UserProjectionUpdaterTest {
 
     UserId userId = new UserId(UUID.randomUUID());
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    String workspaceName = "Test workspace";
+    String workspaceLogoUrl = "logo_url";
 
     @Test
     void should_create_projection_on_user_created() {
@@ -41,7 +44,7 @@ class UserProjectionUpdaterTest {
                 "john@example.com",
                 "hashedPassword123",
                 "John Doe",
-                Set.of()
+                List.of()
         ));
     }
 
@@ -59,13 +62,15 @@ class UserProjectionUpdaterTest {
     void should_add_workspace_on_user_assigned_to_workspace() {
         givenUserCreated();
 
-        var event = new UserAssignedToWorkspace(userId, workspaceId);
+        var event = new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl);
 
         updater.on(event);
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();
-        assertThat(projection.get().workspaceIds()).containsExactly(workspaceId.value());
+        assertThat(projection.get().workspaces()).containsExactly(
+                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl)
+        );
     }
 
     @Test
@@ -73,14 +78,14 @@ class UserProjectionUpdaterTest {
         givenUserCreated();
         var workspaceId2 = new WorkspaceId(UUID.randomUUID());
 
-        updater.on(new UserAssignedToWorkspace(userId, workspaceId));
-        updater.on(new UserAssignedToWorkspace(userId, workspaceId2));
+        updater.on(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
+        updater.on(new UserAssignedToWorkspace(userId, workspaceId2, "otherName", "otherLogoUrl"));
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();
-        assertThat(projection.get().workspaceIds()).containsExactlyInAnyOrder(
-                workspaceId.value(),
-                workspaceId2.value()
+        assertThat(projection.get().workspaces()).containsExactly(
+                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl),
+                new WorkspaceDTO(workspaceId2, "otherName", "otherLogoUrl")
         );
     }
 

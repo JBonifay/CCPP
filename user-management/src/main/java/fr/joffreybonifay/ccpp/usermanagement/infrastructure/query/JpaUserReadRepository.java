@@ -1,7 +1,9 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.query;
 
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserWorkspacesRepository;
@@ -9,10 +11,7 @@ import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEn
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserWorkspacesJpaEntity;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -38,10 +37,12 @@ public class JpaUserReadRepository implements UserReadRepository {
                 user.fullName()
         ));
 
-        for (UUID workspaceId : user.workspaceIds()) {
+        for (WorkspaceDTO workspace : user.workspaces()) {
             jpaUserWorkspacesRepository.save(new UserWorkspacesJpaEntity(
                     user.userId().value(),
-                    workspaceId
+                    workspace.workspaceId().value(),
+                    workspace.workspaceName(),
+                    workspace.workspaceLogoUrl()
             ));
         }
     }
@@ -64,18 +65,21 @@ public class JpaUserReadRepository implements UserReadRepository {
     }
 
     private UserDTO toDTO(UserJpaEntity entity) {
-        Set<UUID> workspaceIds = jpaUserWorkspacesRepository
-                .findByUserId(entity.getId())
-                .stream()
-                .map(UserWorkspacesJpaEntity::getWorkspaceId)
-                .collect(Collectors.toSet());
-
         return new UserDTO(
                 new UserId(entity.getId()),
                 entity.getEmail(),
                 entity.getPassword(),
                 entity.getFullName(),
-                workspaceIds
+                jpaUserWorkspacesRepository
+                        .findByUserId(entity.getId())
+                        .stream()
+                        .map(userWorkspacesJpaEntity ->
+                                new WorkspaceDTO(
+                                        new WorkspaceId(userWorkspacesJpaEntity.getWorkspaceId()),
+                                        userWorkspacesJpaEntity.getWorkspaceName(),
+                                        userWorkspacesJpaEntity.getWorkspaceName()
+                                ))
+                        .collect(Collectors.toList())
         );
     }
 }

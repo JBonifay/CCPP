@@ -7,7 +7,6 @@ import fr.joffreybonifay.ccpp.shared.rest.RequestContext;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
-import fr.joffreybonifay.ccpp.usermanagement.domain.User;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.AuthTokens;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.jwt.TokenService;
@@ -118,7 +117,8 @@ public class AuthController {
                 userDTO.userId(),
                 userDTO.email(),
                 userDTO.fullName(),
-                "user"
+                "user",
+                userDTO.workspaces()
         ));
     }
 }

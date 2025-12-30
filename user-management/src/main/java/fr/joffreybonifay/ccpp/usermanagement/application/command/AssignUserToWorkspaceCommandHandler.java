@@ -23,7 +23,7 @@ public class AssignUserToWorkspaceCommandHandler implements CommandHandler<Assig
         User user = User.fromHistory(userEvents);
         int initialVersion = user.version();
 
-        user.assignToWorkspace(command.workspaceId());
+        user.assignToWorkspace(command.workspaceId(), command.workspaceName(), command.workspaceLogoUrl());
 
         eventStore.saveEvents(
                 command.userId().value(),

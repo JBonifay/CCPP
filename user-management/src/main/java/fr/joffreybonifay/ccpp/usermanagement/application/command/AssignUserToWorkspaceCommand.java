@@ -9,13 +9,15 @@ import java.util.UUID;
 public record AssignUserToWorkspaceCommand(
         UUID commandId,
         WorkspaceId workspaceId,
+        String workspaceName,
+        String workspaceLogoUrl,
         UserId userId,
         UUID correlationId,
         UUID causationId
 ) implements Command {
 
-    public AssignUserToWorkspaceCommand(WorkspaceId workspaceId, UserId userId, UUID correlationId, UUID causationId) {
-        this(UUID.randomUUID(), workspaceId, userId, correlationId, causationId);
+    public AssignUserToWorkspaceCommand(WorkspaceId workspaceId, String workspaceName, String workspaceLogoUrl, UserId userId, UUID correlationId, UUID causationId) {
+        this(UUID.randomUUID(), workspaceId, workspaceName, workspaceLogoUrl, userId, correlationId, causationId);
     }
 
     @Override

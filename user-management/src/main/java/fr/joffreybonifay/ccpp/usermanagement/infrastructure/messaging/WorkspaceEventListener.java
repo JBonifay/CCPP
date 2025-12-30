@@ -41,6 +41,8 @@ public class WorkspaceEventListener extends AbstractEventListener {
         commandBus.execute(
                 new AssignUserToWorkspaceCommand(
                         workspaceCreated.workspaceId(),
+                        workspaceCreated.workspaceName(),
+                        workspaceCreated.logoUrl(),
                         workspaceCreated.userId(),
                         envelope.correlationId(),
                         envelope.causationId()

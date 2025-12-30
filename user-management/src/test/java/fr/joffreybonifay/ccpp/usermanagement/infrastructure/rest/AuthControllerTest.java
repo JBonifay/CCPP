@@ -37,7 +37,7 @@ class AuthControllerTest extends AbstractE2eTest {
                 .post("/auth/login")
                 .then()
                 .log().all()
-                .statusCode(HttpStatus.CREATED.value())
+                .statusCode(HttpStatus.OK.value())
                 .body("projectId", equalTo(""));
     }
 

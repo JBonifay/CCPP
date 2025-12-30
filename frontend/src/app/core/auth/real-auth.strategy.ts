@@ -17,12 +17,10 @@ export class RealAuthStrategy extends AuthStrategy {
   login(email: string, password: string): Observable<User> {
     this.clearStorage();
     return this.api.post<AuthTokens>('/auth/login', {email, password}).pipe(
-      switchMap(tokens =>
+      tap(tokens => this.persistTokens(tokens)),
+      switchMap(() =>
         this.api.get<User>('/auth/me').pipe(
-          tap(user => {
-            this.persistTokens(tokens);
-            this.persistUser(user);
-          })
+          tap(user => this.persistUser(user))
         )
       )
     );

@@ -47,7 +47,7 @@ export class RealAuthStrategy implements AuthStrategy {
 
   async logout(): Promise<void> {
     try {
-      await firstValueFrom(this.api.post('/api/auth/logout', {}));
+      await firstValueFrom(this.api.post('/auth/logout', {}));
     } catch {
       // Ignore logout errors - we'll clear local state anyway
     }
@@ -56,7 +56,7 @@ export class RealAuthStrategy implements AuthStrategy {
   async refreshToken(): Promise<string | null> {
     try {
       const response = await firstValueFrom(
-        this.api.post<{ token: string }>('/api/auth/refresh', {})
+        this.api.post<{ token: string }>('/auth/refresh', {})
       );
       return response.token;
     } catch {

@@ -11,11 +11,11 @@ export class ProjectsApi implements ProjectsRepository {
   private http = inject(HttpClient);
 
   getAll(): Observable<ProjectListItem[]> {
-    return this.http.get<ProjectListItem[]>('/api/projects');
+    return this.http.get<ProjectListItem[]>('/projects');
   }
 
   getById(id: string): Observable<ProjectDetails> {
-    return this.http.get<ProjectDetails>(`/api/projects/${id}`);
+    return this.http.get<ProjectDetails>(`/projects/${id}`);
   }
 
 }

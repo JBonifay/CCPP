@@ -10,10 +10,10 @@ export class UserApi implements UserRepository {
   private http = inject(HttpClient);
 
   getAll(): Observable<UserListItem[]> {
-    return this.http.get<UserListItem[]>('/api/users');
+    return this.http.get<UserListItem[]>('/users');
   }
 
   updateRole(userId: string, role: UserRole): Observable<void> {
-    return this.http.patch<void>(`/api/users/${userId}/role`, {role});
+    return this.http.patch<void>(`/users/${userId}/role`, {role});
   }
 }

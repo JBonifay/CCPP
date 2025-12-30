@@ -14,19 +14,19 @@ export class BrainstormIdeaApi implements BrainstormIdeaRepository {
   }
 
   createIdea(idea: Omit<BrainstormIdea, 'position'>): Observable<BrainstormIdea> {
-    return this.http.post<BrainstormIdea>(`/api/brainstorm/ideas`, idea);
+    return this.http.post<BrainstormIdea>(`/brainstorm/ideas`, idea);
   }
 
   changeColor(ideaId: string, color: string): Observable<void> {
-    return this.http.patch<void>(`/api/brainstorm/ideas/${ideaId}/color`, {color});
+    return this.http.patch<void>(`/brainstorm/ideas/${ideaId}/color`, {color});
   }
 
   deleteIdea(ideaId: string): Observable<void> {
-    return this.http.delete<void>(`/api/brainstorm/ideas/${ideaId}`);
+    return this.http.delete<void>(`/brainstorm/ideas/${ideaId}`);
   }
 
   updateIdea(ideaId: string, title: string, description: string): Observable<void> {
-    return this.http.patch<void>(`/api/brainstorm/ideas/${ideaId}`, {title, description});
+    return this.http.patch<void>(`/brainstorm/ideas/${ideaId}`, {title, description});
   }
 
 }

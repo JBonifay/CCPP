@@ -9,10 +9,10 @@ export class WorkspaceConfigApi implements WorkspaceConfigRepository {
   private http = inject(HttpClient);
 
   get(): Observable<WorkspaceConfig> {
-    return this.http.get<WorkspaceConfig>('/api/workspace/config');
+    return this.http.get<WorkspaceConfig>('/workspace/config');
   }
 
   update(config: Partial<WorkspaceConfig>): Observable<WorkspaceConfig> {
-    return this.http.patch<WorkspaceConfig>('/api/workspace/config', config);
+    return this.http.patch<WorkspaceConfig>('/workspace/config', config);
   }
 }

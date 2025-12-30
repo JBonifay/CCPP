@@ -2,18 +2,18 @@ package fr.joffreybonifay.ccpp.workspace.domain;
 
 import fr.joffreybonifay.ccpp.shared.domain.AggregateRoot;
 import fr.joffreybonifay.ccpp.shared.domain.event.DomainEvent;
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceProjectLimitReached;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.InvalidWorkspaceDataException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.ProjectLimitReachedException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.SubscriptionTierException;
 import fr.joffreybonifay.ccpp.workspace.domain.exception.WorkspaceDoesNotExistException;
-import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 
 import java.util.List;
 
@@ -28,16 +28,16 @@ public class Workspace extends AggregateRoot {
         loadFromHistory(workspaceDomainEvents);
     }
 
-    private Workspace(WorkspaceId workspaceId, UserId userId, String workspaceName) {
+    private Workspace(WorkspaceId workspaceId, UserId userId, String workspaceName, String logoUrl) {
         validateWorkspaceId(workspaceId);
         validateUserId(userId);
         validateWorkspaceName(workspaceName);
 
-        raiseEvent(new WorkspaceCreated(workspaceId, userId, workspaceName, SubscriptionTier.FREEMIUM));
+        raiseEvent(new WorkspaceCreated(workspaceId, userId, workspaceName, logoUrl, SubscriptionTier.FREEMIUM));
     }
 
-    public static Workspace create(WorkspaceId workspaceId, UserId userId, String workspaceName) {
-        return new Workspace(workspaceId, userId, workspaceName);
+    public static Workspace create(WorkspaceId workspaceId, UserId userId, String workspaceName, String logoUrl) {
+        return new Workspace(workspaceId, userId, workspaceName, logoUrl);
     }
 
     public static Workspace fromHistory(List<DomainEvent> workspaceEvents) {

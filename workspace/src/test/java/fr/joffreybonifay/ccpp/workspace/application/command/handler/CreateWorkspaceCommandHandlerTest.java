@@ -24,42 +24,42 @@ class CreateWorkspaceCommandHandlerTest {
 
     @Test
     void should_create_workspace() {
-        createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(workspaceId, userId, "Creator workspace"));
+        createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(workspaceId, userId, "Creator workspace", "logo_url"));
 
         assertThat(eventStore.loadEvents(workspaceId.value()))
                 .last()
-                .isEqualTo(new WorkspaceCreated(workspaceId, userId, "Creator workspace", SubscriptionTier.FREEMIUM));
+                .isEqualTo(new WorkspaceCreated(workspaceId, userId, "Creator workspace", "logo_url", SubscriptionTier.FREEMIUM));
     }
 
     @Test
     void should_fail_if_workspaceId_null() {
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(null), userId, "FOOBAR")))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(null), userId, "FOOBAR", "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("Workspace id cannot be empty");
 
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(null, userId, "FOOBAR")))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(null, userId, "FOOBAR", "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("Workspace id cannot be empty");
     }
 
     @Test
     void should_fail_if_workspace_name_empty_or_null() {
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), userId, "")))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), userId, "", "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("Workspace name cannot be empty");
 
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), userId, null)))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), userId, null, "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("Workspace name cannot be empty");
     }
 
     @Test
     void should_fail_if_user_id_missing() {
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), null, "FOOBAR")))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), null, "FOOBAR", "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("User id cannot be empty");
 
-        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), new UserId(null), "FOOBAR")))
+        assertThatThrownBy(() -> createWorkspaceCommandHandler.handle(new CreateWorkspaceCommand(new WorkspaceId(UUID.randomUUID()), new UserId(null), "FOOBAR", "logo_url")))
                 .isInstanceOf(InvalidWorkspaceDataException.class)
                 .hasMessage("User id cannot be empty");
     }

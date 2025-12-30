@@ -19,7 +19,8 @@ class WorkspaceCommandControllerTest extends AbstractE2eTest {
                 .header("X-User-Id", UUID.randomUUID().toString())
                 .contentType(ContentType.JSON)
                 .body(new CreateWorkspaceRequest(
-                        "Workspace name"
+                        "Workspace name",
+                        "logo url"
                 ))
                 .when()
                 .post("/workspaces")

@@ -1,14 +1,14 @@
 package fr.joffreybonifay.ccpp.workspace.infrastructure.projection;
 
+import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceProjectCreationApproved;
 import fr.joffreybonifay.ccpp.shared.domain.identities.ProjectId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.application.query.model.WorkspaceProjectCountDTO;
 import fr.joffreybonifay.ccpp.workspace.application.query.repository.WorkspaceProjectCountReadRepository;
-import fr.joffreybonifay.ccpp.shared.domain.event.WorkspaceCreated;
 import fr.joffreybonifay.ccpp.workspace.domain.event.WorkspaceSubscriptionUpgraded;
-import fr.joffreybonifay.ccpp.shared.domain.model.SubscriptionTier;
 import fr.joffreybonifay.ccpp.workspace.infrastructure.query.InMemoryWorkspaceProjectCountReadRepository;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class WorkspaceProjectionUpdaterTest {
 
     @Test
     void should_create_projection_on_workspace_created() {
-        var event = new WorkspaceCreated(workspaceId, userId, "My Workspace", SubscriptionTier.FREEMIUM);
+        var event = new WorkspaceCreated(workspaceId, userId, "My Workspace", "logoUrl", SubscriptionTier.FREEMIUM);
 
         updater.on(event);
 
@@ -34,6 +34,7 @@ class WorkspaceProjectionUpdaterTest {
         assertThat(projection.get()).isEqualTo(
                 new WorkspaceProjectCountDTO(
                         workspaceId,
+                        "logoUrl",
                         0,
                         SubscriptionTier.FREEMIUM
                 ));
@@ -41,7 +42,7 @@ class WorkspaceProjectionUpdaterTest {
 
     @Test
     void should_increment_project_count_on_approval() {
-        repository.save(new WorkspaceProjectCountDTO(workspaceId, 0, SubscriptionTier.FREEMIUM));
+        repository.save(new WorkspaceProjectCountDTO(workspaceId, "logoUrl", 0, SubscriptionTier.FREEMIUM));
 
         updater.on(new WorkspaceProjectCreationApproved(workspaceId, new ProjectId(UUID.randomUUID())));
 
@@ -49,6 +50,7 @@ class WorkspaceProjectionUpdaterTest {
         assertThat(projection.get()).isEqualTo(
                 new WorkspaceProjectCountDTO(
                         workspaceId,
+                        "logoUrl",
                         1,
                         SubscriptionTier.FREEMIUM
                 )
@@ -57,7 +59,7 @@ class WorkspaceProjectionUpdaterTest {
 
     @Test
     void should_update_tier_on_subscription_upgrade() {
-        repository.save(new WorkspaceProjectCountDTO(workspaceId, 2, SubscriptionTier.FREEMIUM));
+        repository.save(new WorkspaceProjectCountDTO(workspaceId, "logoUrl",2, SubscriptionTier.FREEMIUM));
 
         updater.on(new WorkspaceSubscriptionUpgraded(workspaceId, SubscriptionTier.PREMIUM));
 
@@ -65,6 +67,7 @@ class WorkspaceProjectionUpdaterTest {
         assertThat(projection.get()).isEqualTo(
                 new WorkspaceProjectCountDTO(
                         workspaceId,
+                        "logoUrl",
                         2,
                         SubscriptionTier.PREMIUM
                 )

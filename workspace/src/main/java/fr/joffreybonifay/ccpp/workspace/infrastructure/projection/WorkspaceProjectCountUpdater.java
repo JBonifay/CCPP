@@ -21,6 +21,7 @@ public class WorkspaceProjectCountUpdater implements WorkspaceProjectCountProjec
     public void on(WorkspaceCreated event) {
         var dto = new WorkspaceProjectCountDTO(
                 event.workspaceId(),
+                event.logoUrl(),
                 0,
                 event.subscriptionTier()
         );
@@ -36,6 +37,7 @@ public class WorkspaceProjectCountUpdater implements WorkspaceProjectCountProjec
 
         repository.save(new WorkspaceProjectCountDTO(
                 current.workspaceId(),
+                current.logoUrl(),
                 current.projectCount() + 1,
                 current.subscriptionTier()
         ));
@@ -50,6 +52,7 @@ public class WorkspaceProjectCountUpdater implements WorkspaceProjectCountProjec
 
         repository.save(new WorkspaceProjectCountDTO(
                 current.workspaceId(),
+                current.logoUrl(),
                 current.projectCount(),
                 event.newSubscriptionTier()
         ));

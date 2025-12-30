@@ -34,7 +34,8 @@ public class WorkspaceCommandController {
         commandBus.execute(new CreateWorkspaceCommand(
                 workspaceId,
                 RequestContext.getUserId(),
-                request.name()
+                request.name(),
+                request.logoUrl()
         ));
         return new ResponseEntity<>(new CreateWorkspaceResponse(workspaceId.value()), HttpStatus.CREATED);
     }

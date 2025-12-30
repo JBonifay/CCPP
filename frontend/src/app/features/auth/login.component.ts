@@ -119,7 +119,7 @@ export class LoginComponent {
   constructor() {
     effect(() => {
       if (this.authStore.isAuthenticated()) {
-        this.router.navigate([AppRoutePaths.home()]);
+        this.router.navigate(AppRoutePaths.selectWorkspace());
       }
     });
   }

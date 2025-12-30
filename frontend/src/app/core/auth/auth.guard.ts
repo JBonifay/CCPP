@@ -21,5 +21,9 @@ export const publicGuard: CanActivateFn = () => {
     return true;
   }
 
+  if (!authStore.hasWorkspaceSelected()) {
+    return router.createUrlTree(['/select-workspace']);
+  }
+
   return router.createUrlTree(['/app']);
 };

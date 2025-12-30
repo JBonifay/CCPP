@@ -1,3 +1,5 @@
+import {Workspace} from './workspace';
+
 export type UserRole = 'user' | 'admin';
 
 export interface User {
@@ -5,4 +7,5 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
+  workspaces: Workspace[];
 }

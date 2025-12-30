@@ -1,12 +1,13 @@
 import {Routes} from '@angular/router';
-import {authGuard, publicGuard} from './core';
+import {authGuard, needsWorkspaceGuard, publicGuard, workspaceGuard} from './core';
 import {AppLayoutComponent, PublicLayoutComponent} from './layouts';
 
 export const AppRoutePaths = {
   landing: () => [RouteTokens.LANDING],
+  selectWorkspace: () => ['/', RouteTokens.SELECT_WORKSPACE],
   home: () => ['/', RouteTokens.APP],
   projects: () => ['/', RouteTokens.APP, RouteTokens.PROJECTS],
-  project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id,],
+  project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id],
   settings: () => ['/', RouteTokens.APP, RouteTokens.SETTINGS],
   brainstorm: () => ['/', RouteTokens.APP, RouteTokens.BRAINSTORM],
 };
@@ -14,6 +15,7 @@ export const AppRoutePaths = {
 export const RouteTokens = {
   LANDING: '',
   LOGIN: 'login',
+  SELECT_WORKSPACE: 'select-workspace',
   APP: 'app',
   HOME: 'home',
   PROJECTS: 'projects',
@@ -41,9 +43,15 @@ export const routes: Routes = [
     ],
   },
   {
+    path: RouteTokens.SELECT_WORKSPACE,
+    canActivate: [needsWorkspaceGuard],
+    loadChildren: () =>
+      import('./features/workspace/workspace.routes').then(m => m.WORKSPACE_ROUTES),
+  },
+  {
     path: RouteTokens.APP,
     component: AppLayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, workspaceGuard],
     children: [
       {
         path: '',

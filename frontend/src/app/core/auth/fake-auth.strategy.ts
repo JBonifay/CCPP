@@ -1,7 +1,14 @@
 import {Injectable} from '@angular/core';
 import {delay, finalize, Observable, of, tap} from 'rxjs';
-import {AuthStrategy, STORAGE_KEYS} from './auth.strategy';
+import {AuthStrategy, RestoreResult, STORAGE_KEYS} from './auth.strategy';
 import {User} from './user';
+import {Workspace} from './workspace';
+
+const FAKE_WORKSPACES: Workspace[] = [
+  {id: 'ws-1', name: 'Personal', role: 'owner'},
+  {id: 'ws-2', name: 'Acme Corp', role: 'admin', logoUrl: '/acme-logo.png'},
+  {id: 'ws-3', name: 'Startup Inc', role: 'member'},
+];
 
 @Injectable({providedIn: 'root'})
 export class FakeAuthStrategy extends AuthStrategy {
@@ -14,13 +21,35 @@ export class FakeAuthStrategy extends AuthStrategy {
       email,
       name: email.split('@')[0],
       role: email.includes('admin') ? 'admin' : 'user',
+      workspaces: FAKE_WORKSPACES,
     };
 
     return of(user).pipe(
       delay(500),
-      tap(user => {
+      tap(u => {
         this.persistTokens();
-        this.persistUser(user);
+        this.persistUser(u);
+      })
+    );
+  }
+
+  selectWorkspace(workspaceId: string): Observable<Workspace> {
+    const storedUser = localStorage.getItem(STORAGE_KEYS.user);
+    if (!storedUser) {
+      throw new Error('No user in storage');
+    }
+
+    const user = JSON.parse(storedUser) as User;
+    const workspace = user.workspaces.find(w => w.id === workspaceId);
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    return of(workspace).pipe(
+      delay(300),
+      tap(() => {
+        this.persistTokens();
+        this.persistSelectedWorkspace(workspaceId);
       })
     );
   }
@@ -32,14 +61,25 @@ export class FakeAuthStrategy extends AuthStrategy {
     );
   }
 
-  override restore(): User | null {
+  override restore(): RestoreResult | null {
     const stored = localStorage.getItem(STORAGE_KEYS.user);
     if (!stored) {
       return null;
     }
 
     try {
-      return JSON.parse(stored) as User;
+      const user = JSON.parse(stored) as User;
+      const selectedWorkspaceId = localStorage.getItem(STORAGE_KEYS.selectedWorkspaceId);
+
+      let selectedWorkspace: Workspace | null = null;
+      if (selectedWorkspaceId) {
+        selectedWorkspace = user.workspaces.find(w => w.id === selectedWorkspaceId) ?? null;
+        if (!selectedWorkspace) {
+          localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
+        }
+      }
+
+      return {user, selectedWorkspace};
     } catch {
       this.clearStorage();
       return null;
@@ -55,9 +95,14 @@ export class FakeAuthStrategy extends AuthStrategy {
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
   }
 
+  private persistSelectedWorkspace(workspaceId: string): void {
+    localStorage.setItem(STORAGE_KEYS.selectedWorkspaceId, workspaceId);
+  }
+
   private clearStorage(): void {
     localStorage.removeItem(STORAGE_KEYS.accessToken);
     localStorage.removeItem(STORAGE_KEYS.refreshToken);
     localStorage.removeItem(STORAGE_KEYS.user);
+    localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
   }
 }

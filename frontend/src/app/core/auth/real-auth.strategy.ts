@@ -14,6 +14,7 @@ export class RealAuthStrategy extends AuthStrategy {
   private readonly api = inject(ApiService);
 
   login(email: string, password: string): Observable<User> {
+    this.clearStorage();
     return this.api.post<AuthTokens>('/auth/login', { email, password }).pipe(
       switchMap(tokens =>
         this.api.get<User>('/auth/me').pipe(

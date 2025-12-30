@@ -7,6 +7,8 @@ import {User} from './user';
 export class FakeAuthStrategy extends AuthStrategy {
 
   login(email: string, password: string): Observable<User> {
+    this.clearStorage();
+
     const user: User = {
       id: 'fake-user-id',
       email,

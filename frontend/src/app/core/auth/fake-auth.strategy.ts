@@ -61,6 +61,10 @@ export class FakeAuthStrategy extends AuthStrategy {
     );
   }
 
+  clearSelectedWorkspace(): void {
+    localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
+  }
+
   override restore(): RestoreResult | null {
     const stored = localStorage.getItem(STORAGE_KEYS.user);
     if (!stored) {

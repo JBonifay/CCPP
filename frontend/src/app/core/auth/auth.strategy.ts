@@ -18,5 +18,6 @@ export abstract class AuthStrategy {
   abstract login(email: string, password: string): Observable<User>;
   abstract logout(): Observable<void>;
   abstract selectWorkspace(workspaceId: string): Observable<Workspace>;
+  abstract clearSelectedWorkspace(): void;
   abstract restore(): RestoreResult | null;
 }

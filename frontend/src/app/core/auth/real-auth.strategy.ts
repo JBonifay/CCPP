@@ -61,6 +61,10 @@ export class RealAuthStrategy extends AuthStrategy {
     );
   }
 
+  clearSelectedWorkspace(): void {
+    localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
+  }
+
   override restore(): RestoreResult | null {
     const token = localStorage.getItem(STORAGE_KEYS.accessToken);
     const storedUser = localStorage.getItem(STORAGE_KEYS.user);

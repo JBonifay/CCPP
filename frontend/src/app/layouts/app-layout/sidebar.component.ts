@@ -51,6 +51,10 @@ export class SidebarComponent {
     this.authStore.logout();
   }
 
+  protected switchWorkspace() {
+    this.authStore.clearSelectedWorkspace();
+  }
+
   protected readonly RouteTokens = RouteTokens;
   protected readonly PrimeIcons = PrimeIcons;
   protected readonly AppRoutePaths = AppRoutePaths;

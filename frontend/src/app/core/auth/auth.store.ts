@@ -86,6 +86,11 @@ export const AuthStore = signalStore(
       )
     ),
 
+    clearSelectedWorkspace(): void {
+      authStrategy.clearSelectedWorkspace();
+      patchState(store, {selectedWorkspace: null});
+    },
+
     clearError(): void {
       patchState(store, {error: null});
     },

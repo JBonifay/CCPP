@@ -2,6 +2,7 @@ package fr.joffreybonifay.ccpp.usermanagement.application.query.model;
 
 import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +11,6 @@ public record UserDTO(
         String email,
         String passwordHash,
         String fullName,
-        Set<UUID> workspaceIds
+        List<WorkspaceDTO> workspaces
 ) {
 }

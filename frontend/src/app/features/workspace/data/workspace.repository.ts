@@ -3,7 +3,7 @@ import {Workspace} from '../../../core';
 
 export interface CreateWorkspaceRequest {
   name: string;
-  logoUrl?: string;
+  logoUrl: string;
 }
 
 export abstract class WorkspaceRepository {

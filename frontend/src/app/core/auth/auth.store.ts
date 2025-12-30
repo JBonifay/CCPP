@@ -32,7 +32,7 @@ export const AuthStore = signalStore(
     userName: computed(() => store.user()?.name ?? ''),
     userInitial: computed(() => store.user()?.name?.charAt(0).toUpperCase() ?? 'U'),
     workspaces: computed(() => store.user()?.workspaces ?? []),
-    workspaceName: computed(() => store.selectedWorkspace()?.name ?? ''),
+    workspaceName: computed(() => store.selectedWorkspace()?.workspaceName ?? ''),
   })),
 
   withMethods((store, authStrategy = inject(AuthStrategy)) => ({

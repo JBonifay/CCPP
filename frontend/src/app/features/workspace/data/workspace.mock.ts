@@ -8,10 +8,9 @@ export class WorkspaceMock implements WorkspaceRepository {
 
   create(request: CreateWorkspaceRequest): Observable<Workspace> {
     const workspace: Workspace = {
-      id: `ws-${Date.now()}`,
-      name: request.name,
-      role: 'owner',
-      logoUrl: request.logoUrl,
+      workspaceId: `ws-${Date.now()}`,
+      workspaceName: request.name,
+      workspaceLogoUrl: request.logoUrl,
     };
     return of(workspace).pipe(
       delay(300),

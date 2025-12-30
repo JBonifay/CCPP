@@ -2,6 +2,7 @@ package fr.joffreybonifay.ccpp.usermanagement.infrastructure.projection;
 
 import fr.joffreybonifay.ccpp.usermanagement.application.projection.UserProjectionHandler;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
+import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
@@ -9,7 +10,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 @Component
 public class UserProjectionUpdater implements UserProjectionHandler {
@@ -29,7 +30,7 @@ public class UserProjectionUpdater implements UserProjectionHandler {
                 event.email().value(),
                 event.passwordHash(),
                 event.fullname(),
-                new HashSet<>()
+                new ArrayList<>()
         );
         repository.save(dto);
     }
@@ -43,8 +44,12 @@ public class UserProjectionUpdater implements UserProjectionHandler {
                         "Missing projection for user " + event.userId()
                 ));
 
-        var updatedWorkspaces = new HashSet<>(current.workspaceIds());
-        updatedWorkspaces.add(event.workspaceId().value());
+        var updatedWorkspaces = current.workspaces();
+        updatedWorkspaces.add(new WorkspaceDTO(
+                event.workspaceId(),
+                event.workspaceName(),
+                event.workspaceLogoUrl()
+        ));
 
         repository.update(new UserDTO(
                 current.userId(),

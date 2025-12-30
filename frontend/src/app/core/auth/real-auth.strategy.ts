@@ -41,7 +41,7 @@ export class RealAuthStrategy extends AuthStrategy {
         this.api.get<User>('/auth/me').pipe(
           tap(user => this.persistUser(user)),
           map(user => {
-            const workspace = user.workspaces.find(w => w.id === workspaceId);
+            const workspace = user.workspaces.find(w => w.workspaceId === workspaceId);
             if (!workspace) {
               throw new Error('Workspace not found');
             }
@@ -77,7 +77,7 @@ export class RealAuthStrategy extends AuthStrategy {
 
       let selectedWorkspace: Workspace | null = null;
       if (selectedWorkspaceId) {
-        selectedWorkspace = user.workspaces.find(w => w.id === selectedWorkspaceId) ?? null;
+        selectedWorkspace = user.workspaces.find(w => w.workspaceId === selectedWorkspaceId) ?? null;
         if (!selectedWorkspace) {
           localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
         }

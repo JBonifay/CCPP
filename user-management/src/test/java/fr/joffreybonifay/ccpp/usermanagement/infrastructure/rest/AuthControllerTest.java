@@ -23,7 +23,7 @@ class AuthControllerTest extends AbstractE2eTest {
                 "joffreybonifay83@gmail.com",
                 "$2a$10$cVOeEZG28y6XGaDGVc2IIeYE4TEUyrWZGCA5hVYqQ1o5CxXc45skm",
                 "Joffrey",
-                Collections.emptySet()));
+                Collections.emptyList()));
 
         given()
                 .header("X-Workspace-Id", UUID.randomUUID().toString())

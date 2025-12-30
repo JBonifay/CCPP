@@ -1,12 +1,12 @@
 package fr.joffreybonifay.ccpp.usermanagement.application.command;
 
+import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
+import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
+import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.shared.eventstore.AggregateType;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventMetadata;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
-import fr.joffreybonifay.ccpp.shared.domain.identities.UserId;
-import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
-import fr.joffreybonifay.ccpp.shared.domain.valueobjects.Email;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
@@ -25,6 +25,8 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
     UserId userId = new UserId(UUID.randomUUID());
     WorkspaceId workspaceId = new WorkspaceId(UUID.randomUUID());
+    String workspaceName = "Test workspace";
+    String workspaceLogoUrl = "logo_url";
 
     UUID commandId = UUID.randomUUID();
     UUID correlationId = UUID.randomUUID();
@@ -41,6 +43,8 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
         handler.handle(new AssignUserToWorkspaceCommand(
                 commandId,
                 workspaceId,
+                workspaceName,
+                workspaceLogoUrl,
                 userId,
                 correlationId,
                 null
@@ -48,7 +52,7 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
 
         assertThat(eventStore.loadEvents(userId.value()))
                 .last()
-                .isEqualTo(new UserAssignedToWorkspace(userId, workspaceId));
+                .isEqualTo(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
 
     }
 
@@ -57,6 +61,8 @@ class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
         assertThatThrownBy(() -> handler.handle(new AssignUserToWorkspaceCommand(
                 commandId,
                 workspaceId,
+                workspaceName,
+                workspaceLogoUrl,
                 new UserId(UUID.randomUUID()),
                 correlationId,
                 null

@@ -11,7 +11,7 @@ import {AppRoutePaths} from '../../../app.routes';
   imports: [Card, Button, Message],
   template: `
     <div class="workspace-container">
-      <p-card styleClass="workspace-card">
+      <p-card class="workspace-card">
         <ng-template #header>
           <div class="workspace-header">
             <h2>Select Workspace</h2>
@@ -24,21 +24,20 @@ import {AppRoutePaths} from '../../../app.routes';
         }
 
         <div class="workspace-list">
-          @for (workspace of authStore.workspaces(); track workspace.id) {
+          @for (workspace of authStore.workspaces(); track workspace.workspaceId) {
             <div
               class="workspace-item"
               [class.loading]="authStore.loading()"
               (click)="selectWorkspace(workspace)"
             >
               <div class="workspace-info">
-                @if (workspace.logoUrl) {
-                  <img [src]="workspace.logoUrl" [alt]="workspace.name" class="workspace-logo"/>
+                @if (workspace.workspaceLogoUrl) {
+                  <img [src]="workspace.workspaceLogoUrl" [alt]="workspace.workspaceName" class="workspace-logo"/>
                 } @else {
-                  <div class="workspace-initial">{{ workspace.name.charAt(0).toUpperCase() }}</div>
+                  <div class="workspace-initial">{{ workspace.workspaceName.charAt(0).toUpperCase() }}</div>
                 }
                 <div class="workspace-details">
-                  <span class="workspace-name">{{ workspace.name }}</span>
-                  <span class="workspace-role">{{ workspace.role }}</span>
+                  <span class="workspace-name">{{ workspace.workspaceName }}</span>
                 </div>
               </div>
               <i class="pi pi-chevron-right"></i>
@@ -184,7 +183,7 @@ export class SelectWorkspace {
     if (this.authStore.loading()) {
       return;
     }
-    this.authStore.selectWorkspace(workspace.id);
+    this.authStore.selectWorkspace(workspace.workspaceId);
   }
 
   createWorkspace(): void {

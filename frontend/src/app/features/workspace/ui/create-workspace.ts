@@ -162,12 +162,12 @@ export class CreateWorkspace {
 
     this.workspaceRepository.create({
       name: this.name.trim(),
-      logoUrl: this.logoUrl.trim() || undefined,
+      logoUrl: this.logoUrl.trim() || '',
     }).pipe(
       finalize(() => this.loading = false)
     ).subscribe({
       next: (workspace) => {
-        this.authStore.selectWorkspace(workspace.id);
+        this.authStore.selectWorkspace(workspace.workspaceId);
       },
       error: (err) => {
         this.error = err?.message ?? 'Failed to create workspace';

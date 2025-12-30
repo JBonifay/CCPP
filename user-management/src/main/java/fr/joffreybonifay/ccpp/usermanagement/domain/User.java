@@ -34,8 +34,8 @@ public class User extends AggregateRoot {
         return new User(userEvents);
     }
 
-    public void assignToWorkspace(WorkspaceId workspaceId) {
-        raiseEvent(new UserAssignedToWorkspace(new UserId(aggregateId), workspaceId));
+    public void assignToWorkspace(WorkspaceId workspaceId, String workspaceName, String workspaceLogoUrl) {
+        raiseEvent(new UserAssignedToWorkspace(new UserId(aggregateId), workspaceId, workspaceName, workspaceLogoUrl));
     }
 
     @Override

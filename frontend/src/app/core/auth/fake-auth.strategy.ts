@@ -5,9 +5,9 @@ import {User} from './user';
 import {Workspace} from './workspace';
 
 const FAKE_WORKSPACES: Workspace[] = [
-  {id: 'ws-1', name: 'Personal', role: 'owner'},
-  {id: 'ws-2', name: 'Acme Corp', role: 'admin', logoUrl: '/acme-logo.png'},
-  {id: 'ws-3', name: 'Startup Inc', role: 'member'},
+  {workspaceId: 'ws-1', workspaceName: 'Personal', workspaceLogoUrl: ''},
+  {workspaceId: 'ws-2', workspaceName: 'Acme Corp', workspaceLogoUrl: '/acme-logo.png'},
+  {workspaceId: 'ws-3', workspaceName: 'Startup Inc', workspaceLogoUrl: ''},
 ];
 
 @Injectable({providedIn: 'root'})
@@ -40,7 +40,7 @@ export class FakeAuthStrategy extends AuthStrategy {
     }
 
     const user = JSON.parse(storedUser) as User;
-    const workspace = user.workspaces.find(w => w.id === workspaceId);
+    const workspace = user.workspaces.find(w => w.workspaceId === workspaceId);
     if (!workspace) {
       throw new Error('Workspace not found');
     }
@@ -77,7 +77,7 @@ export class FakeAuthStrategy extends AuthStrategy {
 
       let selectedWorkspace: Workspace | null = null;
       if (selectedWorkspaceId) {
-        selectedWorkspace = user.workspaces.find(w => w.id === selectedWorkspaceId) ?? null;
+        selectedWorkspace = user.workspaces.find(w => w.workspaceId === selectedWorkspaceId) ?? null;
         if (!selectedWorkspace) {
           localStorage.removeItem(STORAGE_KEYS.selectedWorkspaceId);
         }

@@ -45,20 +45,17 @@ export const BrainstormStore = signalStore(
 
     changeColor: rxMethod<{ id: string; color: string }>(
       pipe(
-        tap(({id, color}) => {
-          // Optimistic update
-          const previousIdeas = store.ideas();
-          const updatedIdeas = previousIdeas.map(idea =>
-            idea.id === id ? {...idea, color} : idea
-          );
-          patchState(store, {ideas: updatedIdeas, error: null});
-        }),
+        tap(() => patchState(store, {loading: true, error: null})),
         switchMap(({id, color}) =>
           brainstormIdeaRepository.changeColor(id, color).pipe(
+            tap(() => {
+              const updatedIdeas = store.ideas().map(idea =>
+                idea.id === id ? {...idea, color} : idea
+              );
+              patchState(store, {ideas: updatedIdeas, loading: false});
+            }),
             catchError(() => {
-              // Rollback on failure
-              const previousIdeas = store.ideas(); // This assumes you saved previousIdeas in tap above
-              patchState(store, {ideas: previousIdeas, error: 'Failed to change color'});
+              patchState(store, {loading: false, error: 'Failed to change color'});
               return EMPTY;
             })
           )
@@ -68,18 +65,15 @@ export const BrainstormStore = signalStore(
 
     deleteIdea: rxMethod<string>(
       pipe(
-        tap((ideaId: string) => {
-          // Optimistic update
-          const previousIdeas = store.ideas();
-          const updatedIdeas = previousIdeas.filter(idea => idea.id !== ideaId);
-          patchState(store, {ideas: updatedIdeas, error: null});
-        }),
+        tap(() => patchState(store, {loading: true, error: null})),
         switchMap((ideaId: string) =>
           brainstormIdeaRepository.deleteIdea(ideaId).pipe(
+            tap(() => {
+              const updatedIdeas = store.ideas().filter(idea => idea.id !== ideaId);
+              patchState(store, {ideas: updatedIdeas, loading: false});
+            }),
             catchError(() => {
-              // Rollback on failure
-              const previousIdeas = store.ideas(); // or save it in tap if needed
-              patchState(store, {ideas: previousIdeas, error: 'Failed to delete idea'});
+              patchState(store, {loading: false, error: 'Failed to delete idea'});
               return EMPTY;
             })
           )
@@ -89,16 +83,17 @@ export const BrainstormStore = signalStore(
 
     updateIdea: rxMethod<{ id: string; title: string; description: string }>(
       pipe(
-        tap(({id, title, description}) => {
-          const updatedIdeas = store.ideas().map(idea =>
-            idea.id === id ? {...idea, title, description} : idea
-          );
-          patchState(store, {ideas: updatedIdeas, error: null});
-        }),
+        tap(() => patchState(store, {loading: true, error: null})),
         switchMap(({id, title, description}) =>
           brainstormIdeaRepository.updateIdea(id, title, description).pipe(
+            tap(() => {
+              const updatedIdeas = store.ideas().map(idea =>
+                idea.id === id ? {...idea, title, description} : idea
+              );
+              patchState(store, {ideas: updatedIdeas, loading: false});
+            }),
             catchError(() => {
-              patchState(store, {error: 'Failed to update idea'});
+              patchState(store, {loading: false, error: 'Failed to update idea'});
               return EMPTY;
             })
           )
@@ -108,14 +103,15 @@ export const BrainstormStore = signalStore(
 
     createIdea: rxMethod<Omit<BrainstormIdea, 'position'>>(
       pipe(
-        tap((idea) => {
-          const newIdea: BrainstormIdea = {...idea, position: {x: 100, y: 100}};
-          patchState(store, {ideas: [...store.ideas(), newIdea], error: null});
-        }),
+        tap(() => patchState(store, {loading: true, error: null})),
         switchMap((idea) =>
           brainstormIdeaRepository.createIdea(idea).pipe(
+            tap(() => {
+              const newIdea: BrainstormIdea = {...idea, position: {x: 100, y: 100}};
+              patchState(store, {ideas: [...store.ideas(), newIdea], loading: false});
+            }),
             catchError(() => {
-              patchState(store, {error: 'Failed to create idea'});
+              patchState(store, {loading: false, error: 'Failed to create idea'});
               return EMPTY;
             })
           )

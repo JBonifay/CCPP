@@ -29,7 +29,18 @@
   <ul class="mt-auto mb-2 w-full">
     <li class="w-full">
       <a
-        [routerLink]="['/', RouteTokens.APP, RouteTokens.SETTINGS]"
+        [routerLink]="AppRoutePaths.selectWorkspace()"
+        routerLinkActive="bg-primary-500 text-white"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300 mx-auto"
+      >
+        <i [class]="PrimeIcons.SITEMAP" style="font-size: 1.2rem"></i>
+      </a>
+    </li>
+
+    <li class="w-full">
+      <a
+        [routerLink]="AppRoutePaths.settings()"
         routerLinkActive="bg-primary-500 text-white"
         [routerLinkActiveOptions]="{ exact: true }"
         class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300 mx-auto"
@@ -39,7 +50,7 @@
     </li>
     <li class="w-full">
       <a
-        [routerLink]="['/']"
+        [routerLink]="AppRoutePaths.landing()"
         (click)="logout()"
         class="h-16 w-16 flex items-center justify-center hover:text-white hover:bg-primary-300 mx-auto"
       >

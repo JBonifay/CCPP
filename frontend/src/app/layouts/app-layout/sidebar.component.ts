@@ -53,4 +53,5 @@ export class SidebarComponent {
 
   protected readonly RouteTokens = RouteTokens;
   protected readonly PrimeIcons = PrimeIcons;
+  protected readonly AppRoutePaths = AppRoutePaths;
 }

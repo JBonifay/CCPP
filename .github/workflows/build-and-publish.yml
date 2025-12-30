@@ -55,13 +55,13 @@ jobs:
         run: |
           ALL_MODULES=$(grep -oP '(?<=<module>).*?(?=</module>)' pom.xml | sed 's/[[:space:]]//g' | grep -v "shared")
           CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
+
           # Check for global changes
           GLOBAL_CHANGE=false
           if echo "$CHANGED_FILES" | grep -qE "pom.xml|shared/|.github/workflows/build-and-publish.yml"; then
             GLOBAL_CHANGE=true
           fi
-          
+
           TO_BUILD=()
           if [ "$GLOBAL_CHANGE" = "true" ]; then
             echo "Global change detected, building all modules."
@@ -75,7 +75,7 @@ jobs:
               fi
             done
           fi
-          
+
           if [ ${#TO_BUILD[@]} -eq 0 ]; then
             echo "No modules changed."
             echo "modules=[]" >> $GITHUB_OUTPUT
@@ -86,28 +86,12 @@ jobs:
           fi
 
   test:
-    name: Run Tests
+    name: Test ${{ matrix.module }}
+    needs: discover-modules
+    if: needs.discover-modules.outputs.modules != '[]'
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '25'
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Run tests
-        run: mvn clean test
-
-  build-and-publish:
-    name: Build and Publish Images
-    needs: [test, discover-modules]
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' && needs.discover-modules.outputs.modules != '[]'
     strategy:
+      fail-fast: false
       matrix:
         module: ${{ fromJson(needs.discover-modules.outputs.modules) }}
     steps:
@@ -121,8 +105,34 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build and install all modules (including shared)
-        run: mvn clean package -DskipTests
+      - name: Install shared module
+        run: mvn install -pl shared -am -DskipTests -q
+
+      - name: Run tests for ${{ matrix.module }}
+        run: mvn test -pl ${{ matrix.module }} -am
+
+  deploy:
+    name: Deploy ${{ matrix.module }}
+    needs: [test, discover-modules]
+    if: github.event_name != 'pull_request' && needs.discover-modules.outputs.modules != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: ${{ fromJson(needs.discover-modules.outputs.modules) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build ${{ matrix.module }}
+        run: mvn package -pl ${{ matrix.module }} -am -DskipTests -q
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -143,7 +153,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix={{branch}}-
 
-      - name: Build and push Docker image for ${{ matrix.module }}
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./${{ matrix.module }}

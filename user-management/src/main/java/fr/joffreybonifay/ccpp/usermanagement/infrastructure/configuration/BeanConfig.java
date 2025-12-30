@@ -7,6 +7,7 @@ import fr.joffreybonifay.ccpp.shared.command.SimpleCommandBus;
 import fr.joffreybonifay.ccpp.shared.eventstore.EventStore;
 import fr.joffreybonifay.ccpp.shared.query.QueryBus;
 import fr.joffreybonifay.ccpp.shared.query.SimpleQueryBus;
+import fr.joffreybonifay.ccpp.shared.rest.TenantContextFilter;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.AssignUserToWorkspaceCommand;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.AssignUserToWorkspaceCommandHandler;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.RegisterNewUserCommand;
@@ -19,6 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class BeanConfig {
+
+    @Bean
+    TenantContextFilter tenantContextFilter() {
+        return new TenantContextFilter();
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

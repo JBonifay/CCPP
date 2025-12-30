@@ -5,6 +5,7 @@ import {AppLayoutComponent, PublicLayoutComponent} from './layouts';
 export const AppRoutePaths = {
   landing: () => [RouteTokens.LANDING],
   selectWorkspace: () => ['/', RouteTokens.SELECT_WORKSPACE],
+  createWorkspace: () => ['/', RouteTokens.SELECT_WORKSPACE, RouteTokens.CREATE],
   home: () => ['/', RouteTokens.APP],
   projects: () => ['/', RouteTokens.APP, RouteTokens.PROJECTS],
   project: (id: string | number) => ['/', RouteTokens.APP, RouteTokens.PROJECTS, id],
@@ -16,6 +17,7 @@ export const RouteTokens = {
   LANDING: '',
   LOGIN: 'login',
   SELECT_WORKSPACE: 'select-workspace',
+  CREATE: 'create',
   APP: 'app',
   HOME: 'home',
   PROJECTS: 'projects',

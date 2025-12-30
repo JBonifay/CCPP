@@ -20,7 +20,8 @@ public class CreateWorkspaceCommandHandler implements CommandHandler<CreateWorks
         Workspace workspace = Workspace.create(
                 createWorkspaceCommand.workspaceId(),
                 createWorkspaceCommand.userId(),
-                createWorkspaceCommand.workspaceName()
+                createWorkspaceCommand.workspaceName(),
+                createWorkspaceCommand.logoUrl()
         );
 
         eventStore.saveEvents(

@@ -8,6 +8,7 @@ public record WorkspaceCreated(
         WorkspaceId workspaceId,
         UserId userId,
         String workspaceName,
+        String logoUrl,
         SubscriptionTier subscriptionTier
 ) implements DomainEvent {
 }

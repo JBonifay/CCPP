@@ -37,19 +37,19 @@ export class RealAuthStrategy extends AuthStrategy {
       workspaceId,
     }).pipe(
       tap(tokens => this.persistTokens(tokens)),
-      map(() => {
-        const storedUser = localStorage.getItem(STORAGE_KEYS.user);
-        if (!storedUser) {
-          throw new Error('No user in storage');
-        }
-        const user = JSON.parse(storedUser) as User;
-        const workspace = user.workspaces.find(w => w.id === workspaceId);
-        if (!workspace) {
-          throw new Error('Workspace not found');
-        }
-        this.persistSelectedWorkspace(workspaceId);
-        return workspace;
-      })
+      switchMap(() =>
+        this.api.get<User>('/auth/me').pipe(
+          tap(user => this.persistUser(user)),
+          map(user => {
+            const workspace = user.workspaces.find(w => w.id === workspaceId);
+            if (!workspace) {
+              throw new Error('Workspace not found');
+            }
+            this.persistSelectedWorkspace(workspaceId);
+            return workspace;
+          })
+        )
+      )
     );
   }
 

@@ -1,13 +1,14 @@
 import {Component, effect, inject} from '@angular/core';
 import {Router} from '@angular/router';
 import {Card} from 'primeng/card';
+import {Button} from 'primeng/button';
 import {Message} from 'primeng/message';
 import {AuthStore, Workspace} from '../../../core';
 import {AppRoutePaths} from '../../../app.routes';
 
 @Component({
   selector: 'app-select-workspace',
-  imports: [Card, Message],
+  imports: [Card, Button, Message],
   template: `
     <div class="workspace-container">
       <p-card styleClass="workspace-card">
@@ -43,8 +44,16 @@ import {AppRoutePaths} from '../../../app.routes';
               <i class="pi pi-chevron-right"></i>
             </div>
           } @empty {
-            <p-message severity="warn" text="No workspaces available" styleClass="w-full"/>
+            <p-message severity="info" text="No workspaces yet. Create your first one!" styleClass="w-full"/>
           }
+
+          <p-button
+            label="Create Workspace"
+            icon="pi pi-plus"
+            [outlined]="true"
+            styleClass="w-full mt-3"
+            (onClick)="createWorkspace()"
+          />
         </div>
       </p-card>
     </div>
@@ -153,6 +162,10 @@ import {AppRoutePaths} from '../../../app.routes';
     .mb-3 {
       margin-bottom: 1rem;
     }
+
+    .mt-3 {
+      margin-top: 1rem;
+    }
   `,
 })
 export class SelectWorkspace {
@@ -172,5 +185,9 @@ export class SelectWorkspace {
       return;
     }
     this.authStore.selectWorkspace(workspace.id);
+  }
+
+  createWorkspace(): void {
+    this.router.navigate(AppRoutePaths.createWorkspace());
   }
 }

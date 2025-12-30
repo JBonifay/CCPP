@@ -11,16 +11,13 @@ public record CreateWorkspaceCommand(
         WorkspaceId workspaceId,
         UserId userId,
         String workspaceName,
+        String logoUrl,
         UUID correlationId,
         UUID causationId
 ) implements Command {
 
-    public CreateWorkspaceCommand(WorkspaceId workspaceId, UserId userId, String workspaceName, UUID correlationId, UUID causationId) {
-        this(UUID.randomUUID(), workspaceId, userId, workspaceName, correlationId, causationId);
-    }
-
-    public CreateWorkspaceCommand(WorkspaceId workspaceId, UserId userId, String workspaceName) {
-        this(UUID.randomUUID(), workspaceId, userId, workspaceName, null, null);
+    public CreateWorkspaceCommand(WorkspaceId workspaceId, UserId userId, String workspaceName, String logoUrl) {
+        this(UUID.randomUUID(), workspaceId, userId, workspaceName, logoUrl, null, null);
     }
 
     @Override

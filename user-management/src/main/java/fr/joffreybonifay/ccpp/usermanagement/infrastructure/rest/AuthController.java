@@ -55,7 +55,7 @@ public class AuthController {
                 UUID.randomUUID(),
                 null
         ));
-        AuthTokens tokens = tokenService.issue(userId, request.email());
+        AuthTokens tokens = tokenService.issue(userId);
         return ResponseEntity.ok(tokens);
     }
 
@@ -64,7 +64,6 @@ public class AuthController {
         // 1. Extract Identity from current Refresh Token
         Claims claims = tokenService.parseRefreshToken(request.refreshToken());
         UUID userId = UUID.fromString(claims.getSubject());
-        String email = claims.get("email", String.class);
 
         // 2. IMPORTANT: Verify user actually belongs to this workspace
         // This prevents "token injection" where a user tries to access a workspace they don't own.
@@ -72,7 +71,7 @@ public class AuthController {
         // if (!hasAccess) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
         // 3. Issue the context-aware tokens
-        AuthTokens tokens = tokenService.issue(userId, email, request.workspaceId());
+        AuthTokens tokens = tokenService.issue(userId, request.workspaceId());
 
         return ResponseEntity.ok(tokens);
     }
@@ -88,7 +87,7 @@ public class AuthController {
 
         // Conventional: Always start with a "Neutral" token on login
         // unless you want to implement "Remember Last Workspace" logic.
-        AuthTokens tokens = tokenService.issue(user.userId().value(), user.email());
+        AuthTokens tokens = tokenService.issue(user.userId().value());
 
         return ResponseEntity.ok(tokens);
     }
@@ -98,14 +97,13 @@ public class AuthController {
         String refreshToken = body.get("refreshToken");
         Claims claims = tokenService.parseRefreshToken(refreshToken);
         String userId = claims.getSubject();
-        String email = claims.get("email", String.class);
 
         // IMPORTANT: If the refresh token already had a workspaceId,
         // carry it over to the new access token so the user doesn't lose context.
         String workspaceIdStr = claims.get("workspaceId", String.class);
         UUID workspaceId = (workspaceIdStr != null) ? UUID.fromString(workspaceIdStr) : null;
 
-        AuthTokens tokens = tokenService.issue(UUID.fromString(userId), email, workspaceId);
+        AuthTokens tokens = tokenService.issue(UUID.fromString(userId), workspaceId);
 
         return ResponseEntity.ok(tokens);
     }

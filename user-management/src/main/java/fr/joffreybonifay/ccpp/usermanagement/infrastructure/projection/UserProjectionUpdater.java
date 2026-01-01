@@ -44,7 +44,15 @@ public class UserProjectionUpdater implements UserProjectionHandler {
                         "Missing projection for user " + event.userId()
                 ));
 
-        var updatedWorkspaces = current.workspaces();
+        // Check if workspace already exists
+        boolean alreadyExists = current.workspaces().stream()
+                .anyMatch(w -> w.workspaceId().equals(event.workspaceId()));
+
+        if (alreadyExists) {
+            return;
+        }
+
+        var updatedWorkspaces = new ArrayList<>(current.workspaces());
         updatedWorkspaces.add(new WorkspaceDTO(
                 event.workspaceId(),
                 event.workspaceName(),

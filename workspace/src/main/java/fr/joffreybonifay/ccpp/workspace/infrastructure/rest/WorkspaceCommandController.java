@@ -37,6 +37,10 @@ public class WorkspaceCommandController {
                 request.name(),
                 request.logoUrl()
         ));
-        return new ResponseEntity<>(new CreateWorkspaceResponse(workspaceId.value()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CreateWorkspaceResponse(
+                workspaceId.value().toString(),
+                request.name(),
+                request.logoUrl()
+        ), HttpStatus.CREATED);
     }
 }

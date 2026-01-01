@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {WorkspaceConfigStore} from '../store/workspace-config.store';
 import {AuthStore, UserRole} from '../../../core';
 import {UserStore} from '../store/user.store';
@@ -75,15 +75,16 @@ import {TableModule} from 'primeng/table';
     }
   `
 })
-export class SettingsAdminComponent {
+export class SettingsAdminComponent implements OnInit {
   protected readonly authStore = inject(AuthStore);
   protected readonly workspaceConfigStore = inject(WorkspaceConfigStore);
   protected readonly userStore = inject(UserStore);
 
   fontOptions = ['Rubik', 'Inter', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Poppins'];
-  roleOptions: UserRole[] = ['admin', 'user'];
+  roleOptions: UserRole[] = ['ADMIN', 'USER'];
 
   ngOnInit() {
+    console.log(this.authStore.selectedWorkspace()?.userRole);
     if (this.authStore.isAdmin()) {
       this.userStore.loadUsers();
     }

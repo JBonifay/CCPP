@@ -115,7 +115,6 @@ public class AuthController {
                 userDTO.userId(),
                 userDTO.email(),
                 userDTO.fullName(),
-                "user",
                 userDTO.workspaces()
         ));
     }

@@ -7,10 +7,10 @@ import {UserRole} from '../../../core';
 export class UserMock implements UserRepository {
 
   private users: UserListItem[] = [
-    {id: '1', email: 'admin@example.com', name: 'Admin User', role: 'admin'},
-    {id: '2', email: 'john@example.com', name: 'John Doe', role: 'user'},
-    {id: '3', email: 'jane@example.com', name: 'Jane Smith', role: 'user'},
-    {id: '4', email: 'bob@example.com', name: 'Bob Wilson', role: 'user'},
+    {id: '1', email: 'admin@example.com', name: 'Admin User', role: 'ADMIN'},
+    {id: '2', email: 'john@example.com', name: 'John Doe', role: 'USER'},
+    {id: '3', email: 'jane@example.com', name: 'Jane Smith', role: 'USER'},
+    {id: '4', email: 'bob@example.com', name: 'Bob Wilson', role: 'USER'},
   ];
 
   getAll(): Observable<UserListItem[]> {

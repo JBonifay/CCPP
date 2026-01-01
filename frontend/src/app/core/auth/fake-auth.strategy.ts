@@ -5,9 +5,9 @@ import {User} from './user';
 import {Workspace} from './workspace';
 
 const FAKE_WORKSPACES: Workspace[] = [
-  {workspaceId: 'ws-1', workspaceName: 'Personal', workspaceLogoUrl: ''},
-  {workspaceId: 'ws-2', workspaceName: 'Acme Corp', workspaceLogoUrl: '/acme-logo.png'},
-  {workspaceId: 'ws-3', workspaceName: 'Startup Inc', workspaceLogoUrl: ''},
+  {workspaceId: 'ws-1', workspaceName: 'Personal', workspaceLogoUrl: '', userRole: 'ADMIN'},
+  {workspaceId: 'ws-2', workspaceName: 'Acme Corp', workspaceLogoUrl: '/acme-logo.png', userRole: 'USER'},
+  {workspaceId: 'ws-3', workspaceName: 'Startup Inc', workspaceLogoUrl: '', userRole: 'USER'},
 ];
 
 @Injectable({providedIn: 'root'})
@@ -20,7 +20,6 @@ export class FakeAuthStrategy extends AuthStrategy {
       id: 'fake-user-id',
       email,
       name: email.split('@')[0],
-      role: email.includes('admin') ? 'admin' : 'user',
       workspaces: FAKE_WORKSPACES,
     };
 

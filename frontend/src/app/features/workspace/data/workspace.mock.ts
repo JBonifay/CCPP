@@ -11,6 +11,7 @@ export class WorkspaceMock implements WorkspaceRepository {
       workspaceId: `ws-${Date.now()}`,
       workspaceName: request.name,
       workspaceLogoUrl: request.logoUrl,
+      userRole: 'ADMIN'
     };
     return of(workspace).pipe(
       delay(300),

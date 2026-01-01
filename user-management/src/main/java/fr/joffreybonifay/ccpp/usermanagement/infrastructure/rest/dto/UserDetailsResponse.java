@@ -9,19 +9,18 @@ public record UserDetailsResponse(
         String id,
         String email,
         String name,
-        String role,
         List<WorkspaceResponse> workspaces
 ) {
-    public UserDetailsResponse(UserId userId, String email, String name, String role, List<WorkspaceDTO> workspaces) {
+    public UserDetailsResponse(UserId userId, String email, String name, List<WorkspaceDTO> workspaces) {
         this(
                 userId.value().toString(),
                 email,
                 name,
-                role,
                 workspaces.stream().map(workspaceDTO -> new WorkspaceResponse(
                         workspaceDTO.workspaceId().value().toString(),
                         workspaceDTO.workspaceName(),
-                        workspaceDTO.workspaceLogoUrl()
+                        workspaceDTO.workspaceLogoUrl(),
+                        workspaceDTO.userRole()
                 )).toList()
         );
     }

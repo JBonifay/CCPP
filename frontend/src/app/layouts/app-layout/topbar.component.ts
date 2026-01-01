@@ -5,6 +5,7 @@ import {ToggleButton} from 'primeng/togglebutton';
 import {FormsModule} from '@angular/forms';
 import {VisitorModeService} from '../../shared/services/visitor-mode.service';
 import {WorkspaceConfigStore} from '../../features/settings/store/workspace-config.store';
+import {AuthStore} from '../../core';
 
 @Component({
   selector: 'app-topbar',
@@ -19,6 +20,7 @@ import {WorkspaceConfigStore} from '../../features/settings/store/workspace-conf
 export class TopbarComponent implements OnInit {
   readonly visitorMode = inject(VisitorModeService);
   readonly workspaceConfigStore = inject(WorkspaceConfigStore);
+  readonly authStore = inject(AuthStore);
 
   ngOnInit() {
     this.workspaceConfigStore.loadConfig();

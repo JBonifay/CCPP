@@ -10,19 +10,18 @@
   <ul aria-label="top bar right" aria-orientation="horizontal" class="px-8 flex items-center gap-3">
     <li>
       <p-toggleButton
+        class="h-8"
         [ngModel]="visitorMode.isActive()"
         (ngModelChange)="visitorMode.toggle()"
         onIcon="pi pi-eye-slash"
         offIcon="pi pi-eye"
-        onLabel="Visitor"
-        offLabel="Visitor"
+        onLabel="Hidden"
+        offLabel="Hide"
       />
     </li>
 
-    <li class="">
-      <p-overlay-badge value="4" severity="danger" class="inline-flex">
-        <p-avatar label="U"/>
-      </p-overlay-badge>
+    <li>
+      <p-avatar [label]="authStore.userName()?.slice(0, 2)" shape="circle"/>
     </li>
   </ul>
 </nav>

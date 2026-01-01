@@ -30,7 +30,6 @@ export const AuthStore = signalStore(
     hasWorkspaceSelected: computed(() => store.selectedWorkspace() !== null),
     isAdmin: computed(() => store.selectedWorkspace()?.userRole === 'ADMIN'),
     userName: computed(() => store.user()?.name ?? ''),
-    userInitial: computed(() => store.user()?.name?.charAt(0).toUpperCase() ?? 'U'),
     workspaces: computed(() => store.user()?.workspaces ?? []),
     workspaceName: computed(() => store.selectedWorkspace()?.workspaceName ?? ''),
   })),

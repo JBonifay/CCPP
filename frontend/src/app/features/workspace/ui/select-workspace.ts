@@ -161,8 +161,9 @@ export class SelectWorkspace implements OnInit {
     if (this.authStore.loading()) {
       return;
     }
-    this.authStore.selectWorkspace(workspace.workspaceId);
-    this.router.navigate(AppRoutePaths.home());
+    this.authStore.selectWorkspace$(workspace.workspaceId).subscribe({
+      next: () => this.router.navigate(AppRoutePaths.home())
+    });
   }
 
   createWorkspace(): void {

@@ -54,23 +54,17 @@ export const AuthStore = signalStore(
       )
     ),
 
-    selectWorkspace: rxMethod<string>(
-      pipe(
-        tap(() => patchState(store, {loading: true, error: null})),
-        switchMap((workspaceId) =>
-          authStrategy.selectWorkspace(workspaceId).pipe(
-            tap((workspace) => patchState(store, {selectedWorkspace: workspace, loading: false})),
-            catchError((error) => {
-              patchState(store, {
-                loading: false,
-                error: error?.message ?? 'Failed to select workspace.',
-              });
-              return EMPTY;
-            })
-          )
-        )
-      )
-    ),
+    // Observable for chaining (for select-workspace with navigation)
+    selectWorkspace$(workspaceId: string) {
+      patchState(store, {loading: true, error: null});
+      return authStrategy.selectWorkspace(workspaceId).pipe(
+        tap((workspace) => patchState(store, {selectedWorkspace: workspace, loading: false})),
+        catchError((error) => {
+          patchState(store, {loading: false, error: error?.message ?? 'Failed to select workspace.'});
+          return EMPTY;
+        })
+      );
+    },
 
     logout: rxMethod<void>(
       pipe(

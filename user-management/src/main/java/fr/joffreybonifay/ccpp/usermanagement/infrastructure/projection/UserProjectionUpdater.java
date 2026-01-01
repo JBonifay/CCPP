@@ -56,7 +56,8 @@ public class UserProjectionUpdater implements UserProjectionHandler {
         updatedWorkspaces.add(new WorkspaceDTO(
                 event.workspaceId(),
                 event.workspaceName(),
-                event.workspaceLogoUrl()
+                event.workspaceLogoUrl(),
+                event.userRole()
         ));
 
         repository.update(new UserDTO(

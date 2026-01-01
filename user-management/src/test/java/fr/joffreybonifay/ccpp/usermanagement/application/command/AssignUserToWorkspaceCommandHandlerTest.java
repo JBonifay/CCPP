@@ -10,6 +10,7 @@ import fr.joffreybonifay.ccpp.shared.eventstore.impl.InMemoryEventStore;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -46,13 +47,14 @@ class AssignUserToWorkspaceCommandHandlerTest {
                 workspaceName,
                 workspaceLogoUrl,
                 userId,
+                UserRole.ADMIN,
                 correlationId,
                 null
         ));
 
         assertThat(eventStore.loadEvents(userId.value()))
                 .last()
-                .isEqualTo(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
+                .isEqualTo(new UserAssignedToWorkspace(userId, UserRole.ADMIN, workspaceId, workspaceName, workspaceLogoUrl));
 
     }
 
@@ -64,6 +66,7 @@ class AssignUserToWorkspaceCommandHandlerTest {
                 workspaceName,
                 workspaceLogoUrl,
                 new UserId(UUID.randomUUID()),
+                UserRole.USER,
                 correlationId,
                 null
         )))

@@ -8,6 +8,7 @@ import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDT
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspace;
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.query.InMemoryUserReadRepository;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,6 @@ class UserProjectionUpdaterTest {
 
     @Test
     void should_create_projection_on_user_created() {
-
         updater.on(new UserCreated(
                 userId,
                 new Email("john@example.com"),
@@ -61,12 +61,12 @@ class UserProjectionUpdaterTest {
     void should_add_workspace_on_user_assigned_to_workspace() {
         givenUserCreated();
 
-        updater.on(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
+        updater.on(new UserAssignedToWorkspace(userId, UserRole.USER, workspaceId, workspaceName, workspaceLogoUrl));
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();
         assertThat(projection.get().workspaces()).containsExactly(
-                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl)
+                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl, UserRole.USER)
         );
     }
 
@@ -75,14 +75,14 @@ class UserProjectionUpdaterTest {
         givenUserCreated();
         var workspaceId2 = new WorkspaceId(UUID.randomUUID());
 
-        updater.on(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
-        updater.on(new UserAssignedToWorkspace(userId, workspaceId2, "otherName", "otherLogoUrl"));
+        updater.on(new UserAssignedToWorkspace(userId, UserRole.USER, workspaceId, workspaceName, workspaceLogoUrl));
+        updater.on(new UserAssignedToWorkspace(userId, UserRole.ADMIN, workspaceId2, "otherName", "otherLogoUrl"));
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();
         assertThat(projection.get().workspaces()).containsExactly(
-                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl),
-                new WorkspaceDTO(workspaceId2, "otherName", "otherLogoUrl")
+                new WorkspaceDTO(workspaceId, workspaceName, workspaceLogoUrl, UserRole.USER),
+                new WorkspaceDTO(workspaceId2, "otherName", "otherLogoUrl", UserRole.ADMIN)
         );
     }
 

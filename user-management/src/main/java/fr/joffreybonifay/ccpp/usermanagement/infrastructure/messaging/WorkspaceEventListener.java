@@ -8,6 +8,7 @@ import fr.joffreybonifay.ccpp.shared.eventstore.EventEnvelope;
 import fr.joffreybonifay.ccpp.shared.indempotency.ProcessedEventRepository;
 import fr.joffreybonifay.ccpp.shared.messaging.AbstractEventListener;
 import fr.joffreybonifay.ccpp.usermanagement.application.command.AssignUserToWorkspaceCommand;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,7 @@ public class WorkspaceEventListener extends AbstractEventListener {
                         workspaceCreated.workspaceName(),
                         workspaceCreated.logoUrl(),
                         workspaceCreated.userId(),
+                        UserRole.ADMIN,
                         envelope.correlationId(),
                         envelope.causationId()
                 ));

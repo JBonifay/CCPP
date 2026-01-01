@@ -5,6 +5,7 @@ import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.usermanagement.AbstractE2eTest;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDTO;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserWorkspacesRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
@@ -48,7 +49,7 @@ class JpaUserReadRepositoryTest extends AbstractE2eTest {
     void should_update() {
         UserDTO userDTO = aUserIsPresent();
 
-        WorkspaceDTO workspaceDTO = new WorkspaceDTO(new WorkspaceId(UUID.randomUUID()), "workspaceName", "workspaceLogoUrl");
+        WorkspaceDTO workspaceDTO = new WorkspaceDTO(new WorkspaceId(UUID.randomUUID()), "workspaceName", "workspaceLogoUrl", UserRole.USER);
         userDTO = new UserDTO(
                 userDTO.userId(),
                 userDTO.email(),
@@ -71,7 +72,8 @@ class JpaUserReadRepositoryTest extends AbstractE2eTest {
                         userDTO.userId().value(),
                         workspaceDTO.workspaceId().value(),
                         workspaceDTO.workspaceName(),
-                        workspaceDTO.workspaceLogoUrl()
+                        workspaceDTO.workspaceLogoUrl(),
+                        UserRole.USER
                 )
         ));
     }
@@ -85,7 +87,8 @@ class JpaUserReadRepositoryTest extends AbstractE2eTest {
         WorkspaceDTO workspaceDTO = new WorkspaceDTO(
                 workspaceId,
                 "workspaceName",
-                "workspaceLogoUrl"
+                "workspaceLogoUrl",
+                UserRole.ADMIN
         );
 
         UserDTO updated = new UserDTO(
@@ -106,12 +109,13 @@ class JpaUserReadRepositoryTest extends AbstractE2eTest {
                 jpaUserWorkspacesRepository.findByUserId(userDTO.userId().value());
 
         assertThat(workspaces).hasSize(1);
-        assertThat(workspaces.get(0)).isEqualTo(
+        assertThat(workspaces.getFirst()).isEqualTo(
                 new UserWorkspacesJpaEntity(
                         userDTO.userId().value(),
                         workspaceId.value(),
                         "workspaceName",
-                        "workspaceLogoUrl"
+                        "workspaceLogoUrl",
+                        UserRole.ADMIN
                 )
         );
     }
@@ -120,7 +124,7 @@ class JpaUserReadRepositoryTest extends AbstractE2eTest {
     private @NonNull UserDTO aUserIsPresent() {
         UserDTO userDTO = new UserDTO(
                 new UserId(UUID.randomUUID()),
-                "email",
+                UUID.randomUUID() + "email@email.com",
                 "password_hash",
                 "fullname",
                 List.of());

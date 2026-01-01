@@ -5,6 +5,7 @@ import fr.joffreybonifay.ccpp.shared.domain.identities.WorkspaceId;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.UserDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.model.WorkspaceDTO;
 import fr.joffreybonifay.ccpp.usermanagement.application.query.repository.UserReadRepository;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.JpaUserWorkspacesRepository;
 import fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository.UserJpaEntity;
@@ -42,7 +43,8 @@ public class JpaUserReadRepository implements UserReadRepository {
                     user.userId().value(),
                     workspace.workspaceId().value(),
                     workspace.workspaceName(),
-                    workspace.workspaceLogoUrl()
+                    workspace.workspaceLogoUrl(),
+                    workspace.userRole()
             ));
         }
     }
@@ -77,7 +79,8 @@ public class JpaUserReadRepository implements UserReadRepository {
                                 new WorkspaceDTO(
                                         new WorkspaceId(userWorkspacesJpaEntity.getWorkspaceId()),
                                         userWorkspacesJpaEntity.getWorkspaceName(),
-                                        userWorkspacesJpaEntity.getWorkspaceLogoUrl()
+                                        userWorkspacesJpaEntity.getWorkspaceLogoUrl(),
+                                        userWorkspacesJpaEntity.getUserRole()
                                 ))
                         .collect(Collectors.toList())
         );

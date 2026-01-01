@@ -9,6 +9,7 @@ import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserAssignedToWorkspac
 import fr.joffreybonifay.ccpp.usermanagement.domain.event.UserCreated;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserCreationException;
 import fr.joffreybonifay.ccpp.usermanagement.domain.exception.UserDoesNotExistException;
+import fr.joffreybonifay.ccpp.usermanagement.domain.model.UserRole;
 import fr.joffreybonifay.ccpp.usermanagement.domain.service.UserUniquenessChecker;
 
 import java.util.List;
@@ -34,8 +35,8 @@ public class User extends AggregateRoot {
         return new User(userEvents);
     }
 
-    public void assignToWorkspace(WorkspaceId workspaceId, String workspaceName, String workspaceLogoUrl) {
-        raiseEvent(new UserAssignedToWorkspace(new UserId(aggregateId), workspaceId, workspaceName, workspaceLogoUrl));
+    public void assignToWorkspace(WorkspaceId workspaceId, String workspaceName, String workspaceLogoUrl, UserRole userRole) {
+        raiseEvent(new UserAssignedToWorkspace(new UserId(aggregateId), userRole, workspaceId, workspaceName, workspaceLogoUrl));
     }
 
     @Override

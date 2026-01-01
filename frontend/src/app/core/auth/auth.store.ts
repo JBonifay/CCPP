@@ -94,6 +94,22 @@ export const AuthStore = signalStore(
     clearError(): void {
       patchState(store, {error: null});
     },
+
+    refreshUser: rxMethod<void>(
+      pipe(
+        tap(() => patchState(store, {loading: true, error: null})),
+        switchMap(() =>
+          authStrategy.refreshUser().pipe(
+            tap((user) => patchState(store, {user: user, loading: false})),
+            catchError((error) => {
+              patchState(store, {loading: false, error: error?.message ?? 'Failed to refresh.'});
+              return EMPTY;
+            })
+          )
+        )
+      )
+    ),
+
   })),
 
   withHooks({

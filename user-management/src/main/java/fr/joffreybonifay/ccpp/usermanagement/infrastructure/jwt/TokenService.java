@@ -25,11 +25,10 @@ public class TokenService {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public AuthTokens issue(UUID userId, String email, UUID workspaceId) {
+    public AuthTokens issue(UUID userId, UUID workspaceId) {
 
         String accessToken = jwt(Map.of(
                 "sub", userId.toString(),
-                "email", email,
                 "workspaceId", workspaceId.toString(),
                 "type", "access"
         ), ACCESS_TOKEN_EXPIRATION_MINUTES);
@@ -43,16 +42,14 @@ public class TokenService {
         return new AuthTokens(accessToken, refreshToken);
     }
 
-    public AuthTokens issue(UUID userId, String email) {
+    public AuthTokens issue(UUID userId) {
         String accessToken = jwt(Map.of(
                 "sub", userId.toString(),
-                "email", email,
                 "type", "access"
         ), ACCESS_TOKEN_EXPIRATION_MINUTES);
 
         String refreshToken = jwt(Map.of(
                 "sub", userId.toString(),
-                "email", email,
                 "type", "refresh"
         ), REFRESH_TOKEN_EXPIRATION_MINUTES);
 

@@ -1,4 +1,4 @@
-import {Component, effect, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Card} from 'primeng/card';
 import {Button} from 'primeng/button';
@@ -147,36 +147,14 @@ import {AppRoutePaths} from '../../../app.routes';
     .workspace-name {
       font-weight: 500;
     }
-
-    .workspace-role {
-      font-size: 0.875rem;
-      color: var(--p-text-muted-color);
-      text-transform: capitalize;
-    }
-
-    .w-full {
-      width: 100%;
-    }
-
-    .mb-3 {
-      margin-bottom: 1rem;
-    }
-
-    .mt-3 {
-      margin-top: 1rem;
-    }
   `,
 })
-export class SelectWorkspace {
+export class SelectWorkspace implements OnInit {
   private readonly router = inject(Router);
   readonly authStore = inject(AuthStore);
 
-  constructor() {
-    effect(() => {
-      if (this.authStore.hasWorkspaceSelected()) {
-        this.router.navigate(AppRoutePaths.home());
-      }
-    });
+  ngOnInit() {
+    this.authStore.refreshUser();
   }
 
   selectWorkspace(workspace: Workspace): void {
@@ -184,6 +162,7 @@ export class SelectWorkspace {
       return;
     }
     this.authStore.selectWorkspace(workspace.workspaceId);
+    this.router.navigate(AppRoutePaths.home());
   }
 
   createWorkspace(): void {

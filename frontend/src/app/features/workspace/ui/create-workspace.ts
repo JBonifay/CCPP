@@ -1,12 +1,11 @@
-import {Component, effect, inject} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {Card} from 'primeng/card';
 import {Button} from 'primeng/button';
 import {InputText} from 'primeng/inputtext';
 import {Message} from 'primeng/message';
-import {finalize} from 'rxjs';
-import {AuthStore} from '../../../core';
+import {delay, finalize} from 'rxjs';
 import {AppRoutePaths} from '../../../app.routes';
 import {WorkspaceRepository} from '../data/workspace.repository';
 
@@ -127,29 +126,16 @@ import {WorkspaceRepository} from '../data/workspace.repository';
     .w-full {
       width: 100%;
     }
-
-    .mb-3 {
-      margin-bottom: 1rem;
-    }
   `,
 })
 export class CreateWorkspace {
   private readonly router = inject(Router);
-  private readonly authStore = inject(AuthStore);
   private readonly workspaceRepository = inject(WorkspaceRepository);
 
   name = '';
   logoUrl = '';
   loading = false;
   error: string | null = null;
-
-  constructor() {
-    effect(() => {
-      if (this.authStore.hasWorkspaceSelected()) {
-        this.router.navigate(AppRoutePaths.home());
-      }
-    });
-  }
 
   onSubmit(): void {
     if (!this.name.trim()) {
@@ -164,14 +150,11 @@ export class CreateWorkspace {
       name: this.name.trim(),
       logoUrl: this.logoUrl.trim() || '',
     }).pipe(
+      delay(2000), // wait 2 seconds after success
       finalize(() => this.loading = false)
     ).subscribe({
-      next: (workspace) => {
-        this.authStore.selectWorkspace(workspace.workspaceId);
-      },
-      error: (err) => {
-        this.error = err?.message ?? 'Failed to create workspace';
-      }
+      next: () => this.router.navigate(AppRoutePaths.selectWorkspace()),
+      error: (err) => this.error = err.message || 'Failed to create workspace'
     });
   }
 

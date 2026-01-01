@@ -17,6 +17,7 @@ export interface RestoreResult {
 export abstract class AuthStrategy {
   abstract login(email: string, password: string): Observable<User>;
   abstract logout(): Observable<void>;
+  abstract refreshUser(): Observable<User>;
   abstract selectWorkspace(workspaceId: string): Observable<Workspace>;
   abstract clearSelectedWorkspace(): void;
   abstract restore(): RestoreResult | null;

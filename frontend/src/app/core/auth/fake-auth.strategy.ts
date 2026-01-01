@@ -33,6 +33,10 @@ export class FakeAuthStrategy extends AuthStrategy {
     );
   }
 
+  refreshUser(): Observable<User> {
+    return this.login('', '');
+  }
+
   selectWorkspace(workspaceId: string): Observable<Workspace> {
     const storedUser = localStorage.getItem(STORAGE_KEYS.user);
     if (!storedUser) {

@@ -28,14 +28,13 @@ class UserProjectionUpdaterTest {
 
     @Test
     void should_create_projection_on_user_created() {
-        UserCreated event = new UserCreated(
+
+        updater.on(new UserCreated(
                 userId,
                 new Email("john@example.com"),
                 "hashedPassword123",
                 "John Doe"
-        );
-
-        updater.on(event);
+        ));
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();
@@ -62,9 +61,7 @@ class UserProjectionUpdaterTest {
     void should_add_workspace_on_user_assigned_to_workspace() {
         givenUserCreated();
 
-        var event = new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl);
-
-        updater.on(event);
+        updater.on(new UserAssignedToWorkspace(userId, workspaceId, workspaceName, workspaceLogoUrl));
 
         var projection = repository.findById(userId);
         assertThat(projection).isPresent();

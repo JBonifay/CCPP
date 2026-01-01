@@ -1,11 +1,15 @@
 package fr.joffreybonifay.ccpp.usermanagement.infrastructure.repository;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.UUID;
 
 @Getter
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "users")
 public class UserJpaEntity {

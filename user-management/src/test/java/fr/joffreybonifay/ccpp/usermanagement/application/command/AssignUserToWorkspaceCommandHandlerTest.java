@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class AssignUserJpaEntityToWorkspaceCommandHandlerTest {
+class AssignUserToWorkspaceCommandHandlerTest {
 
     EventStore eventStore = new InMemoryEventStore();
     AssignUserToWorkspaceCommandHandler handler = new AssignUserToWorkspaceCommandHandler(eventStore);

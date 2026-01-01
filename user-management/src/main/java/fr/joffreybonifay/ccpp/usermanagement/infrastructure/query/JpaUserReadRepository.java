@@ -77,7 +77,7 @@ public class JpaUserReadRepository implements UserReadRepository {
                                 new WorkspaceDTO(
                                         new WorkspaceId(userWorkspacesJpaEntity.getWorkspaceId()),
                                         userWorkspacesJpaEntity.getWorkspaceName(),
-                                        userWorkspacesJpaEntity.getWorkspaceName()
+                                        userWorkspacesJpaEntity.getWorkspaceLogoUrl()
                                 ))
                         .collect(Collectors.toList())
         );
